@@ -3,6 +3,7 @@ package com.example.pandamove.yatzy.score;
 import com.example.pandamove.yatzy.player.Player;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -18,10 +19,11 @@ public class ScoreListHandler {
     private int scorePlayerFour;
     private boolean scoreSetted;
     private String yatzyScore;
-    private HashMap<String,Integer> scoresInColumn;
+    private HashMap<String,Integer> scoresInRow;
+    private int sumOfFirstSection = 0;
+    private int sumOfTotale = 0;
 
     public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted){
-        scoresInColumn = new HashMap<>();
         this.players = players;
         this.yatzyScore = yatzyScore;
         this.scoreSetted = scoreSetted;
@@ -44,7 +46,6 @@ public class ScoreListHandler {
     public int checkScore(String player){
         switch (player){
             case "one":
-
                 return players.get(0).getScoreKeeper().getScore();
             case "two":
                 return players.get(1).getScoreKeeper().getScore();
@@ -74,15 +75,15 @@ public class ScoreListHandler {
     public boolean isScoreSetted() {
         return scoreSetted;
     }
-    public int getScore(String player) {
+    public int getScore(int player) {
         switch (player){
-            case "one":
+            case 0:
                 return scorePlayerOne;
-            case "two":
+            case 1:
                 return scorePlayerTwo;
-            case "three":
+            case 2:
                 return scorePlayerThree;
-            case "four":
+            case 3:
                 return scorePlayerFour;
             default:
                 return 0;
@@ -90,12 +91,10 @@ public class ScoreListHandler {
     }
 
     public void setScore(int score, int player, String row) {
-        System.out.println("wtfs??");
-        if(players.get(player).isCurrentPlayer()){
-            System.out.println("wtfs??");
+        /*if(players.get(player).isCurrentPlayer()){
             players.get(player).
                     getScoreKeeper().setScore(row , score);
-        }
+        }*/
         this.score = score;
         switch (player){
             case 0:
@@ -114,7 +113,16 @@ public class ScoreListHandler {
                 this.score = score;
                 break;
         }
+    }
+    public void setRowValueAdded(){
+        //Iterator iterator = scoresInColumn.entrySet().iterator();
+    }
 
+    public void incrementSumOfFirstSection(int value){
+        sumOfFirstSection += value;
+    }
+    public int getSumOfFirstSection(){
+        return sumOfFirstSection;
     }
 
     public List<Player> getPlayers() {

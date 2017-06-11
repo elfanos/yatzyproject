@@ -26,16 +26,18 @@ public class ScoreViewAdapter extends BaseAdapter {
     private static final int SCORE_ITEM = 1;
     private static final int HEADER_ITEM = 0;
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
+    private final int SUM_OF_FIRST_SECTION = 7;
+    private final int SUM_OF_TOTAL_SCORE = 17;
+    private int tempSum = 0;
 
     public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList){
         this.playerList = playerList;
         this.context = context;
-       // this.playerList = new ArrayList<>();
     }
     public void addItem(String yatzyScore, List<Player> players){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false);
         playerList.add(scoreHandler);
-        notifyDataSetChanged();
+        this.notifyDataSetChanged();
     }
     public void addSectionHeader(String header, List<Player> players){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, header, false);
@@ -62,31 +64,88 @@ public class ScoreViewAdapter extends BaseAdapter {
     public int getItemViewType(int position) {
         return sectionHeader.contains(position) ? HEADER_ITEM : SCORE_ITEM;
     }
-
+    @Override
+    public boolean hasStableIds(){
+        return true;
+    }
     @Override
     public int getViewTypeCount(){
         return 2;
     }
 
-    public void addScore(String yatzyScore, View scoreView){
-        //System.out.println("well1");
+    public void addScore(String yatzyScore, int score, int player){
         for(int i = 0; i < this.getCount(); i++){
             if((this.getItem(i) instanceof  ScoreListHandler)){
                 if(((ScoreListHandler) this.getItem(i)).
                         getYatzyScore().equals(yatzyScore)){
                     ((ScoreListHandler) this.getItem(i)).getPlayers().get(0).setCurrentPlayer(true);
-                    System.out.println("well1");
-                    //((ScoreListHandler) this.getItem(i)).setIsScoreSetted(true);
-                    System.out.println(((ScoreListHandler) this.getItem(i)).isScoreSetted());
-                    System.out.println("le columns: " + ((ScoreListHandler) this.getItem(i)).checkWhichColumn());
-
-                   // System.out.println("le columns: " + ((ScoreListHandler) this.getItem(i)).checkScore());
-                    ((ScoreListHandler) this.getItem(i)).setScore(23, 3,yatzyScore);
-                    this.notifyDataSetChanged();
+                    switch (this.checkIfTotalOrSum(player)){
+                        case 0:
+                            System.out.println("yala inside one?");
+                            ((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
+                            this.notifyDataSetChanged();
+                            break;
+                        case 1:
+                            System.out.println("yala inside 1");
+                            //((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
+                           // ((ScoreListHandler) this.getItem(i)).setScore(tempSum, player, yatzyScore);
+                            this.notifyDataSetChanged();
+                            break;
+                        case 2:
+                            System.out.println("yala inside 2");
+                           // ((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
+                            //((ScoreListHandler) this.getItem(i)).setScore(tempSum, player, yatzyScore);
+                            this.notifyDataSetChanged();
+                            break;
+                    }
                 }
             }
         }
-        //this.notifyDataSetChanged();
+    }
+
+    /**
+     * TODO Remake this shit haha xD
+     * */
+    public int checkIfTotalOrSum(int currentPlayer){
+
+        tempSum = 0;
+        for(int i = 0; i < SUM_OF_FIRST_SECTION; i++) {
+            if(((ScoreListHandler)this.
+                    getItem(SUM_OF_FIRST_SECTION)).
+                    getScore(currentPlayer) == 0) {
+                if ((this.getItem(i) instanceof ScoreListHandler)) {
+                    tempSum += ((ScoreListHandler) this.getItem(i))
+                            .getScore(currentPlayer);
+                    /*System.out.println("le temp sum: " + tempSum);
+                    System.out.println("le i value: " + i);
+                    System.out.println("le currentPlayer??: " + currentPlayer);*/
+                    if (((ScoreListHandler) this.getItem(i))
+                            .getScore(currentPlayer) != 0) {
+                        System.out.println("woot 0??: " + ((ScoreListHandler) this.getItem(i))
+                                .getScore(currentPlayer));
+                        return 1;
+                    }else{
+                        return 0;
+                    }
+                }
+            }else if(((ScoreListHandler)this.
+                    getItem(SUM_OF_TOTAL_SCORE)).
+                    getScore(currentPlayer) == 0){
+                for(int j = 8; j < SUM_OF_TOTAL_SCORE; j++) {
+                    if ((this.getItem(i) instanceof ScoreListHandler)) {
+                        tempSum += ((ScoreListHandler) this.getItem(i))
+                                .getScore(currentPlayer);
+                        if (((ScoreListHandler) this.getItem(j))
+                                .getScore(currentPlayer) != 0) {
+                            return 2;
+                        }else{
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -100,7 +159,6 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard = new YatzyScoreBoard();
             switch (rowType){
                 case HEADER_ITEM:
-                    //System.out.println("Row type? " + rowType);
                     scoreView = inflater.inflate(R.layout.score_header_row, parent, false);
                     scoreBoard.yatzyScores = (TextView) scoreView.findViewById(R.id.header1);
                     scoreBoard.playerOneScore= (TextView) scoreView.findViewById(R.id.hplayerone);
@@ -109,7 +167,6 @@ public class ScoreViewAdapter extends BaseAdapter {
                     scoreBoard.playerFourScore = (TextView) scoreView.findViewById(R.id.hplayerfour);
                     break;
                 case SCORE_ITEM:
-                    //System.out.println("Row type? " + rowType);
                     scoreView = inflater.inflate(R.layout.score_row, parent, false);
                     scoreBoard.yatzyScores = (TextView) scoreView.findViewById(R.id.yatzyscore);
                     scoreBoard.playerOneScore= (TextView) scoreView.findViewById(R.id.playerone);
@@ -123,17 +180,12 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard = (YatzyScoreBoard) scoreView.getTag();
         }
         final ScoreListHandler scoreListHandler = playerList.get(position);
-       // System.out.println("check if list is null: " + scoreListHandler.getYatzyScore());
         scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
-        /*
-        scoreBoard.playerOneScore.setText(String.format("%d", scoreListHandler.checkScore("one")));
-        scoreBoard.playerTwoScore.setText(String.format("%d", scoreListHandler.checkScore("two")));
-        scoreBoard.playerThreeScore.setText(String.format("%d", scoreListHandler.checkScore("three")));
-        scoreBoard.playerFourScore.setText(String.format("%d", scoreListHandler.checkScore("four")));*/
-        scoreBoard.playerOneScore.setText(String.format("%d", scoreListHandler.getScore("one")));
-        scoreBoard.playerTwoScore.setText(String.format("%d", scoreListHandler.getScore("two")));
-        scoreBoard.playerThreeScore.setText(String.format("%d", scoreListHandler.getScore("three")));
-        scoreBoard.playerFourScore.setText(String.format("%d", scoreListHandler.getScore("four")));
+
+        scoreBoard.playerOneScore.setText(String.format("%d", scoreListHandler.getScore(0)));
+        scoreBoard.playerTwoScore.setText(String.format("%d", scoreListHandler.getScore(1)));
+        scoreBoard.playerThreeScore.setText(String.format("%d", scoreListHandler.getScore(2)));
+        scoreBoard.playerFourScore.setText(String.format("%d", scoreListHandler.getScore(3)));
         return scoreView;
     }
     static class YatzyScoreBoard {

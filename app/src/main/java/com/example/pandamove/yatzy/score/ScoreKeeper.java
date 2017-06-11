@@ -27,34 +27,9 @@ public class ScoreKeeper {
         this.scores = scores;
     }
     public int getScore() {
-        Iterator iterator = scoresIncColumnNRow.entrySet().iterator();
-        while (iterator.hasNext()){
-            Map.Entry map = (Map.Entry) iterator.next();
-
-            //System.out.println(map);
-            return this.checkRow(map);
-        }
-       // System.out.println("FINNISHED:       .::");
         return 0;
     }
 
-    public int checkRow(Map.Entry map){
-        if(!updatedRow.isOne()){
-            System.out.println("isone");
-            updatedRow.setOne(true);
-            return 0;
-        }else if(!updatedRow.isTwo()){
-            System.out.println("two");
-            updatedRow.setTwo(true);
-            return 12;
-        }
-        else if(!updatedRow.isThree()){
-            System.out.println("isthree");
-            updatedRow.setThree(true);
-            return 3;
-        }
-        return 13;
-    }
 
     public void setScore(String row,int score) {
         System.out.println("haj" + row);

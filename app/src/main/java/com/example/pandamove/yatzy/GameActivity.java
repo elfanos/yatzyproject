@@ -31,17 +31,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private PagerAdapter pagerAdapter;
 
-    private List<ScoreListHandler> scoreListHandler;
-
-    private List<ScoreListHandler> listOfScores;
-
-    private List<Player> players;
-
-    private ListView scoreListView;
-
     private OnButtonClickedListener onButtonClickedListener;
-
-    private ScoreViewAdapter scoreViewAdapter;
 
     /*Keep track on fragments*/
     private SparseArray<Fragment> fragments;
@@ -51,8 +41,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.navigation_tab);
 
         fragments = new SparseArray<>();
-        players = new ArrayList<>();
-        listOfScores = new ArrayList<>();
 
         Activity activity = this;
         try{
@@ -61,31 +49,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             System.out.println("Exception lal" + e);
         }
 
-        /*Player player = new Player("ralle");
-        player.setColumnPosition(0);
-        players.add(player);
-        Player player2 = new Player("ralle2");
-        player2.setColumnPosition(1);
-        players.add(player2);
-        Player player3 = new Player("ralle3");
-        player3.setColumnPosition(2);
-        players.add(player3);
-        Player player4 = new Player("ralle4");
-        player4.setColumnPosition(3);
-        players.add(player4);*/
-
-        /*ScoreListHandler scoreHandler = new ScoreListHandler(players,"One", false);
-        listOfScores.add(scoreHandler);
-        ScoreListHandler scoreHandler2 = new ScoreListHandler(players,"Two", false);
-        listOfScores.add(scoreHandler2);
-        ScoreListHandler scoreHandler3 = new ScoreListHandler(players,"Three", false);
-        listOfScores.add(scoreHandler3);
-        ScoreListHandler scoreHandler4 = new ScoreListHandler(players,"Four", false);
-        listOfScores.add(scoreHandler4);
-        ScoreListHandler scoreHandler5 = new ScoreListHandler(players,"Five", false);
-        listOfScores.add(scoreHandler5);
-        ScoreListHandler scoreHandler6 = new ScoreListHandler(players,"Six", false);
-        listOfScores.add(scoreHandler6);*/
         mPager = (ViewPager) findViewById(R.id.viewpager);
         pagerAdapter = new FragmentSliderPagerAdapter(getSupportFragmentManager(), onButtonClickedListener, fragments);
         mPager.setAdapter(pagerAdapter);
@@ -102,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 Fragment scoreFragment =  fragments.get(1);
                 if(scoreFragment instanceof ScoreFragment){
                     System.out.println("alright: " + ((ScoreFragment) scoreFragment).getScoreListAdapater().getCount());
-                    ((ScoreFragment) scoreFragment).getScoreListAdapater().addScore("Two", (scoreFragment).getView());
+                    ((ScoreFragment) scoreFragment).getScoreListAdapater().addScore("Two",23,2);
                 }
                 break;
             default:

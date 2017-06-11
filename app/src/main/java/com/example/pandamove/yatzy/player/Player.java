@@ -2,6 +2,9 @@ package com.example.pandamove.yatzy.player;
 
 import com.example.pandamove.yatzy.score.ScoreKeeper;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 /**
  * Created by Rallmo on 2017-04-05.
  */
@@ -10,6 +13,7 @@ public class Player {
     private ScoreKeeper scoreKeeper;
     private int columnPosition;
     private boolean currentPlayer;
+    private HashMap<String,Integer> scoresInRow;
 
     /**
      * Constructor player
@@ -20,6 +24,7 @@ public class Player {
      * */
     public Player(String name, String[] scores){
         scoreKeeper = new ScoreKeeper(scores);
+        scoresInRow = new HashMap<>();
         this.name = name;
     }
 
@@ -43,4 +48,8 @@ public class Player {
     public void setCurrentPlayer(boolean currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
+    public void setRowValueAdded(){
+        Iterator iterator = scoresInRow.entrySet().iterator();
+    }
+
 }
