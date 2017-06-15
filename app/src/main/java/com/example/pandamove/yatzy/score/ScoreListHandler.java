@@ -68,39 +68,48 @@ public class ScoreListHandler {
         }
     }
     public void setListener(int player, ScoreViewAdapter scoreViewAdapter,
-                            int score, String yatzyScore){
+                            int score, String yatzyScore, int position){
         switch (player){
             case 0:
+                System.out.println("well wat is happening?");
                 playerOneListener = new CellOnClickListener(
                         scoreViewAdapter,
                         player,
                         yatzyScore,
-                        score
+                        score,
+                        position
                         );
+                scoreViewAdapter.addToObserveListeners(position,playerOneListener);
                 break;
             case 1:
                 playerTwoListener = new CellOnClickListener(
                         scoreViewAdapter,
                         player,
                         yatzyScore,
-                        score
+                        score,
+                        position
                 );
+                scoreViewAdapter.addToObserveListeners(position,playerTwoListener);
                 break;
             case 2:
                 playerThreeListener = new CellOnClickListener(
                         scoreViewAdapter,
                         player,
                         yatzyScore,
-                        score
+                        score,
+                        position
                 );
+                scoreViewAdapter.addToObserveListeners(position,playerThreeListener);
                 break;
             case 3:
                 playerFourListener = new CellOnClickListener(
                         scoreViewAdapter,
                         player,
                         yatzyScore,
-                        score
+                        score,
+                        position
                 );
+                scoreViewAdapter.addToObserveListeners(position,playerFourListener);
                 break;
         }
 

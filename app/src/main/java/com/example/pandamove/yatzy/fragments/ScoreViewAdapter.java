@@ -11,6 +11,7 @@ import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -27,10 +28,12 @@ public class ScoreViewAdapter extends BaseAdapter {
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
     private final int SUM_OF_FIRST_SECTION = 7;
     private final int SUM_OF_TOTAL_SCORE = 17;
+    private HashMap<Integer,CellOnClickListener> observeListeners;
 
     public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList){
         this.playerList = playerList;
         this.context = context;
+        observeListeners = new HashMap<>();
     }
     public void addItem(String yatzyScore, List<Player> players){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false);
@@ -42,6 +45,14 @@ public class ScoreViewAdapter extends BaseAdapter {
         playerList.add(scoreHandler);
         sectionHeader.add(playerList.size() - 1);
         this.notifyDataSetChanged();
+    }
+
+    public void addToObserveListeners(int index,CellOnClickListener listener){
+        observeListeners.put(index,listener);
+    }
+
+    public HashMap<Integer,CellOnClickListener> getObserveListeners(){
+        return observeListeners;
     }
     @Override
     public Object getItem(int position){
@@ -103,7 +114,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                                                     get(((ScoreListHandler) this.getItem(i)).
                                                             getYatzyScore()),
                                             ((ScoreListHandler) this.getItem(i)).
-                                                    getYatzyScore()
+                                                    getYatzyScore(),
+                                            i
                                     );
 
                             this.notifyDataSetChanged();
@@ -130,7 +142,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                                             get(((ScoreListHandler) this.getItem(i)).
                                                     getYatzyScore()),
                                             ((ScoreListHandler) this.getItem(i)).
-                                            getYatzyScore()
+                                            getYatzyScore(),
+                                            i
                                     );
 
                             this.notifyDataSetChanged();
@@ -157,7 +170,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                                                     get(((ScoreListHandler) this.getItem(i)).
                                                             getYatzyScore()),
                                             ((ScoreListHandler) this.getItem(i)).
-                                                    getYatzyScore()
+                                                    getYatzyScore(),
+                                            i
                                     );
 
                             this.notifyDataSetChanged();
@@ -183,7 +197,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                                                     get(((ScoreListHandler) this.getItem(i)).
                                                             getYatzyScore()),
                                             ((ScoreListHandler) this.getItem(i)).
-                                                    getYatzyScore()
+                                                    getYatzyScore(),
+                                            i
                                     );
 
                             this.notifyDataSetChanged();
