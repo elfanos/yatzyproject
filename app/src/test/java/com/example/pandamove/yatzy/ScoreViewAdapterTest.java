@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
@@ -44,10 +45,9 @@ public class ScoreViewAdapterTest {
     private ScoreViewAdapter scoreViewAdapter;
     private List<Player> players = new ArrayList<>();
     private List<ScoreListHandler> listOfScores;
-    private View mockView;
-    private Fragment mockFragment;
     private  Activity mainActivity;
     private ScoreFragment scoreFragment;
+    private ListView listView;
 
     @Mock
     Context mMockContext;
@@ -76,6 +76,7 @@ public class ScoreViewAdapterTest {
         mainActivity = Robolectric.setupActivity(GameActivity.class);
         scoreFragment = ScoreFragment.newInstance(1);
         startFragment(scoreFragment);
+        listView = scoreFragment.getListView();
         listOfScores = new ArrayList<>();
         playerOne = new Player("ralle", scores);
         playerTwo = new Player("Gura", scores);
@@ -84,25 +85,29 @@ public class ScoreViewAdapterTest {
         players.add(playerOne);
         players.add(playerTwo);
         players.add(playerThree);
-
         scoreViewAdapter = new ScoreViewAdapter(scoreFragment.getActivity(), listOfScores);
+        scoreViewAdapter = this.initializeScoreViewAdapter(scoreViewAdapter);
+
+    }
+    public ScoreViewAdapter initializeScoreViewAdapter(ScoreViewAdapter scoreViewAdapterInit){
         for (int i = 0; i < scores.length; i++) {
             if (i == 0) {
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+                scoreViewAdapterInit.addSectionHeader(scores[i], players);
             }
             if (i != 0 && i < 7) {
-                scoreViewAdapter.addItem(scores[i], players);
+                scoreViewAdapterInit.addItem(scores[i], players);
             }
             if (i > 6 && i < 8) {
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+                scoreViewAdapterInit.addSectionHeader(scores[i], players);
             }
             if (i > 7 && i < 17) {
-                scoreViewAdapter.addItem(scores[i], players);
+                scoreViewAdapterInit.addItem(scores[i], players);
             }
             if (i > 16) {
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+                scoreViewAdapterInit.addSectionHeader(scores[i], players);
             }
         }
+        return scoreViewAdapterInit;
     }
     @Test
     public void testMainActivity(){
@@ -190,7 +195,7 @@ public class ScoreViewAdapterTest {
     public void addScore(){
         int score = 23;
         int player = 2;
-        scoreViewAdapter.addScore("Two",score,player);
+        scoreViewAdapter.addScore("Two",score,player,listView);
         if(scoreViewAdapter.getItem(2) instanceof ScoreListHandler){
             Assert.assertEquals("Player three should have 23 in score: ",
                     23,((ScoreListHandler) scoreViewAdapter.getItem(2)).getScore(2)
@@ -204,7 +209,7 @@ public class ScoreViewAdapterTest {
         }
         int playerTwoScore = 20;
         int playerTwo = 1;
-        scoreViewAdapter.addScore("Two",playerTwoScore,playerTwo);
+        scoreViewAdapter.addScore("Two",playerTwoScore,playerTwo, listView);
         if(scoreViewAdapter.getItem(2) instanceof ScoreListHandler){
             Assert.assertEquals("Player three should have 23 in score: ",
                     23,((ScoreListHandler) scoreViewAdapter.getItem(2)).getScore(2)
@@ -218,7 +223,7 @@ public class ScoreViewAdapterTest {
         }
         int playerOneScore = 12;
         int playerOne = 0;
-        scoreViewAdapter.addScore("Two",playerOneScore, playerOne);
+        scoreViewAdapter.addScore("Two",playerOneScore, playerOne, listView);
         if(scoreViewAdapter.getItem(2) instanceof ScoreListHandler){
             Assert.assertEquals("Player three should have 23 in score: ",
                     23,((ScoreListHandler) scoreViewAdapter.getItem(2)).getScore(2)
@@ -232,7 +237,7 @@ public class ScoreViewAdapterTest {
         }
         int playerOneScoreOtherRow = 5;
         int playerOneOtherRow = 0;
-        scoreViewAdapter.addScore("One",playerOneScoreOtherRow, playerOneOtherRow);
+        scoreViewAdapter.addScore("One",playerOneScoreOtherRow, playerOneOtherRow, listView);
         if(scoreViewAdapter.getItem(2) instanceof ScoreListHandler){
             Assert.assertEquals("Player one should have 12 in score: ",
                     12,((ScoreListHandler) scoreViewAdapter.getItem(2)).getScore(0)
@@ -270,24 +275,90 @@ public class ScoreViewAdapterTest {
         }
 
     }
+
+    @Test
+    public void checkNoDuplicateScores(){
+        scoreViewAdapter.addScore("Two",5,2,listView);
+        scoreViewAdapter.addScore("Two",7,2, listView);
+        Assert.assertEquals("All scores on Player three should be 1",
+                5, ((ScoreListHandler) scoreViewAdapter.getItem(2)).getScore(2)
+        );
+    }
     /**
      *
      * Check add score
      *
      * */
     @Test
-    public void checkScoreSumNToal() {
+    public void checkScoreSumNTotal() {
         for (int i = 0; i < scoreViewAdapter.getCount(); i++) {
-            scoreViewAdapter.addScore(scores[i],1,2);
+            scoreViewAdapter.addScore(scores[i],1,2, listView);
         }
         Assert.assertEquals("All scores on Player three should be 12",
                 1, ((ScoreListHandler) scoreViewAdapter.getItem(1)).getScore(2)
         );
-        /*if ((scoreViewAdapter.getItem(7) instanceof ScoreListHandler)) {
-            Assert.assertEquals("All scores on Player three should be 12",
-                    0, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
-            );
-        }*/
+        Assert.assertEquals("All scores on Player three should be 12",
+                6, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
+        );
+        /**
+         * Test for duplicate
+         * */
+        for (int i = 0; i < scoreViewAdapter.getCount(); i++) {
+            scoreViewAdapter.addScore(scores[i],4,2, listView);
+        }
+        Assert.assertEquals("All scores on Player three should be 12",
+                1, ((ScoreListHandler) scoreViewAdapter.getItem(1)).getScore(2)
+        );
+        Assert.assertEquals("All scores on Player three should be 12",
+                6, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
+        );
+
+        /**
+         * Test with other score
+         *
+         * */
+
+    }
+    @Test
+    public void checkHalfScoreWithOtherValues(){
+        for (int i = 0; i < scoreViewAdapter.getCount(); i++) {
+            scoreViewAdapter.addScore(scores[i],5,2, listView);
+        }
+        Assert.assertEquals("All scores on Player three should be 12",
+                5, ((ScoreListHandler) scoreViewAdapter.getItem(1)).getScore(2)
+        );
+        Assert.assertEquals("All scores on Player three should be 12",
+                30, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
+        );
+    }
+
+    @Test
+    public void checkThatScoreIsReallySettedAtRightTime(){
+        for (int i = 0; i < 6; i++) {
+            scoreViewAdapter.addScore(scores[i],5,2, listView);
+        }
+        Assert.assertEquals("All scores on Player three should be 12",
+                0, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
+        );
+        Assert.assertEquals("All scores on Player three should be 12",
+                0, ((ScoreListHandler) scoreViewAdapter.getItem(6)).getScore(2)
+        );
+    }
+
+    @Test
+    public void checkLastSectionScore(){
+        for (int i = 0; i < scoreViewAdapter.getCount(); i++) {
+            scoreViewAdapter.addScore(scores[i],1,2, listView);
+        }
+        Assert.assertEquals("All scores on Player three should be 12",
+                6, ((ScoreListHandler) scoreViewAdapter.getItem(7)).getScore(2)
+        );
+        Assert.assertEquals("All scores on Player three should be 12",
+                1, ((ScoreListHandler) scoreViewAdapter.getItem(8)).getScore(2)
+        );
+        Assert.assertEquals("All scores on Player three should be 12",
+                9, ((ScoreListHandler) scoreViewAdapter.getItem(17)).getScore(2)
+        );
     }
 
 }

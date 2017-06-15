@@ -23,6 +23,7 @@ import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener, OnButtonClickedListener {
@@ -31,7 +32,38 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private PagerAdapter pagerAdapter;
 
+    private HashMap<String,Integer> listOfPossibleScores = new HashMap<>();
+
     private OnButtonClickedListener onButtonClickedListener;
+    private String[] scores = {
+            "Header",
+            "One",
+            "Two",
+            "Three",
+            "Four",
+            "Five",
+            "Six",
+            "Sum",
+            "1 Pair",
+            "2 Pair",
+            "3 of a Kind",
+            "4 of a Kind",
+            "Full House",
+            "Small Straight",
+            "Long Straight",
+            "Chance",
+            "Yatzy",
+            "Total",
+            "Total of All"
+    };
+    private int[] diceScore = {
+            12,
+            15,
+            14,
+            11,
+            6,
+            20
+    };
 
     /*Keep track on fragments*/
     private SparseArray<Fragment> fragments;
@@ -56,16 +88,34 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         tabLayout.setupWithViewPager(mPager);
     }
 
+    /**
+     * params
+     * which yatzyscore
+     * score
+     * player
+     * */
     @Override
     public void onButtonClicked(View v){
         System.out.println("le id: " + v.getId());
         switch (v.getId()){
             case R.id.testButton:
-                System.out.println("pressed test button");
+                //System.out.println("pressed test button");
                 Fragment scoreFragment =  fragments.get(1);
-                if(scoreFragment instanceof ScoreFragment){
-                    System.out.println("alright: " + ((ScoreFragment) scoreFragment).getScoreListAdapater().getCount());
-                    ((ScoreFragment) scoreFragment).getScoreListAdapater().addScore("Two",23,2);
+                if(scoreFragment instanceof ScoreFragment){;
+                    /*for(int i = 1; i < 5; i++) {
+
+                        ((ScoreFragment) scoreFragment).
+                                getScoreListAdapater().
+                                addScore(scores[i], 5, 1);
+                    }*/
+                    listOfPossibleScores.put(scores[1],diceScore[1]);
+                    listOfPossibleScores.put(scores[3],diceScore[2]);
+                    listOfPossibleScores.put(scores[8],diceScore[3]);
+                    ((ScoreFragment) scoreFragment).
+                            getScoreListAdapater().viewCombination(3,
+                                    listOfPossibleScores
+                    );
+
                 }
                 break;
             default:

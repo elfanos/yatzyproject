@@ -11,9 +11,8 @@ import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.TreeSet;
 
 /**
@@ -28,7 +27,6 @@ public class ScoreViewAdapter extends BaseAdapter {
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
     private final int SUM_OF_FIRST_SECTION = 7;
     private final int SUM_OF_TOTAL_SCORE = 17;
-    private int tempSum = 0;
 
     public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList){
         this.playerList = playerList;
@@ -73,28 +71,178 @@ public class ScoreViewAdapter extends BaseAdapter {
         return 2;
     }
 
-    public void addScore(String yatzyScore, int score, int player){
+    /**
+     * TODO fix so it check for each yatzy score then
+     * apply design on the cells based on player
+     * */
+    public void viewCombination(int currentPlayer,HashMap<String,Integer> listOfScores){
+        for(int i = 0; i < this.getCount(); i++) {
+            if ((this.getItem(i) instanceof ScoreListHandler)) {
+                if(listOfScores.
+                        get(((ScoreListHandler) this.getItem(i)).
+                                getYatzyScore()) != null){
+                    switch (currentPlayer) {
+                        case 0:
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            currentPlayer,
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScoreBackground(currentPlayer,1);
+
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setListener(
+                                            currentPlayer,
+                                            this,
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+
+                            this.notifyDataSetChanged();
+
+                            break;
+                        case 1:
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()),
+                                                    currentPlayer,
+                                                    ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                            );
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScoreBackground(currentPlayer,1);
+
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setListener(
+                                            currentPlayer,
+                                            this,
+                                            listOfScores.
+                                            get(((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()),
+                                            ((ScoreListHandler) this.getItem(i)).
+                                            getYatzyScore()
+                                    );
+
+                            this.notifyDataSetChanged();
+
+                            break;
+                        case 2:
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            currentPlayer,
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScoreBackground(currentPlayer,1);
+
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setListener(
+                                            currentPlayer,
+                                            this,
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+
+                            this.notifyDataSetChanged();
+                            break;
+                        case 3:
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            currentPlayer,
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScoreBackground(currentPlayer,1);
+
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setListener(
+                                            currentPlayer,
+                                            this,
+                                            listOfScores.
+                                                    get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()),
+                                            ((ScoreListHandler) this.getItem(i)).
+                                                    getYatzyScore()
+                                    );
+
+                            this.notifyDataSetChanged();
+                            break;
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    /**
+     * TODO fix test for the new implemented list view
+     * which fix the bakground on each cell.
+     * */
+    public void addScore(String yatzyScore, int score,
+                         int player){
         for(int i = 0; i < this.getCount(); i++){
             if((this.getItem(i) instanceof  ScoreListHandler)){
                 if(((ScoreListHandler) this.getItem(i)).
-                        getYatzyScore().equals(yatzyScore)){
-                    ((ScoreListHandler) this.getItem(i)).getPlayers().get(0).setCurrentPlayer(true);
-                    switch (this.checkIfTotalOrSum(player)){
+                        getYatzyScore().
+                        equals(yatzyScore)){
+
+                    ((ScoreListHandler) this.getItem(i)).
+                            getPlayers().
+                            get(player).
+                            setCurrentPlayer(true);
+
+                    ((ScoreListHandler) this.getItem(i)).setScoreBackground(player,2);
+                    switch (this.checkIfTotalOrSum(
+                            ((ScoreListHandler) this.getItem(i)),
+                            player)
+                            ){
                         case 0:
-                            System.out.println("yala inside one?");
-                            ((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            score,
+                                            player,
+                                            yatzyScore
+                                    );
                             this.notifyDataSetChanged();
                             break;
                         case 1:
-                            System.out.println("yala inside 1");
-                            //((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
-                           // ((ScoreListHandler) this.getItem(i)).setScore(tempSum, player, yatzyScore);
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            this.getHalfScore(player),
+                                            player,
+                                            yatzyScore
+                                    );
                             this.notifyDataSetChanged();
                             break;
                         case 2:
-                            System.out.println("yala inside 2");
-                           // ((ScoreListHandler) this.getItem(i)).setScore(score, player, yatzyScore);
-                            //((ScoreListHandler) this.getItem(i)).setScore(tempSum, player, yatzyScore);
+                            ((ScoreListHandler) this.getItem(i)).
+                                    setScore(
+                                            this.getLastSectionScore(player),
+                                            player,
+                                            yatzyScore
+                                    );
                             this.notifyDataSetChanged();
                             break;
                     }
@@ -106,48 +254,44 @@ public class ScoreViewAdapter extends BaseAdapter {
     /**
      * TODO Remake this shit haha xD
      * */
-    public int checkIfTotalOrSum(int currentPlayer){
-
-        tempSum = 0;
-        for(int i = 0; i < SUM_OF_FIRST_SECTION; i++) {
-            if(((ScoreListHandler)this.
-                    getItem(SUM_OF_FIRST_SECTION)).
-                    getScore(currentPlayer) == 0) {
-                if ((this.getItem(i) instanceof ScoreListHandler)) {
-                    tempSum += ((ScoreListHandler) this.getItem(i))
-                            .getScore(currentPlayer);
-                    /*System.out.println("le temp sum: " + tempSum);
-                    System.out.println("le i value: " + i);
-                    System.out.println("le currentPlayer??: " + currentPlayer);*/
-                    if (((ScoreListHandler) this.getItem(i))
-                            .getScore(currentPlayer) != 0) {
-                        System.out.println("woot 0??: " + ((ScoreListHandler) this.getItem(i))
-                                .getScore(currentPlayer));
-                        return 1;
-                    }else{
-                        return 0;
-                    }
-                }
-            }else if(((ScoreListHandler)this.
-                    getItem(SUM_OF_TOTAL_SCORE)).
-                    getScore(currentPlayer) == 0){
-                for(int j = 8; j < SUM_OF_TOTAL_SCORE; j++) {
-                    if ((this.getItem(i) instanceof ScoreListHandler)) {
-                        tempSum += ((ScoreListHandler) this.getItem(i))
-                                .getScore(currentPlayer);
-                        if (((ScoreListHandler) this.getItem(j))
-                                .getScore(currentPlayer) != 0) {
-                            return 2;
-                        }else{
-                            return 0;
-                        }
-                    }
-                }
+    public int checkIfTotalOrSum(
+            ScoreListHandler scoreListHandler, int currentPlayer
+    ){
+        return scoreListHandler.getPlayers().
+                get(currentPlayer).
+                getScoreKeeper().
+                checkIfHalfScore();
+    }
+    public int getHalfScore(int currentPlayer){
+        int sum = 0;
+        for(int i = 1; i < SUM_OF_FIRST_SECTION; i++){
+            if(this.getItem(i) instanceof ScoreListHandler){
+                sum += ((ScoreListHandler) this.getItem(i)).
+                        getScore(currentPlayer);
             }
         }
-        return 0;
+        return sum;
     }
-
+    public int getLastSectionScore(int currentPlayer){
+        int sum = 0;
+        for(int i = SUM_OF_FIRST_SECTION+1; i < SUM_OF_TOTAL_SCORE; i++){
+            if(this.getItem(i) instanceof ScoreListHandler){
+                sum += ((ScoreListHandler) this.getItem(i)).
+                        getScore(currentPlayer);
+            }
+        }
+        return sum;
+    }
+    public int getTotaleScore(int currentPlayer){
+        int sum = 0;
+        for(int i = 0; i < getCount(); i++){
+            if(this.getItem(i) instanceof ScoreListHandler){
+                sum += ((ScoreListHandler) this.getItem(i)).
+                        getScore(currentPlayer);
+            }
+        }
+        return sum;
+    }
     @Override
     public View getView(int position, View scoreView, ViewGroup parent){
         YatzyScoreBoard scoreBoard;
@@ -182,10 +326,33 @@ public class ScoreViewAdapter extends BaseAdapter {
         final ScoreListHandler scoreListHandler = playerList.get(position);
         scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
 
-        scoreBoard.playerOneScore.setText(String.format("%d", scoreListHandler.getScore(0)));
-        scoreBoard.playerTwoScore.setText(String.format("%d", scoreListHandler.getScore(1)));
-        scoreBoard.playerThreeScore.setText(String.format("%d", scoreListHandler.getScore(2)));
-        scoreBoard.playerFourScore.setText(String.format("%d", scoreListHandler.getScore(3)));
+        scoreBoard.playerOneScore.
+                setText(String.format("%d", scoreListHandler.getScore(0)));
+        scoreBoard.playerOneScore.
+                setBackgroundResource(scoreListHandler.getScoreBackground(0));
+        scoreBoard.playerOneScore.
+                setOnClickListener(scoreListHandler.getListener(0));
+
+        scoreBoard.playerTwoScore.
+                setText(String.format("%d", scoreListHandler.getScore(1)));
+        scoreBoard.playerTwoScore.
+                setBackgroundResource(scoreListHandler.getScoreBackground(1));
+        scoreBoard.playerTwoScore.
+                setOnClickListener(scoreListHandler.getListener(1));
+
+
+        scoreBoard.playerThreeScore.
+                setText(String.format("%d", scoreListHandler.getScore(2)));
+        scoreBoard.playerThreeScore.
+                setBackgroundResource(scoreListHandler.getScoreBackground(2));
+        scoreBoard.playerThreeScore.setOnClickListener(scoreListHandler.getListener(2));
+
+        scoreBoard.playerFourScore.
+                setText(String.format("%d", scoreListHandler.getScore(3)));
+        scoreBoard.playerFourScore.
+                setBackgroundResource(scoreListHandler.getScoreBackground(3));
+        scoreBoard.playerFourScore.
+                setOnClickListener(scoreListHandler.getListener(3));
         return scoreView;
     }
     static class YatzyScoreBoard {

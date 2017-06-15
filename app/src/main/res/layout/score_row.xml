@@ -30,45 +30,49 @@
             android:paddingLeft="10dp" />
 
         <TextView
+            android:id="@+id/playerone"
             android:layout_width="54dp"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/playerone"
-            android:textColor="#000000"
             android:background="@drawable/layout_border"
+            android:clickable="true"
+            android:singleLine="false"
+            android:text="Medium Text"
             android:textAlignment="center"
-            android:singleLine="false" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/background_light" />
 
         <TextView
+            android:id="@+id/playertwo"
             android:layout_width="53dp"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/playertwo"
-            android:textColor="#000000"
             android:background="@drawable/layout_border"
-            android:textAlignment="center" />
+            android:clickable="true"
+            android:text="Medium Text"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/background_dark" />
 
         <TextView
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
             android:id="@+id/playerthree"
-            android:textColor="#000000"
-            android:background="@drawable/layout_border"
-            android:textAlignment="center" />
-
-        <TextView
             android:layout_width="61dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/playerfour"
-            android:textColor="#000000"
             android:background="@drawable/layout_border"
-            android:textAlignment="center" />
+            android:clickable="true"
+            android:text="Medium Text"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/background_light" />
+
+        <TextView
+            android:id="@+id/playerfour"
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/layout_border"
+            android:clickable="true"
+            android:text="Medium Text"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/background_light" />
     </LinearLayout>
 
 </RelativeLayout>

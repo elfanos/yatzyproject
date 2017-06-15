@@ -27,8 +27,7 @@
             android:layout_weight="0.96"
             android:textColor="#000000"
             android:background="@drawable/header_border_layout"
-            android:paddingLeft="10dp"
-            android:visibility="invisible" />
+            android:paddingLeft="10dp" />
 
         <TextView
             android:layout_width="54dp"

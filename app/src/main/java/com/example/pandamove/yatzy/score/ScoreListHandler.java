@@ -1,7 +1,15 @@
 package com.example.pandamove.yatzy.score;
 
+import android.graphics.drawable.Drawable;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.fragments.CellOnClickListener;
+import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
 import com.example.pandamove.yatzy.player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,69 +20,178 @@ import java.util.List;
 public class ScoreListHandler {
 
     private List<Player> players;
-    private int score;
     private int scorePlayerOne;
     private int scorePlayerTwo;
     private int scorePlayerThree;
     private int scorePlayerFour;
     private boolean scoreSetted;
     private String yatzyScore;
-    private HashMap<String,Integer> scoresInRow;
-    private int sumOfFirstSection = 0;
-    private int sumOfTotale = 0;
+    private int playerOneView;
+    private int playerTwoView;
+    private int playerThreeView;
+    private int playerFourView;
+    private CellOnClickListener playerOneListener;
+    private CellOnClickListener playerTwoListener;
+    private CellOnClickListener playerThreeListener;
+    private CellOnClickListener playerFourListener;
+    private ArrayList<Integer> differentLayouts;
 
     public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted){
         this.players = players;
         this.yatzyScore = yatzyScore;
         this.scoreSetted = scoreSetted;
+        playerOneListener = null;
+        playerTwoListener = null;
+        playerThreeListener = null;
+        playerFourListener = null;
+        this.differentLayouts = new ArrayList<>();
+        differentLayouts.add(R.drawable.layout_border);
+        differentLayouts.add(R.drawable.layout_border_higlight);
+        differentLayouts.add(R.drawable.layout_border_scored);
     }
-    public int checkWhichColumn(){
-        System.out.println("check columns :D");
-        if(!this.isScoreSetted()){
-            System.out.println("hola inside here");
-            for(int i = 0; i < players.size(); i++){
-                System.out.println(players.get(i).isCurrentPlayer());
-                if(players.get(i).isCurrentPlayer()){
-                    System.out.println("never here?");
-                    System.out.println("Column pos?: " + players.get(i).getColumnPosition());
-                    return players.get(i).getColumnPosition();
-                }
-            }
-        }
-        return 0;
-    }
-    public int checkScore(String player){
-        switch (player){
-            case "one":
-                return players.get(0).getScoreKeeper().getScore();
-            case "two":
-                return players.get(1).getScoreKeeper().getScore();
-            case "three":
-                return players.get(2).getScoreKeeper().getScore();
-            case "four":
-                //System.out.println(players.get(3).getScoreKeeper().getScore());
-                return players.get(3).getScoreKeeper().getScore();
-            default:
-        }
-        return 0;
-    }
-
     public String getYatzyScore() {
         return yatzyScore;
     }
 
+    public CellOnClickListener getListener(int player){
+        switch (player){
+            case 0:
+                return playerOneListener;
+            case 1:
+                return  playerTwoListener;
+            case 2:
+                return playerThreeListener;
+            case 3:
+                return playerFourListener;
+            default:
+                return null;
+        }
+    }
+    public void setListener(int player, ScoreViewAdapter scoreViewAdapter,
+                            int score, String yatzyScore){
+        switch (player){
+            case 0:
+                playerOneListener = new CellOnClickListener(
+                        scoreViewAdapter,
+                        player,
+                        yatzyScore,
+                        score
+                        );
+                break;
+            case 1:
+                playerTwoListener = new CellOnClickListener(
+                        scoreViewAdapter,
+                        player,
+                        yatzyScore,
+                        score
+                );
+                break;
+            case 2:
+                playerThreeListener = new CellOnClickListener(
+                        scoreViewAdapter,
+                        player,
+                        yatzyScore,
+                        score
+                );
+                break;
+            case 3:
+                playerFourListener = new CellOnClickListener(
+                        scoreViewAdapter,
+                        player,
+                        yatzyScore,
+                        score
+                );
+                break;
+        }
 
-    /**
-     * When all score is setted this will change to true
-     *
-     * @param bol
-     * */
-    public void setIsScoreSetted(boolean bol){
-        this.scoreSetted = bol;
     }
-    public boolean isScoreSetted() {
-        return scoreSetted;
+    public void destroyListener(int player){
+        switch (player){
+            case 0:
+                playerOneListener = null;
+                break;
+            case 1:
+                playerTwoListener = null;
+                break;
+            case 2:
+                playerThreeListener = null;
+                break;
+            case 3:
+                playerFourListener = null;
+                break;
+        }
     }
+    public int getScoreBackground(int player){
+        switch (player){
+            case 0:
+                return playerOneView;
+            case 1:
+                return playerTwoView;
+            case 2:
+                return playerThreeView;
+            case 3:
+                return playerFourView;
+            default:
+                return 0;
+        }
+    }
+    public void setScoreBackground(int player, int viewCase){
+        switch (player){
+            case 0:
+                switch (viewCase){
+                    case 0:
+                        playerOneView = differentLayouts.get(0);
+                        break;
+                    case 1:
+                        playerOneView = differentLayouts.get(1);
+                        break;
+                    case 2:
+                        playerOneView = differentLayouts.get(2);
+                        break;
+                }
+                break;
+            case 1:
+                switch (viewCase){
+                    case 0:
+                        playerTwoView = differentLayouts.get(0);
+                        break;
+                    case 1:
+                        playerTwoView = differentLayouts.get(1);
+                        break;
+                    case 2:
+                        playerTwoView = differentLayouts.get(2);
+                        break;
+                }
+                break;
+            case 2:
+                switch (viewCase){
+                    case 0:
+                        playerThreeView = differentLayouts.get(0);
+                        break;
+                    case 1:
+                        playerThreeView = differentLayouts.get(1);
+                        break;
+                    case 2:
+                        playerThreeView = differentLayouts.get(2);
+                        break;
+                }
+                break;
+            case 3:
+                switch (viewCase){
+                    case 0:
+                        playerFourView = differentLayouts.get(0);
+                        break;
+                    case 1:
+                        playerFourView = differentLayouts.get(1);
+                        break;
+                    case 2:
+                        playerFourView = differentLayouts.get(2);
+                        break;
+                }
+                break;
+        }
+    }
+
     public int getScore(int player) {
         switch (player){
             case 0:
@@ -90,39 +207,57 @@ public class ScoreListHandler {
         }
     }
 
+
     public void setScore(int score, int player, String row) {
-        /*if(players.get(player).isCurrentPlayer()){
-            players.get(player).
-                    getScoreKeeper().setScore(row , score);
-        }*/
-        this.score = score;
         switch (player){
             case 0:
-                this.scorePlayerOne = score;
+                if(!players.get(player).
+                        getScoreKeeper().
+                        checkIfColumnGotScore(row)) {
+
+                    this.scorePlayerOne = score;
+                    players.get(player).
+                            getScoreKeeper().
+                            setColumnScore(row);
+                    break;
+                }
                 break;
             case 1:
-                this.scorePlayerTwo = score;
+                if(!players.get(player).
+                        getScoreKeeper().
+                        checkIfColumnGotScore(row)) {
+                    this.scorePlayerTwo = score;
+                    players.get(player).
+                            getScoreKeeper().
+                            setColumnScore(row);
+                    break;
+                }
                 break;
             case 2:
-                this.scorePlayerThree = score;
+                if(!players.get(player).
+                        getScoreKeeper().
+                        checkIfColumnGotScore(row)) {
+                    this.scorePlayerThree = score;
+                    players.get(player).
+                            getScoreKeeper().
+                            setColumnScore(row);
+                    break;
+                }
                 break;
             case 3:
-                this.scorePlayerFour = score;
+                if(!players.get(player).
+                        getScoreKeeper().
+                        checkIfColumnGotScore(row)) {
+                    this.scorePlayerFour = score;
+                    players.get(player).
+                            getScoreKeeper().
+                            setColumnScore(row);
+                    break;
+                }
                 break;
             default:
-                this.score = score;
                 break;
         }
-    }
-    public void setRowValueAdded(){
-        //Iterator iterator = scoresInColumn.entrySet().iterator();
-    }
-
-    public void incrementSumOfFirstSection(int value){
-        sumOfFirstSection += value;
-    }
-    public int getSumOfFirstSection(){
-        return sumOfFirstSection;
     }
 
     public List<Player> getPlayers() {

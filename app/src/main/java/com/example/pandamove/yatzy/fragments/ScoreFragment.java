@@ -39,7 +39,8 @@ public class ScoreFragment extends Fragment {
             "Long Straight",
             "Chance",
             "Yatzy",
-            "Total"
+            "Total",
+            "Total of All"
     };
 
     private List<Player> players;
@@ -137,6 +138,9 @@ public class ScoreFragment extends Fragment {
     }
     public ScoreViewAdapter getScoreListAdapater (){
         return (ScoreViewAdapter) scoreListView.getAdapter();
+    }
+    public ListView getListView(){
+        return scoreListView;
     }
     public int getPlayerListSize(){
         return players.size();

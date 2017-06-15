@@ -10,215 +10,104 @@ import java.util.Map;
  */
 public class ScoreKeeper {
     private String[] scores;
-    private ArrayList<String> scoreOnColumn;
-    private HashMap<String, Integer> scoresIncColumnNRow;
-    private ArrayList<Boolean> updatedScores;
-    private UpdatedRow updatedRow;
+    private HashMap<String, Boolean> checkIfScoresIsSetted;
+    private int numberScore;
     public ScoreKeeper(String[] scores){
-        scoresIncColumnNRow = new HashMap<>();
-        scoreOnColumn = new ArrayList<>();
-        updatedScores = new ArrayList<>();
-        updatedRow = new UpdatedRow();
+        checkIfScoresIsSetted = new HashMap<>();
         for(int i = 0; i < scores.length; i++){
-           // System.out.println("Scores: " + scores[i]);
-            //this.setScore(scores[i],0);
-            updatedScores.add(false);
+            checkIfScoresIsSetted.put(scores[i],false);
         }
         this.scores = scores;
     }
-    public int getScore() {
-        return 0;
-    }
-
-
-    public void setScore(String row,int score) {
-        System.out.println("haj" + row);
-       // System.out.println(row+" : "+score);
-        scoresIncColumnNRow.put(row, score);
-    }
-    public void changeValueOnKey(String row, int score){
-        Iterator iterator = scoresIncColumnNRow.entrySet().iterator();
+    public void setColumnScore(String row){
+        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry map = (Map.Entry) iterator.next();
-           // System.out.println(map.getKey());
             if(map.getKey() == row){
-              //  System.out.println("yalla");
-               map.setValue(score);
+                map.setValue(true);
             }
-            //map.setValue(score)
-            //System.out.println((Integer) map.getValue());
         }
-        Iterator iterator1 = scoresIncColumnNRow.entrySet().iterator();
-        while (iterator1.hasNext()){
-            Map.Entry map = (Map.Entry) iterator1.next();
-            //System.out.println("le scores: " + (Integer) map.getValue());
-            //System.out.println(map);
+    }
+    public boolean checkIfColumnGotScore(String row){
+        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry map = (Map.Entry) iterator.next();
+            if(map.getKey() == row){
+                return (Boolean) map.getValue();
+            }
         }
+        return false;
+    }
+    public int checkIfHalfScore(){
+     int pivot = 0;
+        if(!checkIfScoresIsSetted.get(scores[7])) {
+            if (checkIfScoresIsSetted.get(scores[1])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[2])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[3])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[4])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[5])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[6])) {
+                pivot++;
+            }
+            if (pivot > 5) {
+                return 1;
+            }
+        }
+        if(!checkIfScoresIsSetted.get(scores[17])){
+            if (checkIfScoresIsSetted.get(scores[8])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[9])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[10])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[11])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[12])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[13])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[14])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[15])) {
+                pivot++;
+            }
+            if (checkIfScoresIsSetted.get(scores[16])) {
+                pivot++;
+            }
+            if (pivot > 8) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+    public void setNumberScore(int numberScore) {
+        this.numberScore = numberScore;
     }
 
     public int getTotalScore(){
         return 0;
     }
     public int getNumberScore(){
-        return 0;
+        return numberScore;
     }
 
-    public class UpdatedRow{
-        private boolean one;
-        private boolean two;
-        private boolean three;
-        private boolean four;
-        private boolean five;
-        private boolean six;
-        private boolean sumHalf;
-        private boolean twoPair;
-        private boolean threeKind;
-        private boolean fourKind;
-        private boolean sStragiht;
-        private boolean lStraigt;
-        private boolean chance;
-        private boolean yatzy;
-        private boolean fullHouse;
-
-        public UpdatedRow(){
-            one = false;
-            two = false;
-            three = false;
-            four = false;
-            five = false;
-            six = false;
-            sumHalf = false;
-            twoPair = false;
-            threeKind = false;
-            fourKind = false;
-            sStragiht = false;
-            lStraigt = false;
-            chance = false;
-            yatzy = false;
-            fullHouse = false;
-        }
-
-        public void setOne(boolean one) {
-            this.one = one;
-        }
-
-        public void setTwo(boolean two) {
-            this.two = two;
-        }
-
-        public void setThree(boolean three) {
-            this.three = three;
-        }
-
-        public void setFour(boolean four) {
-            this.four = four;
-        }
-
-        public void setFive(boolean five) {
-            this.five = five;
-        }
-
-        public void setSix(boolean six) {
-            this.six = six;
-        }
-
-        public void setSumHalf(boolean sumHalf) {
-            this.sumHalf = sumHalf;
-        }
-
-        public void setTwoPair(boolean twoPair) {
-            this.twoPair = twoPair;
-        }
-
-        public void setThreeKind(boolean threeKind) {
-            this.threeKind = threeKind;
-        }
-
-        public void setFourKind(boolean fourKind) {
-            this.fourKind = fourKind;
-        }
-
-        public void setsStragiht(boolean sStragiht) {
-            this.sStragiht = sStragiht;
-        }
-
-        public void setlStraigt(boolean lStraigt) {
-            this.lStraigt = lStraigt;
-        }
-
-        public void setChance(boolean chance) {
-            this.chance = chance;
-        }
-
-        public void setYatzy(boolean yatzy) {
-            this.yatzy = yatzy;
-        }
-
-        public void setFullHouse(boolean fullHouse) {
-            this.fullHouse = fullHouse;
-        }
-
-        public boolean isOne() {
-            return one;
-        }
-
-        public boolean isTwo() {
-            return two;
-        }
-
-        public boolean isThree() {
-            return three;
-        }
-
-        public boolean isFour() {
-            return four;
-        }
-
-        public boolean isFive() {
-            return five;
-        }
-
-        public boolean isSix() {
-            return six;
-        }
-
-        public boolean isSumHalf() {
-            return sumHalf;
-        }
-
-        public boolean isTwoPair() {
-            return twoPair;
-        }
-
-        public boolean isThreeKind() {
-            return threeKind;
-        }
-
-        public boolean isFourKind() {
-            return fourKind;
-        }
-
-        public boolean issStragiht() {
-            return sStragiht;
-        }
-
-        public boolean islStraigt() {
-            return lStraigt;
-        }
-
-        public boolean isChance() {
-            return chance;
-        }
-
-        public boolean isYatzy() {
-            return yatzy;
-        }
-
-        public boolean isFullHouse() {
-            return fullHouse;
-        }
-
-    }
 
 
 }
