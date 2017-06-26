@@ -39,6 +39,17 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="220dp"
                     android:text="test" />
+
+                <FrameLayout
+                    android:id="@+id/unityPlayer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/testButton"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="132dp"
+                    android:layout_marginStart="48dp">
+
+                </FrameLayout>
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>

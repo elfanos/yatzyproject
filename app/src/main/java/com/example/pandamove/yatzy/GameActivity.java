@@ -34,6 +34,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private HashMap<String,Integer> listOfPossibleScores = new HashMap<>();
 
+
     private OnButtonClickedListener onButtonClickedListener;
     private String[] scores = {
             "Header",
@@ -133,5 +134,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         }
 
     }
+
 
 }
