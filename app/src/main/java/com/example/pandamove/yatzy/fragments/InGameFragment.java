@@ -16,12 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.pandamove.yatzy.*;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
-import com.unity3d.player.UnityPlayer;
 
 import java.util.Random;
 import java.util.Timer;
@@ -47,8 +45,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private OnButtonClickedListener onButtonClickedListener;
-
-    //protected UnityPlayer mUnityPlayer;
+    Cubesurfaceview diceSurface;
 
 
     public static InGameFragment newInstance(int page,
@@ -73,7 +70,10 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         onButtonClickedListener =
                 (OnButtonClickedListener) getArguments().getSerializable("interface");
+
     }
+
+
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -82,15 +82,13 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         sound_id = dice_sound.load(inflater.getContext(),R.raw.shake_dice,1);
         dice_picture = (ImageView) view.findViewById(R.id.imageButton);
         Button testButton = (Button) view.findViewById(R.id.testButton);
+
+        diceSurface = (Cubesurfaceview) view.findViewById(R.id.surfaceviewdice);
+
+        System.out.println("before handle");
+
         handler = new Handler(callback);
 
-       // mUnityPlayer = new UnityPlayer(getActivity());
-
-       /* FrameLayout unityFrame = (FrameLayout) view.findViewById(R.id.unityPlayer);
-
-        unityFrame.addView(mUnityPlayer.getView(),
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);*/
-       // this.registerSensorListener();
 
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,9 +98,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         });
 
-       // mUnityPlayer.requestFocus();
-
-     //   mUnityPlayer.windowFocusChanged(true);
        /* dice_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,6 +215,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     @Override
     public void onPause() {
         super.onPause();
+        diceSurface.onPause();
        // mUnityPlayer.pause();
     }
 
@@ -227,6 +223,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     @Override
     public void onResume() {
         super.onResume();
+        diceSurface.onResume();
        // mUnityPlayer.resume();
     }
 

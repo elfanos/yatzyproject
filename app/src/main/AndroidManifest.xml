@@ -7,8 +7,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-        <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="true" />
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        >
+
         <activity android:name=".GameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
