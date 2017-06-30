@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
 import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
@@ -33,6 +34,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private PagerAdapter pagerAdapter;
 
     private HashMap<String,Integer> listOfPossibleScores = new HashMap<>();
+
+    private ArrayList<Dice> dices = new ArrayList<>();
 
 
     private OnButtonClickedListener onButtonClickedListener;
@@ -83,7 +86,12 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         }
 
         mPager = (ViewPager) findViewById(R.id.viewpager);
-        pagerAdapter = new FragmentSliderPagerAdapter(getSupportFragmentManager(), onButtonClickedListener, fragments);
+        pagerAdapter = new FragmentSliderPagerAdapter(
+                getSupportFragmentManager(),
+                onButtonClickedListener,
+                fragments,
+                dices
+        );
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
@@ -99,7 +107,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     public void onButtonClicked(View v){
         System.out.println("le id: " + v.getId());
         switch (v.getId()){
-            case R.id.testButton:
+            /*case R.id.testButton:
                 //System.out.println("pressed test button");
                 Fragment scoreFragment =  fragments.get(1);
                 if(scoreFragment instanceof ScoreFragment){;
@@ -109,7 +117,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                                 getScoreListAdapater().
                                 addScore(scores[i], 5, 1);
                     }*/
-                    listOfPossibleScores.put(scores[1],diceScore[1]);
+                   /* listOfPossibleScores.put(scores[1],diceScore[1]);
                     listOfPossibleScores.put(scores[3],diceScore[2]);
                     listOfPossibleScores.put(scores[8],diceScore[3]);
                     ((ScoreFragment) scoreFragment).
@@ -120,7 +128,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 }
                 break;
             default:
-                break;
+                break;*/
         }
 
     }

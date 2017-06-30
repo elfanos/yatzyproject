@@ -14,17 +14,19 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 
 public class Cuberenderer implements GLSurfaceView.Renderer 
 {
+
 	/**
 	 * Store the model matrix. This matrix is used to move models from object space (where each model can be thought
 	 * of being located at the center of the universe) to world space.
 	 */
 //	float touchedX = 0;
 //	float touchedY = 0;
+
+	private boolean diceSelected = false;
 	public float xAngle = 0;
 	public float yAngle = 0;
 	private float[] mModelMatrix = new float[16];
@@ -52,7 +54,9 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	
 	/** Allocate storage for the final combined matrix. This will be passed into the shader program. */
 	private float[] mMVPMatrix = new float[16];
-	private final FloatBuffer mCubeColors;
+	private FloatBuffer mCubeColors;
+
+	private FloatBuffer mSelectedCubeColor;
 	/** Store our model data in a float buffer. */
 	private final FloatBuffer mcubeVertices;
 
@@ -90,15 +94,25 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 
 	/** How many bytes per float. */
 	private final int mBytesPerFloat = 4;
-	
-	
-	 GLSurfaceView mActivityContext;		
+
+	private float rotationRatio = 0f;
+
+	GLSurfaceView mActivityContext;
 	/**
 	 * Initialize the model data.
 	 */
-	public Cuberenderer(Cubesurfaceview cubesurfaceview)
+
+	public float getRotationRatio() {
+		return rotationRatio;
+	}
+
+	public void setRotationRatio(float rotationRatio) {
+		this.rotationRatio = rotationRatio;
+	}
+
+	public Cuberenderer(DiceSurfaceView diceSurfaceView)
 	{	
-		mActivityContext = cubesurfaceview;
+		mActivityContext = diceSurfaceView;
 		// Define points for equilateral triangles.
 		
 		// This triangle is red, green, and blue.
@@ -143,49 +157,94 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		        };
 		// R, G, B, A
 		final float[] cubeColorData =
-		{				
-				// Front face (red)
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+		{
+				// some color
 
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
 
-                // Right face (green)
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+				// some color
 
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
 
-                // Back face (blue)
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+				// some color
 
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
 
-                // Left face (yellow)
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+				// some color
 
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
 
-                // Top face (cyan)
-				0.0f, 1.0f, 1.0f, 1.0f,				
-				0.0f, 1.0f, 1.0f, 1.0f,
-				0.0f, 1.0f, 1.0f, 1.0f,
-				0.0f, 1.0f, 1.0f, 1.0f,				
+				// some color
 
-				
-				// Bottom face (magenta)
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+
+				// some color
+
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
+				1.0f, 1.0f, 1.0f, 1.0f,
 
         };
+        final float[] selectedCubeColor = {
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+
+				// some color
+
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+				0.6f, 0.6f, 0.6f, 0.6f,
+		};
 		
 		// This triangle is yellow, cyan, and magenta.
 	
@@ -242,7 +301,13 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		
 		mCubeColors = ByteBuffer.allocateDirect(cubeColorData.length * mBytesPerFloat).order(ByteOrder.nativeOrder()).asFloatBuffer();							
 		mCubeColors.put(cubeColorData).position(0);
-		
+
+		/*My inserts*/
+		mSelectedCubeColor = ByteBuffer.
+				allocateDirect(selectedCubeColor.length * mBytesPerFloat).
+				order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mSelectedCubeColor.put(selectedCubeColor).position(0);
+
 		indexBuffer = ByteBuffer.allocateDirect(indeces.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		indexBuffer.put(indeces).position(0);
 		
@@ -250,6 +315,17 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}
 	
 
+	public FloatBuffer getmCubeColors(){
+		return mCubeColors;
+	}
+
+	public boolean isDiceSelected() {
+		return diceSelected;
+	}
+
+	public void setDiceSelected(boolean diceSelected) {
+		this.diceSelected = diceSelected;
+	}
 	
 	public static int loadTexture(GLSurfaceView mActivityContext2, final int resourceId)
 	{
@@ -290,8 +366,8 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) 
 	{
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-	
-		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		float[] values = hextoRGB("#354e15");
+		GLES20.glClearColor(values[0], values[1], values[2], 1.0f);
 		// Use culling to remove back faces.
 //		GLES20.glEnable(GLES20.GL_CULL_FACE);
 		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -451,6 +527,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	@Override
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) 
 	{
+		System.out.println("surfacechanged");
 		// Set the OpenGL viewport to the same size as the surface.
 		GLES20.glViewport(0, 0, width, height);
 
@@ -473,6 +550,9 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	@Override
 	public void onDrawFrame(GL10 glUnused) 
 	{
+		//System.out.println("drawframe");
+		/*System.out.println("angel x: " + xAngle);
+		System.out.println("angel y: " + yAngle);*/
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);			        
                 
 		 GLES20.glUseProgram(mProgramHandle);
@@ -565,7 +645,6 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 
 	private void draw(final FloatBuffer acubeBuffer, final int i)
 	{		
-		
 
 		// Pass in the position information. each vertex needs 3 values and each face of the
 //		cube needs 4 vertices. so total 3*4 = 12
@@ -577,10 +656,16 @@ public class Cuberenderer implements GLSurfaceView.Renderer
         
         // Pass in the color information. every vertex colr is defined by 4 values and each cube
 //        face has 4 vertices so 4*4 = 16
+
+		if(!this.isDiceSelected()) {
         mCubeColors.position(16*i);
         GLES20.glVertexAttribPointer(mColorHandle, 4, GLES20.GL_FLOAT, false,
-        		0, mCubeColors);        
-        
+        		0, mCubeColors);
+		}else {
+			mSelectedCubeColor.position(16 * i);
+			GLES20.glVertexAttribPointer(mColorHandle, 4, GLES20.GL_FLOAT, false,
+					0, mSelectedCubeColor);
+		}
         GLES20.glEnableVertexAttribArray(mColorHandle);
         
         // Pass in the texture coordinate information. every vertex needs 2 values to define texture
@@ -602,6 +687,41 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 //*each face of the cube is drawn using 2 triangles. so 2*3=6 lines
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
                          
+	}
+
+	public void turnFaceOnClick(){
+		//System.out.println("inside turnface");
+		// Draw the triangle facing straight on.
+
+	}
+	/* re-map RGB colors so they can be used in OpenGL */
+	private float[] map(float[]rgb) {
+
+    /* RGB is from 0 to 255 */
+    /* THIS is from 0 to 1 (float) */
+
+		// 1 : 2 = x : 4 >>> 2
+
+    /*
+    *
+    * 240 : 255 = x : 1
+    *
+    * */
+
+		float[] result = new float[3];
+		result[0] = rgb[0] / 255;
+		result[1] = rgb[1] / 255;
+		result[2] = rgb[2] / 255;
+		return result;
+	}
+
+	public float[] hextoRGB(String hex) {
+
+		float[] rgbcolor = new float[3];
+		rgbcolor[0] = Integer.valueOf( hex.substring( 1, 3 ), 16 );
+		rgbcolor[1] = Integer.valueOf( hex.substring( 3, 5 ), 16 );
+		rgbcolor[2] = Integer.valueOf( hex.substring( 5, 7 ), 16 );
+		return map(rgbcolor);
 	}
 
 }

@@ -20,7 +20,9 @@ import android.widget.ImageView;
 
 import com.example.pandamove.yatzy.*;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.dice.Dice;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,18 +44,25 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private SensorManager sensorManager;
     private Sensor senAccelerometer;
     private static final int SHAKE_THRESHOLD = 1200;
+    private static final int STOP_THRESHOLD = 60;
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private OnButtonClickedListener onButtonClickedListener;
-    Cubesurfaceview diceSurface;
+    private ArrayList<DiceSurfaceView> diceList;
+    private ArrayList<Dice> dices;
+
+
+    boolean doneShaking = false;
 
 
     public static InGameFragment newInstance(int page,
-                                             OnButtonClickedListener onButtonClickedListener){
+                                             OnButtonClickedListener onButtonClickedListener,
+                                             ArrayList<Dice> dices){
         System.out.println("inside fragment XD");
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         args.putSerializable("interface",onButtonClickedListener);
+        args.putParcelableArrayList("dices", dices);
         InGameFragment fragment = new InGameFragment();
         fragment.setArguments(args);
         return fragment;
@@ -70,6 +79,9 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         onButtonClickedListener =
                 (OnButtonClickedListener) getArguments().getSerializable("interface");
+        dices = getArguments().getParcelableArrayList("dices");
+
+        diceList = new ArrayList<>();
 
     }
 
@@ -80,38 +92,44 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.ingame_page, container, false);
         sound_id = dice_sound.load(inflater.getContext(),R.raw.shake_dice,1);
-        dice_picture = (ImageView) view.findViewById(R.id.imageButton);
-        Button testButton = (Button) view.findViewById(R.id.testButton);
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface)
+        );
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface2)
+        );
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface3)
+        );
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface4)
+        );
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface5)
+        );
+        diceList.add(
+                (DiceSurfaceView) view.findViewById(R.id.dicesurface6)
+        );
 
-        diceSurface = (Cubesurfaceview) view.findViewById(R.id.surfaceviewdice);
+        //Initialize dices in default mode
+        for(int i = 0; i < diceList.size(); i++){
+            Dice dice = new Dice(true,0,i);
+            dices.add(dice);
+        }
 
-        System.out.println("before handle");
+
 
         handler = new Handler(callback);
 
 
-        testButton.setOnClickListener(new View.OnClickListener() {
+        /*testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onButtonClickedListener.onButtonClicked(v);
             }
 
-        });
-
-       /* dice_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!rolling) {
-                    rolling = true;
-
-                    dice_picture.setImageResource(R.mipmap.ic_whiteone);
-
-                    dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
-
-                    timer.schedule(new Roll(), 500);
-                }
-            }
         });*/
+
         return view;
     }
     @Override
@@ -124,20 +142,38 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             if((curTime - lastUpdate) > 100){
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
-
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
-
+               // System.out.println("wait is: " + speed);
                 if(speed > SHAKE_THRESHOLD){
-                    System.out.println("SHAKING");
+                 //   System.out.println("SHAKING");
                     if (!rolling) {
+                        doneShaking = false;
                         rolling = true;
-
-                        dice_picture.setImageResource(R.mipmap.ic_whiteone);
-
-                        dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
-
-                        timer.schedule(new Roll(), 1000);
                     }
+                }
+
+                if(!doneShaking) {
+                    for(int i = 0; i<diceList.size(); i++){
+                        if(diceList.get(i).isSurfaceIsActive()) {
+                            diceList.get(i).setRotationOnShake(speed);
+                        }
+                    }
+
+                }
+                    //System.out.println("le speed: " + speed);
+                if(rolling && speed < STOP_THRESHOLD){
+                    rolling = false;
+                    doneShaking = true;
+                   // System.out.println("stop casting");
+                    //dice_picture.setImageResource(R.mipmap.ic_whiteone);
+
+                    dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
+                    for(int i = 0; i < diceList.size(); i++) {
+                        if(diceList.get(i).isSurfaceIsActive()) {
+                            timer.schedule(new Roll(i), 100);
+                        }
+                    }
+                    //timer.schedule(new Roll(2), 100);
                 }
                 last_x = x;
                 last_y = y;
@@ -149,9 +185,37 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+
+        // First starts (gets called before everything else)
+        if(sensorManager == null) {
+            return;
+        }
+
+        if(menuVisible) {
+            this.registerSensorListener();
+        } else {
+            this.unregisterSensorListener();
+        }
+    }
     private void registerSensorListener() {
 
         sensorManager.registerListener(this, sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_FASTEST);
+    }
+    public void getDiceSurfaceMethod(String methodName, float f_value, int i_value){
+        for(int i = 0; i < diceList.size(); i++) {
+            switch (methodName) {
+                case "shake":
+                    diceList.get(i).setRotationOnShake(f_value);
+                    break;
+                case "faceScore":
+                    diceList.get(i).changePositionOfDice(i_value);
+                    break;
+                default:
+            }
+        }
     }
 
     private void unregisterSensorListener() {
@@ -159,31 +223,54 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     }
 
     class Roll extends TimerTask {
+        int diceNumber = 0;
+        Bundle bundle;
+        Message m;
+        public Roll(int dNumber){
+            this.diceNumber = dNumber;
+            m = new Message();
+            bundle = new Bundle();
+            bundle.putInt("dicenumber", dNumber); // for example
+            m.setData(bundle);
+        }
         public void run() {
-            handler.sendEmptyMessage(0);
+            handler.sendMessage(m);
         }
     }
     private Callback callback = new Callback() {
         public boolean handleMessage(Message msg){
-
+            int diceNumber = msg.getData().getInt("dicenumber");
+            System.out.println("what is dicenumbeR?: " + diceNumber);
             switch (rng.nextInt(6)+1){
                 case 1:
-                    dice_picture.setImageResource(R.mipmap.ic_whiteone);
+                   // diceSurface.changePositionOfDice(0);
+                    //getDiceSurfaceMethod("faceScore", 0, 0);
+                    diceList.get(diceNumber).changePositionOfDice(0);
                     break;
                 case 2:
-                    dice_picture.setImageResource(R.mipmap.ic_whitetwo);
+                    //diceSurface.changePositionOfDice(1);
+                    //getDiceSurfaceMethod("faceScore", 0, 1);
+                    diceList.get(diceNumber).changePositionOfDice(1);
                     break;
                 case 3:
-                    dice_picture.setImageResource(R.mipmap.ic_whitethree);
+                    //diceSurface.changePositionOfDice(2);
+                    //getDiceSurfaceMethod("faceScore", 0, 2);
+                    diceList.get(diceNumber).changePositionOfDice(2);
                     break;
                 case 4:
-                    dice_picture.setImageResource(R.mipmap.ic_whitefour);
+                    //diceSurface.changePositionOfDice(3);
+                    //getDiceSurfaceMethod("faceScore", 0, 3);
+                    diceList.get(diceNumber).changePositionOfDice(3);
                     break;
                 case 5:
-                    dice_picture.setImageResource(R.mipmap.ic_whitefive);
+                    //diceSurface.changePositionOfDice(4);
+                    //getDiceSurfaceMethod("faceScore", 0, 4);
+                    diceList.get(diceNumber).changePositionOfDice(4);
                     break;
                 case 6:
-                    dice_picture.setImageResource(R.mipmap.ic_whitesix);
+                    //diceSurface.changePositionOfDice(5);
+                    //getDiceSurfaceMethod("faceScore", 0, 5);
+                    diceList.get(diceNumber).changePositionOfDice(5);
                     break;
                 default:
             }
@@ -192,7 +279,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         }
 
     };
-    public void rollTheDices(){
+    /*public void rollTheDices(){
         if (!rolling) {
             rolling = true;
 
@@ -202,7 +289,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
             timer.schedule(new Roll(), 1000);
         }
-    }
+    }*/
 
     // Quit Unity
     @Override
@@ -215,7 +302,9 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     @Override
     public void onPause() {
         super.onPause();
-        diceSurface.onPause();
+        for(int i = 0; i< diceList.size(); i++){
+            diceList.get(i).onPause();
+        }
        // mUnityPlayer.pause();
     }
 
@@ -223,7 +312,9 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     @Override
     public void onResume() {
         super.onResume();
-        diceSurface.onResume();
+        for(int i = 0; i< diceList.size(); i++){
+            diceList.get(i).onResume();
+        }
        // mUnityPlayer.resume();
     }
 

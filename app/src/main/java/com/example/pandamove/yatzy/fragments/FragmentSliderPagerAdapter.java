@@ -9,6 +9,9 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.dice.Dice;
+
+import java.util.ArrayList;
 
 /**
  * Created by Rallmo on 2017-04-05.
@@ -20,15 +23,17 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     private ScoreFragment scoreFragment;
     private OnButtonClickedListener onButtonClickedListener;
     private SparseArray<Fragment> fragments;
+    private ArrayList<Dice> dices;
     private int[] imageResId = {
 
     };
 
     public FragmentSliderPagerAdapter(FragmentManager fm, OnButtonClickedListener onButtonClickedListener,
-                                      SparseArray<Fragment> fragments){
+                                      SparseArray<Fragment> fragments, ArrayList<Dice> dices){
         super(fm);
         this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
+        this.dices = dices;
     }
 
     @Override
@@ -42,7 +47,11 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
         switch (position+1) {
             case 1:
                 InGameFragment inGameFragment = new InGameFragment();
-                return inGameFragment.newInstance(1, onButtonClickedListener);
+                return inGameFragment.newInstance(
+                        1,
+                        onButtonClickedListener,
+                        dices
+                );
             case 2:
                 return ScoreFragment.newInstance(2);
             default:

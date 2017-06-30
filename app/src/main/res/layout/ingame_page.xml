@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:weightSum="1"
-        android:background="#354e15">
+        android:background="#354e15"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <view
+                android:id="@+id/dicesurface"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="150dp" />
 
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imageButton"
-                    android:background="@mipmap/ic_whitetwo" />
-            </LinearLayout>
+            <view
+                android:id="@+id/dicesurface2"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_toEndOf="@+id/dicesurface" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <view
+                android:id="@+id/dicesurface3"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_toEndOf="@+id/dicesurface2" />
 
-                <Button
-                    android:id="@+id/testButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="220dp"
-                    android:text="test" />
+            <view
+                android:id="@+id/dicesurface4"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignStart="@+id/dicesurface"
+                android:layout_below="@+id/dicesurface" />
 
-                <FrameLayout
-                    android:id="@+id/unityPlayer"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/testButton"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginBottom="132dp"
-                    android:layout_marginStart="48dp">
+            <view
+                android:id="@+id/dicesurface5"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@+id/dicesurface2"
+                android:layout_centerHorizontal="true"
+                android:layout_toEndOf="@+id/dicesurface4" />
 
-                    <com.example.pandamove.yatzy.Cubesurfaceview android:id="@+id/surfaceviewdice"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-
-                </FrameLayout>
-            </RelativeLayout>
+            <view
+                android:id="@+id/dicesurface6"
+                class="com.example.pandamove.yatzy.DiceSurfaceView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@+id/dicesurface3"
+                android:layout_toEndOf="@+id/dicesurface5" />
         </RelativeLayout>
     </LinearLayout>
 
