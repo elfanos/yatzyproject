@@ -1,15 +1,19 @@
 package com.example.pandamove.yatzy.fragments;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
+import com.google.common.io.Resources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,19 +33,47 @@ public class ScoreViewAdapter extends BaseAdapter {
     private final int SUM_OF_FIRST_SECTION = 7;
     private final int SUM_OF_TOTAL_SCORE = 17;
     private HashMap<Integer,CellOnClickListener> observeListeners;
+    private ArrayList<Dice> dices;
 
-    public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList){
+    private int imageIndex = 0;
+
+    private int [] imageId = {
+            R.drawable.one,
+            R.drawable.two,
+            R.drawable.three,
+            R.drawable.four,
+            R.drawable.five,
+            R.drawable.six,
+            R.mipmap.ic_dicesix,
+            R.mipmap.ic_dicesix,
+            R.mipmap.ic_dicethree,
+            R.mipmap.ic_dicefour,
+            R.mipmap.ic_dicefive,
+            R.mipmap.ic_dicesix,
+            R.mipmap.ic_diceone,
+            R.mipmap.ic_dicetwo,
+            R.mipmap.ic_dicethree,
+            R.mipmap.ic_dicefour,
+            R.mipmap.ic_dicefive,
+            R.mipmap.ic_dicesix
+    };
+    public int getImageIndex(){
+        return imageIndex;
+    }
+    public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList, ArrayList<Dice> dices){
         this.playerList = playerList;
         this.context = context;
         observeListeners = new HashMap<>();
+        this.dices = dices;
     }
     public void addItem(String yatzyScore, List<Player> players){
-        ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false);
+        ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false, imageId[imageIndex]);
         playerList.add(scoreHandler);
         this.notifyDataSetChanged();
+        imageIndex++;
     }
     public void addSectionHeader(String header, List<Player> players){
-        ScoreListHandler scoreHandler = new ScoreListHandler(players, header, false);
+        ScoreListHandler scoreHandler = new ScoreListHandler(players, header, false, imageId[1]);
         playerList.add(scoreHandler);
         sectionHeader.add(playerList.size() - 1);
         this.notifyDataSetChanged();
@@ -327,7 +359,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                     break;
                 case SCORE_ITEM:
                     scoreView = inflater.inflate(R.layout.score_row, parent, false);
-                    scoreBoard.yatzyScores = (TextView) scoreView.findViewById(R.id.yatzyscore);
+                    //scoreBoard.yatzyScores = (TextView) scoreView.findViewById(R.id.yatzyscore);
+                    scoreBoard.diceImageOne = (ImageView) scoreView.findViewById(R.id.imagescore);
                     scoreBoard.playerOneScore= (TextView) scoreView.findViewById(R.id.playerone);
                     scoreBoard.playerTwoScore = (TextView) scoreView.findViewById(R.id.playertwo);
                     scoreBoard.playerThreeScore = (TextView) scoreView.findViewById(R.id.playerthree);
@@ -339,7 +372,76 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard = (YatzyScoreBoard) scoreView.getTag();
         }
         final ScoreListHandler scoreListHandler = playerList.get(position);
-        scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
+        //scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
+        /*if (scoreBoard.yatzyScores == null) {
+            System.out.println("yoyo inside score");
+            scoreBoard.scoreImage.setImageResource(scoreListHandler.getImageScore());
+            if(scoreListHandler.getYatzyScore().contains("1 Pair")){
+                scoreBoard.scoreImage.setImageResource(scoreListHandler.getImageScore());
+                scoreBoard.secondImage.setVisibility(View.VISIBLE);
+                scoreBoard.secondImage.setImageResource(scoreListHandler.getImageScore());
+            }
+        } else {
+            scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
+        }*/
+        if (scoreBoard.yatzyScores == null) {
+            scoreBoard.diceImageOne.setImageResource(scoreListHandler.getImageScore());
+            if(scoreListHandler.getYatzyScore().contains("1 Pair")) {
+                scoreBoard.diceImageOne.setImageResource(R.drawable.onepair);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+            }else if(scoreListHandler.getYatzyScore().contains("2 Pair")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.twopair);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("3 of a Kind")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.threeofkind);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("4 of a Kind")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.fourofkind);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("Full House")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.fullhouse);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("Small Straight")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.smallstraight);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("Long Straight")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.bigstraight);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("Chance")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.chance);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+            }else if(scoreListHandler.getYatzyScore().contains("Yatzy")){
+                scoreBoard.diceImageOne.setImageResource(R.drawable.yatzy);
+                float logicalDensity = context.getResources().getDisplayMetrics().density;
+                int px = (int) Math.ceil(100 * logicalDensity);
+                scoreBoard.diceImageOne.getLayoutParams().width = px;
+            }
+        } else{
+            scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
+        }
 
         scoreBoard.playerOneScore.
                 setText(String.format("%d", scoreListHandler.getScore(0)));
@@ -376,5 +478,11 @@ public class ScoreViewAdapter extends BaseAdapter {
         TextView playerTwoScore;
         TextView playerThreeScore;
         TextView playerFourScore;
+        ImageView diceImageOne;
+        ImageView diceImageTwo;
+        ImageView diceImageThree;
+        ImageView diceImageFour;
+        ImageView diceImageFive;
+        ImageView diceImageSix;
     }
 }

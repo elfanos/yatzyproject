@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
@@ -22,7 +24,7 @@ public class ScoreFragment extends Fragment {
     private ListView listView;
     private List<ScoreListHandler> listOfScores;
     private String[] scores = {
-            "Header",
+            "YATZY",
             "One",
             "Two",
             "Three",
@@ -47,15 +49,18 @@ public class ScoreFragment extends Fragment {
 
     private ScoreViewAdapter scoreViewAdapter;
 
+    private ArrayList<Dice> dices;
+
     private ListView scoreListView;
     public ScoreFragment(){
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
-    public static ScoreFragment newInstance(int page){
+    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
+        args.putParcelableArrayList("dices", dices);
         object.setArguments(args);
 
         return object;
@@ -65,6 +70,8 @@ public class ScoreFragment extends Fragment {
     @Override
     public void onCreate(Bundle onSavedInstace){
         super.onCreate(onSavedInstace);
+        dices = getArguments().getParcelableArrayList("dices");
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,7 +120,7 @@ public class ScoreFragment extends Fragment {
     }
     public void updateAdapter(){
 
-        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(), listOfScores);
+        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(), listOfScores, dices);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
                 scoreViewAdapter.addSectionHeader(scores[i],players);

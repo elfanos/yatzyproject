@@ -19,56 +19,51 @@
         android:weightSum="1">
 
         <TextView
+            android:id="@+id/header1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/header1"
             android:layout_weight="0.96"
-            android:textColor="#000000"
-            android:background="@drawable/header_border_layout"
-            android:paddingLeft="10dp" />
+            android:paddingLeft="10dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000" />
 
         <TextView
+            android:id="@+id/hplayerone"
             android:layout_width="54dp"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:singleLine="false"
             android:text="Medium Text"
-            android:id="@+id/hplayerone"
-            android:textColor="#2981a1"
-            android:background="@drawable/header_border_layout"
             android:textAlignment="center"
-            android:singleLine="false" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#2981a1" />
 
         <TextView
+            android:id="@+id/hplayertwo"
             android:layout_width="53dp"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/hplayertwo"
-            android:textColor="#26b91c"
-            android:background="@drawable/header_border_layout"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#26b91c" />
 
         <TextView
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
             android:id="@+id/hplayerthree"
-            android:textColor="#cb1a23"
-            android:background="@drawable/header_border_layout"
-            android:textAlignment="center" />
-
-        <TextView
             android:layout_width="61dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#cb1a23" />
+
+        <TextView
             android:id="@+id/hplayerfour"
-            android:textColor="#e1de06"
-            android:background="@drawable/header_border_layout"
-            android:textAlignment="center" />
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#e1de06" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -116,6 +116,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             Dice dice = new Dice(true,0,i);
             dices.add(dice);
         }
+        System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
 
 
 
@@ -129,7 +130,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             }
 
         });*/
-
+        System.out.println("waddup??");
         return view;
     }
     @Override
@@ -240,37 +241,60 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private Callback callback = new Callback() {
         public boolean handleMessage(Message msg){
             int diceNumber = msg.getData().getInt("dicenumber");
-            System.out.println("what is dicenumbeR?: " + diceNumber);
             switch (rng.nextInt(6)+1){
                 case 1:
                    // diceSurface.changePositionOfDice(0);
                     //getDiceSurfaceMethod("faceScore", 0, 0);
                     diceList.get(diceNumber).changePositionOfDice(0);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 case 2:
                     //diceSurface.changePositionOfDice(1);
                     //getDiceSurfaceMethod("faceScore", 0, 1);
                     diceList.get(diceNumber).changePositionOfDice(1);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 case 3:
                     //diceSurface.changePositionOfDice(2);
                     //getDiceSurfaceMethod("faceScore", 0, 2);
                     diceList.get(diceNumber).changePositionOfDice(2);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 case 4:
                     //diceSurface.changePositionOfDice(3);
                     //getDiceSurfaceMethod("faceScore", 0, 3);
                     diceList.get(diceNumber).changePositionOfDice(3);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 case 5:
                     //diceSurface.changePositionOfDice(4);
                     //getDiceSurfaceMethod("faceScore", 0, 4);
                     diceList.get(diceNumber).changePositionOfDice(4);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 case 6:
                     //diceSurface.changePositionOfDice(5);
                     //getDiceSurfaceMethod("faceScore", 0, 5);
                     diceList.get(diceNumber).changePositionOfDice(5);
+                    dices.get(diceNumber).setScore(
+                            diceList.get(diceNumber).getCurrentDiceNumber()
+                    );
+                    System.out.println("jaman score: " +  dices.get(diceNumber).getScore());
                     break;
                 default:
             }

@@ -53,7 +53,10 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                         dices
                 );
             case 2:
-                return ScoreFragment.newInstance(2);
+                return ScoreFragment.newInstance(
+                        2,
+                        dices
+                );
             default:
         }
         return null;

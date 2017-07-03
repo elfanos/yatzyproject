@@ -35,8 +35,9 @@ public class ScoreListHandler {
     private CellOnClickListener playerThreeListener;
     private CellOnClickListener playerFourListener;
     private ArrayList<Integer> differentLayouts;
+    private int imageScore;
 
-    public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted){
+    public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted, int imageId){
         this.players = players;
         this.yatzyScore = yatzyScore;
         this.scoreSetted = scoreSetted;
@@ -45,9 +46,13 @@ public class ScoreListHandler {
         playerThreeListener = null;
         playerFourListener = null;
         this.differentLayouts = new ArrayList<>();
+        this.imageScore = imageId;
         differentLayouts.add(R.drawable.layout_border);
         differentLayouts.add(R.drawable.layout_border_higlight);
         differentLayouts.add(R.drawable.layout_border_scored);
+    }
+    public int getImageScore(){
+        return imageScore;
     }
     public String getYatzyScore() {
         return yatzyScore;
