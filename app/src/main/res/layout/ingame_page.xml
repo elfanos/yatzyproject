@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/lib/com.example.pandamove.yatzy"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,53 +16,219 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <view
-                android:id="@+id/dicesurface"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="150dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
 
-            <view
-                android:id="@+id/dicesurface2"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_toEndOf="@+id/dicesurface" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true">
 
-            <view
-                android:id="@+id/dicesurface3"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_toEndOf="@+id/dicesurface2" />
+                    <TextView
+                        android:id="@+id/currentPlaayer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="TextView" />
 
-            <view
-                android:id="@+id/dicesurface4"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_alignStart="@+id/dicesurface"
-                android:layout_below="@+id/dicesurface" />
+                    <TextView
+                        android:id="@+id/currentplayerscore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/currentPlaayer"
+                        android:layout_below="@+id/currentPlaayer"
+                        android:text="TextView" />
 
-            <view
-                android:id="@+id/dicesurface5"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_below="@+id/dicesurface2"
-                android:layout_centerHorizontal="true"
-                android:layout_toEndOf="@+id/dicesurface4" />
+                    <TextView
+                        android:id="@+id/textView83"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/currentplayerscore"
+                        android:layout_alignParentStart="true"
+                        android:text="TextView" />
 
-            <view
-                android:id="@+id/dicesurface6"
-                class="com.example.pandamove.yatzy.DiceSurfaceView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_below="@+id/dicesurface3"
-                android:layout_toEndOf="@+id/dicesurface5" />
+                    <TextView
+                        android:id="@+id/playerLeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/currentplayerscore"
+                        android:layout_alignParentStart="true"
+                        android:text="TextView" />
+
+                    <TextView
+                        android:id="@+id/playerSecond"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/currentplayerscore"
+                        android:layout_alignEnd="@+id/textView83"
+                        android:text="TextView" />
+
+                    <TextView
+                        android:id="@+id/playerThird"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/playerSecond"
+                        android:layout_below="@+id/playerSecond"
+                        android:text="TextView" />
+
+                    <TextView
+                        android:id="@+id/playerForth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/playerThird"
+                        android:text="TextView" />
+
+                    <TextView
+                        android:id="@+id/rounds"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:text="TextView" />
+
+                </RelativeLayout>
+
+                <ImageButton
+                    android:id="@+id/s_diceFive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/buttonScore"
+                    android:layout_alignEnd="@+id/buttonScore"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@mipmap/ic_diceone"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_dicefive" />
+
+                <ImageButton
+                    android:id="@+id/s_diceFour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/s_diceFive"
+                    android:layout_toEndOf="@+id/throwButton"
+                    android:background="@mipmap/ic_diceone"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_dicefive" />
+
+
+                <ImageButton
+                    android:id="@+id/s_diceTwo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/s_diceThree"
+                    android:layout_toStartOf="@+id/throwButton"
+                    android:background="@mipmap/ic_diceone"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_diceone" />
+
+                <ImageButton
+                    android:id="@+id/s_diceThree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/throwButton"
+                    android:layout_centerHorizontal="true"
+                    android:background="@mipmap/ic_diceone"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_dicefive" />
+
+                <ImageButton
+                    android:id="@+id/s_diceOne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/s_diceTwo"
+                    android:layout_marginEnd="23dp"
+                    android:layout_toStartOf="@+id/s_diceTwo"
+                    android:background="@mipmap/ic_diceone"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_dicefive" />
+
+                <Button
+                    android:id="@+id/throwButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Throw"
+                    android:layout_marginBottom="28dp"
+                    android:layout_above="@+id/s_diceFour"
+                    android:layout_centerHorizontal="true" />
+
+                <Button
+                    android:id="@+id/buttonScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="11dp"
+                    android:layout_toEndOf="@+id/s_diceFour"
+                    android:text="Score" />
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/throwButton"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="38dp">
+
+                    <view
+                        android:id="@+id/dicesurface5"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@+id/dicesurface2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_toEndOf="@+id/dicesurface4" />
+
+                    <view
+                        android:id="@+id/dicesurface6"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@+id/dicesurface3"
+                        android:layout_toEndOf="@+id/dicesurface5" />
+
+                    <view
+                        android:id="@+id/dicesurface4"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignStart="@+id/dicesurface"
+                        android:layout_below="@+id/dicesurface" />
+
+                    <view
+                        android:id="@+id/dicesurface"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true" />
+
+                    <view
+                        android:id="@+id/dicesurface2"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_toEndOf="@+id/dicesurface" />
+
+                    <view
+                        android:id="@+id/dicesurface3"
+                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_toEndOf="@+id/dicesurface2" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
         </RelativeLayout>
+
     </LinearLayout>
 
 </LinearLayout>

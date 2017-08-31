@@ -434,7 +434,7 @@ public class ScoreViewAdapter extends BaseAdapter {
                 scoreBoard.diceImageOne.getLayoutParams().width = px;
 
             }else if(scoreListHandler.getYatzyScore().contains("Yatzy")){
-                scoreBoard.diceImageOne.setImageResource(R.drawable.yatzy);
+                scoreBoard.diceImageOne.setImageResource(R.drawable.chance);
                 float logicalDensity = context.getResources().getDisplayMetrics().density;
                 int px = (int) Math.ceil(100 * logicalDensity);
                 scoreBoard.diceImageOne.getLayoutParams().width = px;

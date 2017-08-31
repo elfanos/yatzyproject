@@ -42,5 +42,5 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile 'net.javacrumbs.json-unit:json-unit-fluent:1.5.6'
     testCompile 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.0@aar'
-    compile files('libs/classes.jar')
+    //compile files('libs/classes.jar')
 }

@@ -1,5 +1,6 @@
 package com.example.pandamove.yatzy.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -7,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -16,12 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.pandamove.yatzy.*;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -50,9 +54,12 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private OnButtonClickedListener onButtonClickedListener;
     private ArrayList<DiceSurfaceView> diceList;
     private ArrayList<Dice> dices;
-
-
+    private ArrayList<ImageButton> diceSelectedButtons;
+    private Button buttonThrow;
+    private ArrayList<ThrowThread> throwRunnables;
+    private ThrowThread throwRunnable;
     boolean doneShaking = false;
+    private Random rand = new Random();
 
 
     public static InGameFragment newInstance(int page,
@@ -82,6 +89,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         dices = getArguments().getParcelableArrayList("dices");
 
         diceList = new ArrayList<>();
+        diceSelectedButtons = new ArrayList<>();
 
     }
 
@@ -92,6 +100,57 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.ingame_page, container, false);
         sound_id = dice_sound.load(inflater.getContext(),R.raw.shake_dice,1);
+        throwRunnables = new ArrayList<>();
+        buttonThrow = (Button) view.findViewById(R.id.throwButton);
+        this.initializeDiceSurface(view);
+        this.initializeDiceSelectedButtons(view);
+        this.setListenerForButton();
+        //Initialize dices in default mode
+        for(int i = 0; i < diceList.size(); i++){
+            Dice dice = new Dice(true,0,i);
+            dices.add(dice);
+        }
+        //Initialize throw threads
+        for(int i = 0; i < diceList.size(); i++){
+            ThrowThread throwThread = new ThrowThread(diceList.get(i), dices.get(i));
+            int random = rand.nextInt((5)+1);
+            diceList.get(i).changePositionOfDice(random);
+            dices.get(i).setScore(random);
+            throwRunnables.add(throwThread);
+        }
+
+        throwRunnable = new ThrowThread(diceList.get(0),dices.get(1));
+        System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
+
+        diceSelectedButtons.get(2).setVisibility(View.VISIBLE);
+
+        handler = new Handler(callback);
+
+        buttonThrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i = 0; i < throwRunnables.size(); i++){
+                    if(i+1 < throwRunnables.size()) {
+                        diceList.get(0).queueEvent(throwRunnables.get(i + 1));
+                        if (throwRunnables.get(i + 1).getRunning()) {
+                            throwRunnables.get(i + 1).endThis();
+                        } else {
+                            throwRunnables.get(i + 1).start();
+                        }
+                    }
+
+                }
+            }
+        });
+        System.out.println("waddup??");
+        return view;
+    }
+    /**
+     *  Insert all diceSurface into a list
+     *
+     * @param view the view to get buttons from xml
+     * */
+    public void initializeDiceSurface(View view){
         diceList.add(
                 (DiceSurfaceView) view.findViewById(R.id.dicesurface)
         );
@@ -110,28 +169,40 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         diceList.add(
                 (DiceSurfaceView) view.findViewById(R.id.dicesurface6)
         );
+    }
+    /**
+     * Insert all Dice buttons into a list
+     *
+     * @param v the view to get buttons from xml
+     * */
+    public void initializeDiceSelectedButtons(View v){
+        diceSelectedButtons.add(
+                (ImageButton) v.findViewById(R.id.s_diceOne)
+        );
+        diceSelectedButtons.add(
+                (ImageButton) v.findViewById(R.id.s_diceTwo)
+        );
+        diceSelectedButtons.add(
+                (ImageButton) v.findViewById(R.id.s_diceThree)
+        );
+        diceSelectedButtons.add(
+                (ImageButton) v.findViewById(R.id.s_diceFour)
+        );
+        diceSelectedButtons.add(
+                (ImageButton) v.findViewById(R.id.s_diceFive)
+        );
 
-        //Initialize dices in default mode
-        for(int i = 0; i < diceList.size(); i++){
-            Dice dice = new Dice(true,0,i);
-            dices.add(dice);
+    }
+    /**
+     * Set listener for a dice buttons inside
+     * diceSelectedButtons
+     * */
+    public void setListenerForButton(){
+        for(int i = 0; i < diceSelectedButtons.size(); i++){
+            diceSelectedButtons.get(i).setOnClickListener(
+                    new DiceSelectedListener()
+            );
         }
-        System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
-
-
-
-        handler = new Handler(callback);
-
-
-        /*testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onButtonClickedListener.onButtonClicked(v);
-            }
-
-        });*/
-        System.out.println("waddup??");
-        return view;
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -341,5 +412,128 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         }
        // mUnityPlayer.resume();
     }
+
+    public class  ThrowThread implements Runnable{
+        private volatile boolean running = false;
+        private Thread thread;
+        private DiceSurfaceView diceSurface;
+        private Dice dice;
+        private DiceSurfaceView surface;
+        boolean reversedX = false;
+        boolean reversedY = false;
+        boolean positiveAngleX = false;
+        boolean positiveAngleY = false;
+        boolean isRotationXDone = false;
+        boolean isRotationYDone = false;
+        int[] currentAngle = null;
+        int xAngle = 0;
+        int yAngle = 0;
+
+        public ThrowThread(DiceSurfaceView diceSurface, Dice dice){
+            this.surface = diceSurface;
+            this.dice = dice;
+            currentAngle = surface.getAngleOfDice(
+                    this.dice.getScore()
+            );
+            xAngle = currentAngle[0];
+            yAngle = currentAngle[1];
+        }
+        @Override
+        public void run(){
+            while(running){
+                try{
+                    /*X rotation*/
+                    surface.rotationOnDice(
+                            this, currentAngle, xAngle,
+                            reversedX, positiveAngleX,"x", isRotationXDone
+                    );
+                    /*Y rotation*/
+                    surface.rotationOnDice(
+                            this, currentAngle, yAngle,
+                            reversedY, positiveAngleY,"y", isRotationYDone
+                    );
+                    Thread.sleep(10);
+                }catch (InterruptedException e){
+                    System.out.println("interrupted e");
+                }
+
+            }
+        }
+        synchronized public void start(){
+            running = true;
+            this.resetValues();
+            if (thread == null) {
+                thread = new Thread(this);
+                thread.start();
+            }
+        }
+        synchronized public void resetValues(){
+            currentAngle = surface.getAngleOfDice(dice.getScore());
+            xAngle = currentAngle[0];
+            yAngle = currentAngle[1];
+            reversedX = false;
+            reversedY = false;
+            positiveAngleX = false;
+            positiveAngleY = false;
+            isRotationXDone = false;
+            isRotationYDone = false;
+        }
+        synchronized public void endThis() {
+            if (thread != null) {
+               // try {
+                running = false;
+                thread = null;
+                /*}catch (InterruptedException e){
+
+                    System.out.println("interrupt failure");
+                }*/
+            }
+        }
+        public synchronized void setXAngle(int value){
+            System.out.println(value);
+            xAngle = value;
+        }
+
+        public synchronized void setYAngle(int value){
+            System.out.println(value);
+            yAngle = value;
+        }
+
+        public synchronized void setReversedX(boolean reversedX) {
+            this.reversedX = reversedX;
+        }
+
+        public synchronized void setReversedY(boolean reversedY) {
+            this.reversedY = reversedY;
+        }
+
+        public synchronized void setPositiveAngleX(boolean positiveAngleX) {
+            this.positiveAngleX = positiveAngleX;
+        }
+
+        public synchronized void setPositiveAngleY(boolean positiveAngleY) {
+            this.positiveAngleY = positiveAngleY;
+        }
+
+        public synchronized void setRotationXDone(boolean rotationXDone) {
+            isRotationXDone = rotationXDone;
+        }
+
+        public synchronized void setRotationYDone(boolean rotationYDone) {
+            isRotationYDone = rotationYDone;
+        }
+        public boolean isRotationXDone() {
+            return isRotationXDone;
+        }
+
+        public boolean isRotationYDone() {
+            return isRotationYDone;
+        }
+
+        public Boolean getRunning(){
+            return running;
+        }
+    }
+
 
 }
