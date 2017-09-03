@@ -8,10 +8,12 @@ import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Rallmo on 2017-04-05.
@@ -22,18 +24,25 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
    // private InGameFragment inGameFragment;
     private ScoreFragment scoreFragment;
     private OnButtonClickedListener onButtonClickedListener;
+    private ListPossibleScores listPossibleScores;
+    private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
     private ArrayList<Dice> dices;
     private int[] imageResId = {
 
     };
 
-    public FragmentSliderPagerAdapter(FragmentManager fm, OnButtonClickedListener onButtonClickedListener,
-                                      SparseArray<Fragment> fragments, ArrayList<Dice> dices){
+    public FragmentSliderPagerAdapter(FragmentManager fm,
+                                      OnButtonClickedListener onButtonClickedListener,
+                                      SparseArray<Fragment> fragments, ArrayList<Dice> dices,
+                                      HashMap<String, Integer> listOfPossibleScores,
+                                      ListPossibleScores listPossibleScores){
         super(fm);
         this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
         this.dices = dices;
+        this.listOfPossibleScores = listOfPossibleScores;
+        this.listPossibleScores = listPossibleScores;
     }
 
     @Override
@@ -50,7 +59,7 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                 return inGameFragment.newInstance(
                         1,
                         onButtonClickedListener,
-                        dices
+                        dices,listPossibleScores,listOfPossibleScores
                 );
             case 2:
                 return ScoreFragment.newInstance(

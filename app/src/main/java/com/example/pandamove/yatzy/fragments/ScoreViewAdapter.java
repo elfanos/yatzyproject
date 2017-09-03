@@ -127,27 +127,18 @@ public class ScoreViewAdapter extends BaseAdapter {
                     switch (currentPlayer) {
                         case 0:
                             ((ScoreListHandler) this.getItem(i)).
-                                    setScore(
-                                            listOfScores.
-                                                    get(((ScoreListHandler) this.getItem(i)).
-                                                            getYatzyScore()),
-                                            currentPlayer,
+                                    setScore(listOfScores.get(((ScoreListHandler) this.getItem(i)).
+                                                            getYatzyScore()), currentPlayer,
                                             ((ScoreListHandler) this.getItem(i)).
                                                     getYatzyScore()
                                     );
-                            ((ScoreListHandler) this.getItem(i)).
-                                    setScoreBackground(currentPlayer,1);
+                            ((ScoreListHandler) this.getItem(i)).setScoreBackground(currentPlayer,1);
 
                             ((ScoreListHandler) this.getItem(i)).
-                                    setListener(
-                                            currentPlayer,
-                                            this,
-                                            listOfScores.
+                                    setListener(currentPlayer, this, listOfScores.
                                                     get(((ScoreListHandler) this.getItem(i)).
                                                             getYatzyScore()),
-                                            ((ScoreListHandler) this.getItem(i)).
-                                                    getYatzyScore(),
-                                            i
+                                            ((ScoreListHandler) this.getItem(i)).getYatzyScore(), i
                                     );
 
                             this.notifyDataSetChanged();

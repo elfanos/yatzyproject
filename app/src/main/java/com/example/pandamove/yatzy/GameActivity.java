@@ -15,19 +15,24 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
 import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
 import com.example.pandamove.yatzy.player.Player;
+import com.example.pandamove.yatzy.score.ScoreHandler;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-public class GameActivity extends AppCompatActivity implements SensorEventListener, OnButtonClickedListener {
+public class GameActivity extends AppCompatActivity implements SensorEventListener, OnButtonClickedListener,
+        ListPossibleScores {
 
     private ViewPager mPager;
 
@@ -39,6 +44,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
 
     private OnButtonClickedListener onButtonClickedListener;
+
+    private ListPossibleScores listPossibleScores;
+
     private String[] scores = {
             "Header",
             "One",
@@ -81,6 +89,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         Activity activity = this;
         try{
             onButtonClickedListener = (OnButtonClickedListener) activity;
+            listPossibleScores = (ListPossibleScores) activity;
         } catch (ClassCastException e){
             System.out.println("Exception lal" + e);
         }
@@ -90,13 +99,40 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 getSupportFragmentManager(),
                 onButtonClickedListener,
                 fragments,
-                dices
+                dices,
+                listOfPossibleScores,
+                listPossibleScores
         );
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
     }
 
+
+    @Override
+    public void onThrowPostPossibleScores(SparseArray<Dice> dices){
+        System.out.println("jaman----------" + dices.size());
+        resetHashMap();
+        ScoreHandler scoreHandler = new ScoreHandler(dices);
+        listOfPossibleScores = scoreHandler.possibleScores();
+        printMap(listOfPossibleScores);
+        resetHashMap();
+        ScoreHandler scoreHandler2 = new ScoreHandler(dices);
+        listOfPossibleScores = scoreHandler2.possibleScores();
+        Fragment scoreFragment = fragments.get(1);
+        if(scoreFragment instanceof ScoreFragment){
+            ((ScoreFragment) scoreFragment).
+                    getScoreListAdapater().viewCombination(
+                    3, listOfPossibleScores
+            );
+        }
+
+
+    }
+    public void resetHashMap(){
+        listOfPossibleScores = null;
+        listOfPossibleScores = new HashMap<>();
+    }
     /**
      * params
      * which yatzyscore
@@ -107,7 +143,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     public void onButtonClicked(View v){
         System.out.println("le id: " + v.getId());
         switch (v.getId()){
-            /*case R.id.testButton:
+            case R.id.buttonScore:
                 //System.out.println("pressed test button");
                 Fragment scoreFragment =  fragments.get(1);
                 if(scoreFragment instanceof ScoreFragment){;
@@ -117,9 +153,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                                 getScoreListAdapater().
                                 addScore(scores[i], 5, 1);
                     }*/
-                   /* listOfPossibleScores.put(scores[1],diceScore[1]);
+                    listOfPossibleScores.put(scores[1],diceScore[1]);
                     listOfPossibleScores.put(scores[3],diceScore[2]);
                     listOfPossibleScores.put(scores[8],diceScore[3]);
+                    listOfPossibleScores.put(scores[8],diceScore[3]);
+                   // this.printMap(listOfPossibleScores);
                     ((ScoreFragment) scoreFragment).
                             getScoreListAdapater().viewCombination(3,
                                     listOfPossibleScores
@@ -128,7 +166,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 }
                 break;
             default:
-                break;*/
+                break;
         }
 
     }
@@ -141,6 +179,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
         }
 
+    }
+    public static void printMap(Map mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
     }
 
 

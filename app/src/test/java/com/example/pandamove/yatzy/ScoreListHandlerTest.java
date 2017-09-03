@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreListHandlerTest {
-    private List<Player> players = new ArrayList<>();
+    /*private List<Player> players = new ArrayList<>();
     private List<ScoreListHandler> listOfScores;
     private Player playerOne;
     private Player playerTwo;
@@ -63,5 +63,5 @@ public class ScoreListHandlerTest {
         Assert.assertEquals("Get score should be equals to 3",
                 3, listOfScores.get(0).getScore(0)
         );
-    }
+    }*/
 }
