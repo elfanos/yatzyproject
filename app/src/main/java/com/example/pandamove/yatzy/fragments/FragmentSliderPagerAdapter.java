@@ -1,6 +1,7 @@
 package com.example.pandamove.yatzy.fragments;
 
 import android.content.Context;
+import android.hardware.SensorManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.controllers.SensorChanging;
 import com.example.pandamove.yatzy.dice.Dice;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
     private ArrayList<Dice> dices;
+    private SensorChanging sensorManager;
     private int[] imageResId = {
 
     };
@@ -36,13 +39,14 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                                       OnButtonClickedListener onButtonClickedListener,
                                       SparseArray<Fragment> fragments, ArrayList<Dice> dices,
                                       HashMap<String, Integer> listOfPossibleScores,
-                                      ListPossibleScores listPossibleScores){
+                                      ListPossibleScores listPossibleScores, SensorChanging sensorManager){
         super(fm);
         this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
         this.dices = dices;
         this.listOfPossibleScores = listOfPossibleScores;
         this.listPossibleScores = listPossibleScores;
+        this.sensorManager = sensorManager;
     }
 
     @Override

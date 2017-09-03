@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import com.example.pandamove.yatzy.*;
 import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.controllers.SensorChanging;
 import com.example.pandamove.yatzy.dice.Dice;
 
 import java.lang.ref.WeakReference;
@@ -47,7 +48,7 @@ import java.util.TimerTask;
  *
  * @author Rasmus Dahlkvist
  */
-public class InGameFragment extends Fragment implements SensorEventListener{
+public class InGameFragment extends Fragment implements SensorEventListener, SensorChanging{
     public static final String ARG_PAGE = "ARG_PAGE";
     ImageView dice_picture;		//reference to dice picture
     Random rng=new Random();	//generate random numbers
@@ -58,7 +59,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     boolean rolling=false;		//Is die rolling?
     private Handler throwHandler;
     private SensorManager sensorManager;
-    private Sensor senAccelerometer;
     private static final int SHAKE_THRESHOLD = 1200;
     private static final int STOP_THRESHOLD = 60;
     private long lastUpdate = 0;
@@ -115,7 +115,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        senAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         onButtonClickedListener =
                 (OnButtonClickedListener) getArguments().getSerializable("interface");
@@ -190,26 +189,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         buttonThrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!throwIsExcuting()) {
-                    for (int i = 0; i < throwRunnables.size(); i++) {
-                        if (i + 1 < throwRunnables.size()) {
-                            //This is a hack, use one invisible open gl as surface thread
-                            //and apply rotation on the other surface that's why zero
-                            //is skipped.
-                            if(throwRunnables.get(i+1).getSurface().isSurfaceIsActive()) {
-                                diceList.get(0).queueEvent(throwRunnables.get(i + 1));
-                                if (throwRunnables.get(i + 1).getRunning()) {
-                                    throwRunnables.get(i + 1).endThis();
-                                } else {
-                                    throwRunnables.get(i + 1).start();
-                                }
-                            }
-                        }
-
-                    }
-                }else{
-                    System.out.println("still throwing :D");
-                }
+                executeRollingAnimation();
             }
         });
         (view.findViewById(R.id.buttonScore)).setOnClickListener(new View.OnClickListener() {
@@ -223,6 +203,28 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         return view;
     }
 
+    public void executeRollingAnimation(){
+        if(!throwIsExcuting()) {
+            for (int i = 0; i < throwRunnables.size(); i++) {
+                if (i + 1 < throwRunnables.size()) {
+                    //This is a hack, use one invisible open gl as surface thread
+                    //and apply rotation on the other surface that's why zero
+                    //is skipped.
+                    if(throwRunnables.get(i+1).getSurface().isSurfaceIsActive()) {
+                        diceList.get(0).queueEvent(throwRunnables.get(i + 1));
+                        if (throwRunnables.get(i + 1).getRunning()) {
+                            throwRunnables.get(i + 1).endThis();
+                        } else {
+                            throwRunnables.get(i + 1).start();
+                        }
+                    }
+                }
+
+            }
+        }else{
+            System.out.println("still throwing :D");
+        }
+    }
     public boolean throwIsExcuting(){
         for(int i = 0; i < throwRunnables.size(); i++){
             if(throwRunnables.get(i).getRunning()){
@@ -290,6 +292,56 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             );
         }
     }
+    @Override
+    public void onSensorChanging(SensorEvent event){
+        float x = event.values[0], y = event.values[1];
+        float z = event.values[2];
+        Sensor sensor = event.sensor;
+        if(sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            long curTime = System.currentTimeMillis();
+            if((curTime - lastUpdate) > 100){
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+                // System.out.println("wait is: " + speed);
+                if(speed > SHAKE_THRESHOLD){
+                    System.out.println("SHAKING");
+                    if (!rolling) {
+                        doneShaking = false;
+                        rolling = true;
+                    }
+                }
+
+                if(!doneShaking) {
+                    for(int i = 0; i<diceList.size(); i++){
+                        if(diceList.get(i).isSurfaceIsActive()) {
+                            diceList.get(i).setRotationOnShake(speed);
+                        }
+                    }
+
+                }
+                //System.out.println("le speed: " + speed);
+                if(rolling && speed < STOP_THRESHOLD){
+                    rolling = false;
+                    doneShaking = true;
+                    // System.out.println("stop casting");
+                    //dice_picture.setImageResource(R.mipmap.ic_whiteone);
+
+                    dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
+                    for(int i = 0; i < diceList.size(); i++) {
+                        if(diceList.get(i).isSurfaceIsActive()) {
+                            //timer.schedule(new Roll(i), 100);
+                            this.executeRollingAnimation();
+                        }
+                    }
+                    //timer.schedule(new Roll(2), 100);
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+    }
 
     /**
      * Controll if the user is moving the phone and shaking
@@ -310,7 +362,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
                // System.out.println("wait is: " + speed);
                 if(speed > SHAKE_THRESHOLD){
-                 //   System.out.println("SHAKING");
+                    System.out.println("SHAKING");
                     if (!rolling) {
                         doneShaking = false;
                         rolling = true;
@@ -335,7 +387,8 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                     dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
                     for(int i = 0; i < diceList.size(); i++) {
                         if(diceList.get(i).isSurfaceIsActive()) {
-                            timer.schedule(new Roll(i), 100);
+                            //timer.schedule(new Roll(i), 100);
+                            this.executeRollingAnimation();
                         }
                     }
                     //timer.schedule(new Roll(2), 100);
@@ -377,19 +430,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                 getSensorList(
                         Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_FASTEST
         );
-    }
-    public void getDiceSurfaceMethod(String methodName, float f_value, int i_value){
-        for(int i = 0; i < diceList.size(); i++) {
-            switch (methodName) {
-                case "shake":
-                    diceList.get(i).setRotationOnShake(f_value);
-                    break;
-                case "faceScore":
-                    diceList.get(i).changePositionOfDice(i_value);
-                    break;
-                default:
-            }
-        }
     }
 
     private void unregisterSensorListener() {

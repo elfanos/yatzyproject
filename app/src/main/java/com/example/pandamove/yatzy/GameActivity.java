@@ -1,9 +1,11 @@
 package com.example.pandamove.yatzy;
 
 import android.app.Activity;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.controllers.SensorChanging;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
@@ -46,6 +49,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private OnButtonClickedListener onButtonClickedListener;
 
     private ListPossibleScores listPossibleScores;
+
+    private SensorManager sensorManager;
+
+    private SensorChanging sensorChanging;
+    private Sensor senAccelerometer;
 
     private String[] scores = {
             "Header",
@@ -83,6 +91,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         fragments = new SparseArray<>();
 
@@ -101,7 +110,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 fragments,
                 dices,
                 listOfPossibleScores,
-                listPossibleScores
+                listPossibleScores,
+                sensorChanging
         );
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -171,15 +181,31 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     }
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-    @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
         }
 
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    /**
+     * Register the motion sensor for the android phone
+     * */
+    private void registerSensorListener() {
+
+        sensorManager.registerListener(this, sensorManager.
+                getSensorList(
+                        Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_FASTEST
+        );
+    }
+
+    private void unregisterSensorListener() {
+        sensorManager.unregisterListener(this);
+    }
+
     public static void printMap(Map mp) {
         Iterator it = mp.entrySet().iterator();
         while (it.hasNext()) {
