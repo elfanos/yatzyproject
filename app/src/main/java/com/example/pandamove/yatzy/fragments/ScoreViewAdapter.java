@@ -238,48 +238,29 @@ public class ScoreViewAdapter extends BaseAdapter {
      * TODO fix test for the new implemented list view
      * which fix the bakground on each cell.
      * */
-    public void addScore(String yatzyScore, int score,
-                         int player){
+    public void addScore(String yatzyScore, int score, int player){
         for(int i = 0; i < this.getCount(); i++){
             if((this.getItem(i) instanceof  ScoreListHandler)){
-                if(((ScoreListHandler) this.getItem(i)).
-                        getYatzyScore().
-                        equals(yatzyScore)){
-
+                if(((ScoreListHandler) this.getItem(i)).getYatzyScore().equals(yatzyScore)){
                     ((ScoreListHandler) this.getItem(i)).
-                            getPlayers().
-                            get(player).
-                            setCurrentPlayer(true);
-
+                            getPlayers().get(player).setCurrentPlayer(true);
                     ((ScoreListHandler) this.getItem(i)).setScoreBackground(player,2);
-                    switch (this.checkIfTotalOrSum(
-                            ((ScoreListHandler) this.getItem(i)),
-                            player)
-                            ){
+                    switch (this.checkIfTotalOrSum(((ScoreListHandler) this.getItem(i)), player)){
                         case 0:
-                            ((ScoreListHandler) this.getItem(i)).
-                                    setScore(
-                                            score,
-                                            player,
-                                            yatzyScore
+                            ((ScoreListHandler) this.getItem(i)).setScore(
+                                    score, player, yatzyScore
                                     );
                             this.notifyDataSetChanged();
                             break;
                         case 1:
-                            ((ScoreListHandler) this.getItem(i)).
-                                    setScore(
-                                            this.getHalfScore(player),
-                                            player,
-                                            yatzyScore
+                            ((ScoreListHandler) this.getItem(i)).setScore(
+                                    this.getHalfScore(player), player, yatzyScore
                                     );
                             this.notifyDataSetChanged();
                             break;
                         case 2:
-                            ((ScoreListHandler) this.getItem(i)).
-                                    setScore(
-                                            this.getLastSectionScore(player),
-                                            player,
-                                            yatzyScore
+                            ((ScoreListHandler) this.getItem(i)).setScore(
+                                    this.getLastSectionScore(player), player, yatzyScore
                                     );
                             this.notifyDataSetChanged();
                             break;
@@ -292,9 +273,7 @@ public class ScoreViewAdapter extends BaseAdapter {
     /**
      * TODO Remake this shit haha xD
      * */
-    public int checkIfTotalOrSum(
-            ScoreListHandler scoreListHandler, int currentPlayer
-    ){
+    public int checkIfTotalOrSum(ScoreListHandler scoreListHandler, int currentPlayer){
         return scoreListHandler.getPlayers().
                 get(currentPlayer).
                 getScoreKeeper().

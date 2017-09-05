@@ -78,41 +78,29 @@ public class ScoreListHandler {
             case 0:
                 System.out.println("well wat is happening?");
                 playerOneListener = new CellOnClickListener(
-                        scoreViewAdapter,
-                        player,
-                        yatzyScore,
-                        score,
-                        position
+                        scoreViewAdapter, player, yatzyScore,
+                        score, position
                         );
                 scoreViewAdapter.addToObserveListeners(position,playerOneListener);
                 break;
             case 1:
                 playerTwoListener = new CellOnClickListener(
-                        scoreViewAdapter,
-                        player,
-                        yatzyScore,
-                        score,
-                        position
+                        scoreViewAdapter, player, yatzyScore,
+                        score, position
                 );
                 scoreViewAdapter.addToObserveListeners(position,playerTwoListener);
                 break;
             case 2:
                 playerThreeListener = new CellOnClickListener(
-                        scoreViewAdapter,
-                        player,
-                        yatzyScore,
-                        score,
-                        position
+                        scoreViewAdapter, player, yatzyScore,
+                        score, position
                 );
                 scoreViewAdapter.addToObserveListeners(position,playerThreeListener);
                 break;
             case 3:
                 playerFourListener = new CellOnClickListener(
-                        scoreViewAdapter,
-                        player,
-                        yatzyScore,
-                        score,
-                        position
+                        scoreViewAdapter, player, yatzyScore,
+                        score, position
                 );
                 scoreViewAdapter.addToObserveListeners(position,playerFourListener);
                 break;
@@ -225,47 +213,30 @@ public class ScoreListHandler {
     public void setScore(int score, int player, String row) {
         switch (player){
             case 0:
-                if(!players.get(player).
-                        getScoreKeeper().
-                        checkIfColumnGotScore(row)) {
-
+                if(!players.get(player).getScoreKeeper().checkIfColumnGotScore(row)) {
                     this.scorePlayerOne = score;
-                    players.get(player).
-                            getScoreKeeper().
-                            setColumnScore(row);
+                    players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;
             case 1:
-                if(!players.get(player).
-                        getScoreKeeper().
-                        checkIfColumnGotScore(row)) {
+                if(!players.get(player).getScoreKeeper().checkIfColumnGotScore(row)) {
                     this.scorePlayerTwo = score;
-                    players.get(player).
-                            getScoreKeeper().
-                            setColumnScore(row);
+                    players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;
             case 2:
-                if(!players.get(player).
-                        getScoreKeeper().
-                        checkIfColumnGotScore(row)) {
+                if(!players.get(player).getScoreKeeper().checkIfColumnGotScore(row)) {
                     this.scorePlayerThree = score;
-                    players.get(player).
-                            getScoreKeeper().
-                            setColumnScore(row);
+                    players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;
             case 3:
-                if(!players.get(player).
-                        getScoreKeeper().
-                        checkIfColumnGotScore(row)) {
+                if(!players.get(player).getScoreKeeper().checkIfColumnGotScore(row)) {
                     this.scorePlayerFour = score;
-                    players.get(player).
-                            getScoreKeeper().
-                            setColumnScore(row);
+                    players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;

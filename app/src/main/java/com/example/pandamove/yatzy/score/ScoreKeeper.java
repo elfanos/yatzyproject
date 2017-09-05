@@ -1,5 +1,7 @@
 package com.example.pandamove.yatzy.score;
 
+import com.example.pandamove.yatzy.player.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,12 +14,24 @@ public class ScoreKeeper {
     private String[] scores;
     private HashMap<String, Boolean> checkIfScoresIsSetted;
     private int numberScore;
+    private ArrayList<ScoreTable> possibleScoreTable;
+    private ArrayList<ScoreTable> scoreTables;
+    private HashMap<String, Integer> listOfScores;
+    private String[] rows = null;
+
     public ScoreKeeper(String[] scores){
         checkIfScoresIsSetted = new HashMap<>();
+        scoreTables = new ArrayList<>();
+        this.rows = scores;
+        possibleScoreTable = new ArrayList<>();
         for(int i = 0; i < scores.length; i++){
             checkIfScoresIsSetted.put(scores[i],false);
         }
         this.scores = scores;
+    }
+    public void setScores(HashMap<String,Integer> listOfScores){
+        this.listOfScores = listOfScores;
+        this.setTempScore();
     }
     public void setColumnScore(String row){
         Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
@@ -28,11 +42,58 @@ public class ScoreKeeper {
             }
         }
     }
-    public boolean checkIfColumnGotScore(String row){
-        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
+    private void setTempScore(){
+        Iterator iterator = listOfScores.entrySet().iterator();
         while (iterator.hasNext()){
+            System.out.println("waddup");
             Map.Entry map = (Map.Entry) iterator.next();
-            if(map.getKey() == row){
+            ScoreTable scoreTable = new ScoreTable();
+            scoreTable.row = (String) map.getKey();
+            scoreTable.active = true;
+            scoreTable.score = (Integer) map.getValue();
+            possibleScoreTable.add(scoreTable);
+        }
+    }
+    public Integer sizeOfScores(){
+        return scoreTables.size();
+    }
+    public Integer sizeOfPossibleScores(){
+        return possibleScoreTable.size();
+    }
+    private void clearScoreTablesScore(){
+        possibleScoreTable.clear();
+    }
+    public boolean getActive(String row){
+        for(int i = 0; i < scoreTables.size(); i++){
+            if(scoreTables.get(i).row.equals(row)){
+                return scoreTables.get(i).active;
+            }
+        }
+        return true;
+    }
+    public Integer getScoresPossible(String row){
+        int value = 0;
+        for(int i = 0; i < possibleScoreTable.size(); i++){
+            if(possibleScoreTable.get(i).row.equals(row)){
+                value = possibleScoreTable.get(i).score;
+            }
+        }
+        return value;
+    }
+    public void setUsedScore(String row) {
+        for(int i = 0; i < possibleScoreTable.size(); i++){
+            if(possibleScoreTable.get(i).row.equals(row)){
+                possibleScoreTable.get(i).active = false;
+                this.scoreTables.add(possibleScoreTable.get(i));
+                this.clearScoreTablesScore();
+            }
+        }
+    }
+    public boolean checkIfColumnGotScore(String row) {
+        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry map = (Map.Entry) iterator.next();
+            if (map.getKey() == row) {
                 return (Boolean) map.getValue();
             }
         }
@@ -106,6 +167,12 @@ public class ScoreKeeper {
     }
     public int getNumberScore(){
         return numberScore;
+    }
+
+    static class ScoreTable{
+        int score;
+        boolean active;
+        String row;
     }
 
 
