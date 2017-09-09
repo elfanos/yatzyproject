@@ -56,11 +56,12 @@ public class ScoreFragment extends Fragment {
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
-    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices){
+    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices, ArrayList<Player> players){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
         args.putParcelableArrayList("dices", dices);
+        args.putSerializable("players", players);
         object.setArguments(args);
 
         return object;
@@ -71,6 +72,7 @@ public class ScoreFragment extends Fragment {
     public void onCreate(Bundle onSavedInstace){
         super.onCreate(onSavedInstace);
         dices = getArguments().getParcelableArrayList("dices");
+        players = (ArrayList<Player>) getArguments().getSerializable("players");
 
     }
     @Override
@@ -82,7 +84,7 @@ public class ScoreFragment extends Fragment {
         /**
          * TODO fix so that set column arent static?
          * */
-        Player player = new Player("ralle", scores);
+       /* Player player = new Player("ralle", scores);
         player.setColumnPosition(0);
         players.add(player);
         Player player2 = new Player("ralle2",scores);
@@ -93,7 +95,7 @@ public class ScoreFragment extends Fragment {
         players.add(player3);
         Player player4 = new Player("ralle4",scores);
         player4.setColumnPosition(3);
-        players.add(player4);
+        players.add(player4);*/
         if(scoreViewAdapter == null){
             this.updateAdapter();
         }

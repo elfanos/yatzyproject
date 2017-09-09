@@ -47,6 +47,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private ListPossibleScores listPossibleScores;
 
+    private ArrayList<Player> players;
+
     private String[] scores = {
             "Header",
             "One",
@@ -83,6 +85,19 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
+        players = new ArrayList<>();
+        Player player = new Player("ralle", scores);
+        player.setColumnPosition(0);
+        players.add(player);
+        Player player2 = new Player("ralle2",scores);
+        player2.setColumnPosition(1);
+        players.add(player2);
+        Player player3 = new Player("ralle3", scores);
+        player3.setColumnPosition(2);
+        players.add(player3);
+        Player player4 = new Player("ralle4",scores);
+        player4.setColumnPosition(3);
+        players.add(player4);
 
         fragments = new SparseArray<>();
 
@@ -101,17 +116,27 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 fragments,
                 dices,
                 listOfPossibleScores,
-                listPossibleScores
+                listPossibleScores,
+                players
         );
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
     }
 
-
+    /**
+     * @return the current player in the arrayList
+     * */
+    public Player checkCurrentPlayer(){
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).isCurrentPlayer()){
+                return players.get(i);
+            }
+        }
+        return null;
+    }
     @Override
     public void onThrowPostPossibleScores(SparseArray<Dice> dices){
-        System.out.println("jaman----------" + dices.size());
         resetHashMap();
         ScoreHandler scoreHandler = new ScoreHandler(dices);
         listOfPossibleScores = scoreHandler.possibleScores();
@@ -120,11 +145,15 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         ScoreHandler scoreHandler2 = new ScoreHandler(dices);
         listOfPossibleScores = scoreHandler2.possibleScores();
         Fragment scoreFragment = fragments.get(1);
-        if(scoreFragment instanceof ScoreFragment){
-            ((ScoreFragment) scoreFragment).
-                    getScoreListAdapater().viewCombination(
-                    3, listOfPossibleScores
-            );
+        players.get(3).setCurrentPlayer(true);
+
+
+        Player player = checkCurrentPlayer();
+        if(player != null) {
+            player.getScoreKeeper().setScores(listOfPossibleScores);
+            if (scoreFragment instanceof ScoreFragment) {
+                ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player);
+            }
         }
 
 
@@ -146,6 +175,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             case R.id.buttonScore:
                 //System.out.println("pressed test button");
                 Fragment scoreFragment =  fragments.get(1);
+                Player player = players.get(1);
                 if(scoreFragment instanceof ScoreFragment){;
                     /*for(int i = 1; i < 5; i++) {
 
@@ -158,10 +188,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     listOfPossibleScores.put(scores[8],diceScore[3]);
                     listOfPossibleScores.put(scores[8],diceScore[3]);
                    // this.printMap(listOfPossibleScores);
-                    ((ScoreFragment) scoreFragment).
-                            getScoreListAdapater().viewCombination(3,
-                                    listOfPossibleScores
-                    );
+                    ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player);
 
                 }
                 break;

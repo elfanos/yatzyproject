@@ -2,6 +2,7 @@ package com.example.pandamove.yatzy.fragments;
 
 import android.view.View;
 
+import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
 import java.util.HashMap;
@@ -15,19 +16,15 @@ import java.util.Objects;
 
 public class CellOnClickListener implements View.OnClickListener {
     private ScoreViewAdapter scoreViewAdapter;
-    private int currentPlayer;
     private String yatzyScore;
-    private int score;
     private int position;
+    private Player player;
     public CellOnClickListener(
-            ScoreViewAdapter scoreViewAdapter,int currentPlayer,
-            String yatzyScore, int score, int position
-    ){
+            Player player, ScoreViewAdapter scoreViewAdapter, String yatzyScore, int position){
         this.scoreViewAdapter = scoreViewAdapter;
-        this.currentPlayer = currentPlayer;
         this.yatzyScore = yatzyScore;
-        this.score = score;
         this.position = position;
+        this.player = player;
 
     }
     @Override
@@ -37,16 +34,19 @@ public class CellOnClickListener implements View.OnClickListener {
             HashMap<Integer,CellOnClickListener> listeners = scoreViewAdapter.getObserveListeners();
             System.out.println("wats le position??: " + position);
             System.out.println("how many??: " + scoreViewAdapter.getObserveListeners().size());
-            scoreViewAdapter.addScore(yatzyScore, score, currentPlayer);
+            scoreViewAdapter.addScore(yatzyScore, player);
             Iterator iterator = listeners.entrySet().iterator();
             while (iterator.hasNext()){
                 Map.Entry map = (Map.Entry) iterator.next();
                 Object index = scoreViewAdapter.getItem((Integer) map.getKey());
                 if(index instanceof ScoreListHandler){
-                    ((ScoreListHandler) index).destroyListener(currentPlayer);
+                    ((ScoreListHandler) index).destroyListener(player.getColumnPosition());
                     if(position != (Integer) map.getKey()){
-                        ((ScoreListHandler) index).setScore(0,currentPlayer,"");
-                        ((ScoreListHandler) index).setScoreBackground(currentPlayer,0);
+                       // ((ScoreListHandler) index).setScore(0,player.getColumnPosition(),"");
+                       //if(this.checkIfCellIsActive()) {
+                           ((ScoreListHandler) index).
+                                   setScoreBackground(player.getColumnPosition(), 0);
+                       //}
                     }
                 }
             }
@@ -54,5 +54,15 @@ public class CellOnClickListener implements View.OnClickListener {
 
         }
 
+    }
+    public boolean checkIfCellIsActive(){
+        for(int i = 0; i < scoreViewAdapter.getCount(); i++){
+            if(scoreViewAdapter.getItem(i) instanceof ScoreListHandler){
+                return player.getScoreKeeper().
+                        getActive(((ScoreListHandler) scoreViewAdapter.getItem(i)).getYatzyScore());
+
+            }
+        }
+        return false;
     }
 }

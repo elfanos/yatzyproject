@@ -29,6 +29,13 @@ public class ScoreKeeper {
         }
         this.scores = scores;
     }
+
+    /**
+     * Set possible scores that was executed in the throw
+     *
+     * @param listOfScores a hashmap which contains all
+     *                     possible scores
+     * */
     public void setScores(HashMap<String,Integer> listOfScores){
         this.listOfScores = listOfScores;
         this.setTempScore();
@@ -42,10 +49,14 @@ public class ScoreKeeper {
             }
         }
     }
+    /**
+     * Sets values to a the temporary possibleScores arraylist
+     * that will be used to display all possible scores for the user
+     *
+     * */
     private void setTempScore(){
         Iterator iterator = listOfScores.entrySet().iterator();
         while (iterator.hasNext()){
-            System.out.println("waddup");
             Map.Entry map = (Map.Entry) iterator.next();
             ScoreTable scoreTable = new ScoreTable();
             scoreTable.row = (String) map.getKey();
@@ -63,6 +74,14 @@ public class ScoreKeeper {
     private void clearScoreTablesScore(){
         possibleScoreTable.clear();
     }
+
+    /**
+     * Check if the cell is active in a
+     * specific row.
+     *
+     * @param row the row on which that is being check for activity
+     * @return if the specific row in the scoreTable is active or not
+     * */
     public boolean getActive(String row){
         for(int i = 0; i < scoreTables.size(); i++){
             if(scoreTables.get(i).row.equals(row)){
@@ -71,6 +90,14 @@ public class ScoreKeeper {
         }
         return true;
     }
+
+    /**
+     * Get possible score by choosing the specific
+     * row where the score should appear.
+     *
+     * @param row the row on which the user choose to use the score
+     *            for
+     * */
     public Integer getScoresPossible(String row){
         int value = 0;
         for(int i = 0; i < possibleScoreTable.size(); i++){
@@ -80,6 +107,32 @@ public class ScoreKeeper {
         }
         return value;
     }
+    /**
+     * Get possible score by choosing the specific
+     * row where the score should appear.
+     *
+     * @param row the row on which the user choose to use the score
+     *            for
+     * */
+    public Integer getScoreOnRow(String row){
+        int value = 0;
+        for(int i = 0; i < scoreTables.size(); i++){
+            if(scoreTables.get(i).row.equals(row)){
+                value = scoreTables.get(i).score;
+            }
+        }
+        return value;
+    }
+
+    /**
+     * When user select a specific score, it will be setted
+     * as inactive for the row cell, and be added to the
+     * main array scoreTables which contains all the scores
+     * for the specific player
+     *
+     * @param row the row on which the user choose to use the score
+     *            for
+     * */
     public void setUsedScore(String row) {
         for(int i = 0; i < possibleScoreTable.size(); i++){
             if(possibleScoreTable.get(i).row.equals(row)){

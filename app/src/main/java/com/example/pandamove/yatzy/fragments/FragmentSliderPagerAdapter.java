@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.example.pandamove.yatzy.controllers.ListPossibleScores;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
+import com.example.pandamove.yatzy.player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
     private ArrayList<Dice> dices;
+    private ArrayList<Player> players;
     private int[] imageResId = {
 
     };
@@ -36,13 +38,14 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                                       OnButtonClickedListener onButtonClickedListener,
                                       SparseArray<Fragment> fragments, ArrayList<Dice> dices,
                                       HashMap<String, Integer> listOfPossibleScores,
-                                      ListPossibleScores listPossibleScores){
+                                      ListPossibleScores listPossibleScores, ArrayList<Player> players){
         super(fm);
         this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
         this.dices = dices;
         this.listOfPossibleScores = listOfPossibleScores;
         this.listPossibleScores = listPossibleScores;
+        this.players = players;
     }
 
     @Override
@@ -64,7 +67,8 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
             case 2:
                 return ScoreFragment.newInstance(
                         2,
-                        dices
+                        dices,
+                        players
                 );
             default:
         }
