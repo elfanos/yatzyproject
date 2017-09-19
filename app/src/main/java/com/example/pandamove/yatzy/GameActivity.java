@@ -12,15 +12,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.pandamove.yatzy.controllers.ListPossibleScores;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
-import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
+import com.example.pandamove.yatzy.player.GameObjects;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreHandler;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
@@ -28,11 +27,10 @@ import com.example.pandamove.yatzy.score.ScoreListHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener, OnButtonClickedListener,
-        ListPossibleScores {
+        GameActivityInterface {
 
     private ViewPager mPager;
 
@@ -45,9 +43,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private OnButtonClickedListener onButtonClickedListener;
 
-    private ListPossibleScores listPossibleScores;
+    private GameActivityInterface gameActivityInterface;
 
     private ArrayList<Player> players;
+
+    private GameObjects gameObjects;
 
     private String[] scores = {
             "Header",
@@ -58,6 +58,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             "Five",
             "Six",
             "Sum",
+            "Bonus",
             "1 Pair",
             "2 Pair",
             "3 of a Kind",
@@ -97,14 +98,18 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         players.add(player3);
         Player player4 = new Player("ralle4",scores);
         player4.setColumnPosition(3);
+        player4.setNumberOfThrows(0);
+        player4.setCurrentPlayer(true);
         players.add(player4);
+
+        gameObjects = new GameObjects(players);
 
         fragments = new SparseArray<>();
 
         Activity activity = this;
         try{
             onButtonClickedListener = (OnButtonClickedListener) activity;
-            listPossibleScores = (ListPossibleScores) activity;
+            gameActivityInterface = (GameActivityInterface) activity;
         } catch (ClassCastException e){
             System.out.println("Exception lal" + e);
         }
@@ -116,7 +121,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 fragments,
                 dices,
                 listOfPossibleScores,
-                listPossibleScores,
+                gameActivityInterface,
                 players
         );
         mPager.setAdapter(pagerAdapter);
@@ -157,6 +162,90 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         }
 
 
+    }
+    public Player getCurrentPlayer(){
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).isCurrentPlayer()){
+                return players.get(i);
+            }
+        }
+        return null;
+    }
+    private void setScoreForSumNNumbers(Player player){
+        Fragment sumNNumbers = fragments.get(1);
+        if(sumNNumbers instanceof ScoreFragment){
+            Object bonus = ((ScoreFragment) sumNNumbers).getScoreListAdapater().getItem(8);
+            if(bonus instanceof ScoreListHandler){
+                ((ScoreListHandler) bonus).setScore(player,"Bonus",2);
+            }
+            Object sum = ((ScoreFragment) sumNNumbers).getScoreListAdapater().getItem(7);
+            if(sum instanceof ScoreListHandler){
+                ((ScoreListHandler) sum).setScore(player,"Sum",3);
+            }
+            Object total = ((ScoreFragment) sumNNumbers).getScoreListAdapater().getItem(18);
+            if(total instanceof ScoreListHandler){
+                ((ScoreListHandler) total).setScore(player,"Total",4);
+            }
+            Object totalOfAll = ((ScoreFragment) sumNNumbers).getScoreListAdapater().getItem(19);
+            if(totalOfAll instanceof ScoreListHandler){
+                ((ScoreListHandler) totalOfAll).setScore(player,"Sum",5);
+            }
+        }
+    }
+    @Override
+    public void roundsEnd(Player player){
+        player.setScoreIsSet(true);
+        players.get(0).setScoreIsSet(true);
+        players.get(1).setScoreIsSet(true);
+        players.get(2).setScoreIsSet(true);
+        int next = gameObjects.getNextPlayer(player.getColumnPosition());
+        boolean checkIfLastPlayer = gameObjects.checkIfLastPlayer();
+        this.setScoreForSumNNumbers(player);
+        if(gameObjects.checkIfLastPlayer()){
+            gameObjects.initializeNextRound();
+            ((TextView)findViewById(R.id.rounds)).setText(String.format("%s",gameObjects.getRound()));
+            System.out.println("check half score" + player.getScoreKeeper().checkIfItHalfScore());
+        }
+        System.out.println("le column pos:" +  next + checkIfLastPlayer);
+
+    }
+    @Override
+    public void setScoreForPlayer(View v){
+        Player player = this.getCurrentPlayer();
+        ((TextView)v.findViewById(R.id.currentplayerscore)).setText(String.format("%s",
+                player.getScoreKeeper().getCurrentScore()));
+    }
+    @Override
+    public void incrementRoundsForPlayer(View v){
+        Player player = this.getCurrentPlayer();
+        player.incrementRound();
+       // ((TextView)v.findViewById(R.id.))
+    }
+    @Override
+    public void setPlayerView(View v){
+        Player player = this.getCurrentPlayer();
+        ((TextView)v.findViewById(R.id.currentPlayer)).
+                setText(String.format("%s", player.getName()));
+    }
+    @Override
+    public void setScoreView(View v){
+        Player player = this.getCurrentPlayer();
+        ((TextView)v.findViewById(R.id.currentplayerscore)).
+        setText(String.format("%s", player.getRound()));
+    }
+    @Override
+    public boolean getIfRoundIsOver(){
+        Player player = this.getCurrentPlayer();
+        if(player.getNumberOfThrows() > 2){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    @Override
+    public void setThrows(View v){
+        Player player = this.getCurrentPlayer();
+        player.increseNumberOfThrows();
     }
     public void resetHashMap(){
         listOfPossibleScores = null;

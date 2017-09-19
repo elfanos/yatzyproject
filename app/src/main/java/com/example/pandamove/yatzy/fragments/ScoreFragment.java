@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
@@ -32,6 +33,7 @@ public class ScoreFragment extends Fragment {
             "Five",
             "Six",
             "Sum",
+            "Bonus",
             "1 Pair",
             "2 Pair",
             "3 of a Kind",
@@ -52,16 +54,21 @@ public class ScoreFragment extends Fragment {
     private ArrayList<Dice> dices;
 
     private ListView scoreListView;
+
+    private GameActivityInterface gameActivityInterface;
     public ScoreFragment(){
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
-    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices, ArrayList<Player> players){
+    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices,
+                                            ArrayList<Player> players,
+                                            GameActivityInterface gameActivityInterface){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
         args.putParcelableArrayList("dices", dices);
         args.putSerializable("players", players);
+        args.putSerializable("scoreinterface", gameActivityInterface);
         object.setArguments(args);
 
         return object;
@@ -73,6 +80,8 @@ public class ScoreFragment extends Fragment {
         super.onCreate(onSavedInstace);
         dices = getArguments().getParcelableArrayList("dices");
         players = (ArrayList<Player>) getArguments().getSerializable("players");
+        gameActivityInterface =
+                (GameActivityInterface) getArguments().getSerializable("scoreinterface");
 
     }
     @Override
@@ -122,7 +131,8 @@ public class ScoreFragment extends Fragment {
     }
     public void updateAdapter(){
 
-        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(), listOfScores, dices);
+        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
+                listOfScores, dices, gameActivityInterface);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
                 scoreViewAdapter.addSectionHeader(scores[i],players);
@@ -130,13 +140,13 @@ public class ScoreFragment extends Fragment {
             if(i != 0 && i < 7){
                 scoreViewAdapter.addItem(scores[i],players);
             }
-            if(i > 6 && i <8){
+            if(i > 6 && i <9){
                 scoreViewAdapter.addSectionHeader(scores[i], players);
             }
-            if(i > 7 && i < 17 ){
+            if(i > 8 && i < 18 ){
                 scoreViewAdapter.addItem(scores[i], players);
             }
-            if(i > 16){
+            if(i > 17){
                 scoreViewAdapter.addSectionHeader(scores[i], players);
             }
         }

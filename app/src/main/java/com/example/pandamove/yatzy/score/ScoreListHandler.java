@@ -133,60 +133,80 @@ public class ScoreListHandler {
                 return 0;
         }
     }
-    public void setScoreBackground(int player, int viewCase){
-        switch (player){
-            case 0:
-                switch (viewCase){
-                    case 0:
-                        playerOneView = differentLayouts.get(0);
-                        break;
-                    case 1:
-                        playerOneView = differentLayouts.get(1);
-                        break;
-                    case 2:
-                        playerOneView = differentLayouts.get(2);
-                        break;
-                }
-                break;
-            case 1:
-                switch (viewCase){
-                    case 0:
-                        playerTwoView = differentLayouts.get(0);
-                        break;
-                    case 1:
-                        playerTwoView = differentLayouts.get(1);
-                        break;
-                    case 2:
-                        playerTwoView = differentLayouts.get(2);
-                        break;
-                }
-                break;
-            case 2:
-                switch (viewCase){
-                    case 0:
-                        playerThreeView = differentLayouts.get(0);
-                        break;
-                    case 1:
-                        playerThreeView = differentLayouts.get(1);
-                        break;
-                    case 2:
-                        playerThreeView = differentLayouts.get(2);
-                        break;
-                }
-                break;
-            case 3:
-                switch (viewCase){
-                    case 0:
-                        playerFourView = differentLayouts.get(0);
-                        break;
-                    case 1:
-                        playerFourView = differentLayouts.get(1);
-                        break;
-                    case 2:
-                        playerFourView = differentLayouts.get(2);
-                        break;
-                }
-                break;
+    public void setScoreBackground(int playerPos, int viewCase, Player player, String yatzyScore, int whichBackground){
+        if(!player.getScoreKeeper().getActive(yatzyScore)){
+          //  System.out.println("le background" + whichBackground);
+           // System.out.println("how many unactive!!!!!!!!!!!!!");
+            viewCase = 2;
+            switch (playerPos) {
+                case 0:
+                    playerOneView = differentLayouts.get(2);
+                    break;
+                case 1:
+                    playerTwoView = differentLayouts.get(2);
+                    break;
+                case 2:
+                    playerThreeView = differentLayouts.get(2);
+                    break;
+                case 3:
+                    playerFourView = differentLayouts.get(2);
+                    break;
+            }
+        }else {
+            switch (playerPos) {
+                case 0:
+                    switch (viewCase) {
+                        case 0:
+                            playerOneView = differentLayouts.get(0);
+                            break;
+                        case 1:
+                            playerOneView = differentLayouts.get(1);
+                            break;
+                        case 2:
+                            playerOneView = differentLayouts.get(2);
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (viewCase) {
+                        case 0:
+                            playerTwoView = differentLayouts.get(0);
+                            break;
+                        case 1:
+                            playerTwoView = differentLayouts.get(1);
+                            break;
+                        case 2:
+                            playerTwoView = differentLayouts.get(2);
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (viewCase) {
+                        case 0:
+                            playerThreeView = differentLayouts.get(0);
+                            break;
+                        case 1:
+                            playerThreeView = differentLayouts.get(1);
+                            break;
+                        case 2:
+                            playerThreeView = differentLayouts.get(2);
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (viewCase) {
+                        case 0:
+                            playerFourView = differentLayouts.get(0);
+                            break;
+                        case 1:
+                            playerFourView = differentLayouts.get(1);
+                            break;
+                        case 2:
+                            playerFourView = differentLayouts.get(2);
+                            break;
+                    }
+                    break;
+            }
         }
     }
 
@@ -212,6 +232,9 @@ public class ScoreListHandler {
                 if(player.getScoreKeeper().getActive(row)) {
                     if(addOrTemp == 1) {
                         player.getScoreKeeper().setUsedScore(row);
+                        System.out.println("wat is used?? ");
+                    }else if(addOrTemp == 2){
+
                     }
                     this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
                    // players.get(player).getScoreKeeper().setColumnScore(row);
@@ -222,6 +245,8 @@ public class ScoreListHandler {
                 if(player.getScoreKeeper().getActive(row)) {
                     if(addOrTemp == 1) {
                         player.getScoreKeeper().setUsedScore(row);
+                    }else if(addOrTemp == 2){
+
                     }
                     this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
                   //  players.get(player).getScoreKeeper().setColumnScore(row);
@@ -235,6 +260,8 @@ public class ScoreListHandler {
                         this.scorePlayerThree = player.getScoreKeeper().getScoreOnRow(row);
                     }else if(addOrTemp == 0) {
                         this.scorePlayerThree = player.getScoreKeeper().getScoresPossible(row);
+                    }else if(addOrTemp == 2){
+
                     }
                    // players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
@@ -242,11 +269,22 @@ public class ScoreListHandler {
                 break;
             case 3:
                 if(player.getScoreKeeper().getActive(row)) {
-                    if(addOrTemp == 1) {
+
+                    if(addOrTemp == 0) {
+                        this.scorePlayerFour = player.getScoreKeeper().getScoresPossible(row);
+                    }else if(addOrTemp == 1) {
                       //  player.getScoreKeeper().setUsedScore(row);
                         this.scorePlayerFour = player.getScoreKeeper().getScoreOnRow(row);
-                    }else if(addOrTemp == 0) {
-                        this.scorePlayerFour = player.getScoreKeeper().getScoresPossible(row);
+                    }else if(addOrTemp == 2){
+                        this.scorePlayerFour = player.getScoreKeeper().checkBonus();
+                    }else if(addOrTemp == 3){
+                        this.scorePlayerFour = player.getScoreKeeper().getSumOfNumbers();
+                    }else if(addOrTemp == 4){
+                        //total
+                        this.scorePlayerFour = player.getScoreKeeper().getTotal();
+                    }else if(addOrTemp == 5){
+                        //total of all
+                        this.scorePlayerFour = player.getScoreKeeper().getTotalOfAll();
                     }
                    //players.get(player).getScoreKeeper().setColumnScore(row);
                     break;

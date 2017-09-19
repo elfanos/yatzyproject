@@ -115,8 +115,10 @@ public class ScoreHandler {
         for(int i = position; i < dices.size(); i++){
             if((i+1) < dices.size()) {
                 if (dices.get(position).getScore() == dices.get(i + 1).getScore()) {
+                    System.out.println("should be one time?");
                     int value = (dices.get(position).getScore()) + (dices.get(i + 1).getScore());
                     pairCollector.add(value);
+                    System.out.println("wat is ur size" + pairCollector.size() + "and value?" + value);
                     pairs.add(value);
                 }
             }
@@ -154,21 +156,46 @@ public class ScoreHandler {
             }
         }
     }
+    private void checkForPairOrThreeOfAkind(List<Integer> pairCollector){
+        System.out.println("thee of a " + pairCollector.size());
+        int value = 0;
+        for(int i = 0; i < pairCollector.size(); i++){
+            if(pairCollector.size() > 1){
+                if((i+1) < pairCollector.size()){
+                    if(!pairCollector.get(i).equals(pairCollector.get(i+1))){
+
+                        value += pairCollector.get(i);
+                        value += pairCollector.get(i+1);
+                    }else{
+                        System.out.println("thee of a welwel ");
+                        value = 0;
+                    }
+                }
+            }
+        }
+        if(value != 0) {
+            allScores.put(scores[8], value);
+        }
+    }
     private void checkForTwoPairOrFourOfKind(List<Integer> pairCollector){
         int value = 0;
         int fourOfKind = 0;
+        System.out.println("thee of a aw");
         for(int i = 0; i < pairCollector.size(); i++){
             if(pairCollector.size() > 2) {
                 if((i+1) < pairCollector.size()) {
                     if (!pairCollector.get(i).equals(pairCollector.get(i + 1))) {
+
                         value += pairCollector.get(i);
                         value += pairCollector.get(i + 1);
+
                     } else {
                         fourOfKind = pairCollector.get(i) + pairCollector.get(i + 1);
                     }
                 }
             }else{
-                value += pairCollector.get(i);
+                this.checkForPairOrThreeOfAkind(pairCollector);
+               // value += pairCollector.get(i);
             }
         }
         if(value != 0) {

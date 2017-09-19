@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreKeeper;
@@ -31,7 +32,9 @@ public class ScoreViewAdapter extends BaseAdapter {
     private static final int SCORE_ITEM = 1;
     private static final int HEADER_ITEM = 0;
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
+    private GameActivityInterface gameActivityInterface;
     private final int SUM_OF_FIRST_SECTION = 7;
+    private final int BONUS_OF_FIRST_SECTION = 7;
     private final int SUM_OF_TOTAL_SCORE = 17;
     private HashMap<Integer,CellOnClickListener> observeListeners;
     private ArrayList<Dice> dices;
@@ -61,11 +64,15 @@ public class ScoreViewAdapter extends BaseAdapter {
     public int getImageIndex(){
         return imageIndex;
     }
-    public ScoreViewAdapter(Context context, List<ScoreListHandler> playerList, ArrayList<Dice> dices){
+    public ScoreViewAdapter(Context context,
+                            List<ScoreListHandler> playerList,
+                            ArrayList<Dice> dices,
+                            GameActivityInterface gameActivityInterface){
         this.playerList = playerList;
         this.context = context;
         observeListeners = new HashMap<>();
         this.dices = dices;
+        this.gameActivityInterface = gameActivityInterface;
     }
     public void addItem(String yatzyScore, List<Player> players){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false, imageId[imageIndex]);
@@ -118,10 +125,39 @@ public class ScoreViewAdapter extends BaseAdapter {
 
     public void setScoreOnPlayer(int i, Player player, String row){
         int score = player.getScoreKeeper().getScoresPossible(row);
+        this.checkIfScoreExist(player);
         ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
-        ((ScoreListHandler) this.getItem(i)).setScoreBackground(player.getColumnPosition(),1);
+        ((ScoreListHandler) this.getItem(i)).setScoreBackground(player.getColumnPosition(),1, player, row,0);
         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
         this.notifyDataSetChanged();
+    }
+    public void checkIfScoreExist(Player player){
+        for(int i = 0; i < this.getCount(); i++){
+            if(this.getItem(i) instanceof  ScoreListHandler){
+                String row = ((ScoreListHandler) this.getItem(i)).getYatzyScore();
+                int value = player.getScoreKeeper().
+                        getScoresPossible(((ScoreListHandler) this.getItem(i)).
+                                getYatzyScore());
+                //int bonus = player.getScoreKeeper().checkBonus();
+                System.out.println("Value? " + value);
+                System.out.println("Row? " + row);
+                 if(value == 0 && !this.checkIfSumOrBonus(row)){
+                    /* System.out.println("Value? " + value);
+                     System.out.println("Row? " + row);*/
+                     ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
+                     ((ScoreListHandler) this.getItem(i)).setScoreBackground(player.getColumnPosition(),0, player, row,2);
+                     this.notifyDataSetChanged();
+                     //((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
+
+                }
+            }
+        }
+    }
+    private boolean checkIfSumOrBonus(String row){
+        if(row.equals("Bonus") || row.equals("Sum") || row.equals("Total") || row.equals("Total of All")){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -168,7 +204,7 @@ public class ScoreViewAdapter extends BaseAdapter {
                             getColumnPosition()).setCurrentPlayer(true);*/
 
                     ((ScoreListHandler) this.getItem(i)).setScoreBackground(
-                            player.getColumnPosition(),2
+                            player.getColumnPosition(),2, player, yatzyScore, 1
                     );
                     switch (this.checkIfTotalOrSum(
                             ((ScoreListHandler) this.getItem(i)), player.getColumnPosition())
@@ -181,6 +217,7 @@ public class ScoreViewAdapter extends BaseAdapter {
                                    ((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                                    this.notifyDataSetChanged();
                                }
+                                gameActivityInterface.roundsEnd(player);
                             }
                             /*((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                             this.notifyDataSetChanged();*/

@@ -198,7 +198,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 					this.setAngleValue(axis, angleValue, throwThread);
 				}
 			} else{
-				//System.out.println("five amigos?");
+				System.out.println("five amigos?");
 				this.setNewDiceAngleForXnY(throwThread);
 			}
 		} else {

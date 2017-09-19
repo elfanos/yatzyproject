@@ -1,6 +1,5 @@
 package com.example.pandamove.yatzy.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,28 +7,24 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.telecom.Call;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.pandamove.yatzy.*;
-import com.example.pandamove.yatzy.controllers.ListPossibleScores;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -64,7 +59,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private OnButtonClickedListener onButtonClickedListener;
-    private ListPossibleScores  listPossibleScores;
+    private GameActivityInterface gameActivityInterface;
     private HashMap listOfPossibleScores;
     private ArrayList<DiceSurfaceView> diceList;
     private ArrayList<Dice> dices;
@@ -76,6 +71,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     boolean doneShaking = false;
     private Random rand = new Random();
     public int numberOfThreadsDone = 0;
+    public int numberOfThreadsStarted = 0;
 
 
     /**
@@ -88,13 +84,13 @@ public class InGameFragment extends Fragment implements SensorEventListener{
      * */
     public static InGameFragment newInstance(int page,
                                              OnButtonClickedListener onButtonClickedListener,
-                                             ArrayList<Dice> dices, ListPossibleScores  listPossibleScores,
+                                             ArrayList<Dice> dices, GameActivityInterface gameActivityInterface,
                                              HashMap<String,Integer> listOfPossibleScores){
         System.out.println("inside fragment XD");
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         args.putSerializable("interface",onButtonClickedListener);
-        args.putSerializable("scoreinterface", listPossibleScores);
+        args.putSerializable("scoreinterface", gameActivityInterface);
         args.putSerializable("hashmap", listOfPossibleScores);
         args.putParcelableArrayList("dices", dices);
         InGameFragment fragment = new InGameFragment();
@@ -119,8 +115,8 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         onButtonClickedListener =
                 (OnButtonClickedListener) getArguments().getSerializable("interface");
-        listPossibleScores =
-                (ListPossibleScores) getArguments().getSerializable("scoreinterface");
+        gameActivityInterface =
+                (GameActivityInterface) getArguments().getSerializable("scoreinterface");
 
         listOfPossibleScores =
                 (HashMap) getArguments().getSerializable("hashmap");
@@ -171,7 +167,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         //Initialize throw threads
         for(int i = 0; i < diceList.size(); i++){
             ThrowThread throwThread =  new ThrowThread(diceList.get(i), hashDices.get(i),
-                    hashDices, listOfPossibleScores, listPossibleScores, throwHandler);
+                    hashDices, listOfPossibleScores, gameActivityInterface, throwHandler);
             int random = rand.nextInt((5)+1);
             diceList.get(i).changePositionOfDice(random+1);
             hashDices.get(i).setScore(random+1);
@@ -179,36 +175,42 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         }
 
         throwRunnable = new ThrowThread(diceList.get(0),hashDices.get(1),
-                hashDices,listOfPossibleScores, listPossibleScores,throwHandler);
+                hashDices,listOfPossibleScores, gameActivityInterface,throwHandler);
         System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
 
         diceSelectedButtons.get(2).setVisibility(View.VISIBLE);
 
         handler = new Handler(callback);
 
+        gameActivityInterface.setPlayerView(view);
+        gameActivityInterface.setScoreView(view);
 
         buttonThrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!throwIsExcuting()) {
-                    for (int i = 0; i < throwRunnables.size(); i++) {
-                        if (i + 1 < throwRunnables.size()) {
-                            //This is a hack, use one invisible open gl as surface thread
-                            //and apply rotation on the other surface that's why zero
-                            //is skipped.
-                            if(throwRunnables.get(i+1).getSurface().isSurfaceIsActive()) {
-                                diceList.get(0).queueEvent(throwRunnables.get(i + 1));
-                                if (throwRunnables.get(i + 1).getRunning()) {
-                                    throwRunnables.get(i + 1).endThis();
-                                } else {
-                                    throwRunnables.get(i + 1).start();
+                if(!gameActivityInterface.getIfRoundIsOver()) {
+                    if (!throwIsExcuting()) {
+                        gameActivityInterface.setThrows(v);
+                        for (int i = 0; i < throwRunnables.size(); i++) {
+                            if (i + 1 < throwRunnables.size()) {
+                                //This is a hack, use one invisible open gl as surface thread
+                                //and apply rotation on the other surface that's why zero
+                                //is skipped.
+                                if (throwRunnables.get(i + 1).getSurface().isSurfaceIsActive()) {
+                                    numberOfThreadsStarted = i;
+                                    diceList.get(0).queueEvent(throwRunnables.get(i + 1));
+                                    if (throwRunnables.get(i + 1).getRunning()) {
+                                        throwRunnables.get(i + 1).endThis();
+                                    } else {
+                                        throwRunnables.get(i + 1).start();
+                                    }
                                 }
                             }
-                        }
 
+                        }
+                    } else {
+                        System.out.println("still throwing :D");
                     }
-                }else{
-                    System.out.println("still throwing :D");
                 }
             }
         });
@@ -421,7 +423,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                     System.out.println("values " + (sparseArray.get(key).getScore()));
                     System.out.println("surface Index " +  key);
                 }
-                listPossibleScores.onThrowPostPossibleScores(sparseArray);
+                gameActivityInterface.onThrowPostPossibleScores(sparseArray);
                 return true;
             }else{
                 return false;
@@ -555,7 +557,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         boolean newAngleIsSetted = false;
         private Handler uiHandler;
         private HashMap listOfScores;
-        private ListPossibleScores listPossibleScores;
+        private GameActivityInterface gameActivityInterface;
         int[] currentAngle = null;
         int xAngle = 0;
         int yAngle = 0;
@@ -572,13 +574,13 @@ public class InGameFragment extends Fragment implements SensorEventListener{
          * */
         public ThrowThread(DiceSurfaceView diceSurface,
                            Dice dice, SparseArray<Dice> dices, HashMap listOfScores,
-                           ListPossibleScores listOfPossibleScores, Handler uiHandler){
+                           GameActivityInterface listOfPossibleScores, Handler uiHandler){
             this.surface = diceSurface;
             this.dice = dice;
             this.dices = dices;
             this.uiHandler = uiHandler;
             this.listOfScores = listOfScores;
-            this.listPossibleScores = listOfPossibleScores;
+            this.gameActivityInterface = listOfPossibleScores;
             currentAngle = surface.getAngleOfDice(
                     this.dice.getScore()
             );
@@ -665,7 +667,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         }
 
         private boolean checkIfThreadIsDone(){
-            if(numberOfThreadsDone > 5){
+            if(numberOfThreadsDone >= numberOfThreadsStarted){
                 numberOfThreadsDone = 0;
               //  System.out.println("new checkscore");
                 return true;
@@ -685,13 +687,15 @@ public class InGameFragment extends Fragment implements SensorEventListener{
          * */
        public synchronized void endThis() {
             numberOfThreadsDone++;
-            if(this.checkIfThreadIsDone()){
-                //     checkScores();
-                /* calls the interface method communicate with other fragment*/
-                //listPossibleScores.onThrowPostPossibleScores(dices);
-                // uiHandler.sendMessage()
+
+            /*if(this.checkIfThreadIsDone()){
+
+                System.out.println("it is the end?");
                 this.sendMessageToMainThread();
-            }
+            }else{
+                System.out.println("jamna?" + numberOfThreadsDone);
+            }*/
+           this.sendMessageToMainThread();
             if (thread != null) {
                 running = false;
                 thread = null;

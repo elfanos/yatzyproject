@@ -2,6 +2,7 @@ package com.example.pandamove.yatzy.player;
 
 import com.example.pandamove.yatzy.score.ScoreKeeper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,12 +10,16 @@ import java.util.Iterator;
 /**
  * Created by Rallmo on 2017-04-05.
  */
-public class Player {
+public class Player implements Serializable{
     private String name;
     private ScoreKeeper scoreKeeper;
     private int columnPosition;
     private boolean currentPlayer;
     private HashMap<String,Integer> scoresInRow;
+    private int round;
+    private int numberOfThrows;
+    private boolean roundEnds;
+    private boolean scoreIsSet;
 
     /**
      * Constructor player
@@ -27,8 +32,46 @@ public class Player {
         scoreKeeper = new ScoreKeeper(scores);
         scoresInRow = new HashMap<>();
         this.name = name;
+        round = 1;
     }
 
+    public boolean isScoreIsSet() {
+        return scoreIsSet;
+    }
+
+    public void setScoreIsSet(boolean scoreIsSet) {
+        this.scoreIsSet = scoreIsSet;
+    }
+
+    public void incrementRound(){
+        round++;
+    }
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
+    public int getNumberOfThrows() {
+        return numberOfThrows;
+    }
+
+    public void setNumberOfThrows(int numberOfThrows) {
+        this.numberOfThrows = numberOfThrows;
+    }
+    public void increseNumberOfThrows(){
+        this.numberOfThrows++;
+    }
+
+    public boolean isRoundEnds() {
+        return roundEnds;
+    }
+
+    public void setRoundEnds(boolean roundEnds) {
+        this.roundEnds = roundEnds;
+    }
     public String getName(){
         return name;
     }
