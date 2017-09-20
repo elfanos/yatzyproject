@@ -139,8 +139,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                         getScoresPossible(((ScoreListHandler) this.getItem(i)).
                                 getYatzyScore());
                 //int bonus = player.getScoreKeeper().checkBonus();
-                System.out.println("Value? " + value);
-                System.out.println("Row? " + row);
+                //System.out.println("Value? " + value);
+                //System.out.println("Row? " + row);
                  if(value == 0 && !this.checkIfSumOrBonus(row)){
                     /* System.out.println("Value? " + value);
                      System.out.println("Row? " + row);*/
@@ -218,6 +218,8 @@ public class ScoreViewAdapter extends BaseAdapter {
                                    this.notifyDataSetChanged();
                                }
                                 gameActivityInterface.roundsEnd(player);
+                            }else{
+                                System.out.println("not active yo");
                             }
                             /*((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                             this.notifyDataSetChanged();*/

@@ -31,10 +31,10 @@ public class CellOnClickListener implements View.OnClickListener {
     }
     @Override
     public void onClick(View view) {
-
+        System.out.println("le click");
         if(view.isPressed()) {
             HashMap<Integer,CellOnClickListener> listeners = scoreViewAdapter.getObserveListeners();
-            System.out.println("wats le position??: " + position);
+            //System.out.println("wats le position??: " + position);
             System.out.println("how many??: " + scoreViewAdapter.getObserveListeners().size());
             player.setNumberOfThrows(0);
             player.incrementRound();

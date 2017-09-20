@@ -152,7 +152,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         Fragment scoreFragment = fragments.get(1);
         players.get(3).setCurrentPlayer(true);
 
-
         Player player = checkCurrentPlayer();
         if(player != null) {
             player.getScoreKeeper().setScores(listOfPossibleScores);
@@ -198,15 +197,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         players.get(0).setScoreIsSet(true);
         players.get(1).setScoreIsSet(true);
         players.get(2).setScoreIsSet(true);
-        int next = gameObjects.getNextPlayer(player.getColumnPosition());
-        boolean checkIfLastPlayer = gameObjects.checkIfLastPlayer();
         this.setScoreForSumNNumbers(player);
         if(gameObjects.checkIfLastPlayer()){
             gameObjects.initializeNextRound();
             ((TextView)findViewById(R.id.rounds)).setText(String.format("%s",gameObjects.getRound()));
-            System.out.println("check half score" + player.getScoreKeeper().checkIfItHalfScore());
         }
-        System.out.println("le column pos:" +  next + checkIfLastPlayer);
 
     }
     @Override
@@ -266,12 +261,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 Fragment scoreFragment =  fragments.get(1);
                 Player player = players.get(1);
                 if(scoreFragment instanceof ScoreFragment){;
-                    /*for(int i = 1; i < 5; i++) {
-
-                        ((ScoreFragment) scoreFragment).
-                                getScoreListAdapater().
-                                addScore(scores[i], 5, 1);
-                    }*/
                     listOfPossibleScores.put(scores[1],diceScore[1]);
                     listOfPossibleScores.put(scores[3],diceScore[2]);
                     listOfPossibleScores.put(scores[8],diceScore[3]);

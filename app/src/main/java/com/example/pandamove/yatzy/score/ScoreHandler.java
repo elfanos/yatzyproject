@@ -115,10 +115,8 @@ public class ScoreHandler {
         for(int i = position; i < dices.size(); i++){
             if((i+1) < dices.size()) {
                 if (dices.get(position).getScore() == dices.get(i + 1).getScore()) {
-                    System.out.println("should be one time?");
                     int value = (dices.get(position).getScore()) + (dices.get(i + 1).getScore());
                     pairCollector.add(value);
-                    System.out.println("wat is ur size" + pairCollector.size() + "and value?" + value);
                     pairs.add(value);
                 }
             }
@@ -180,7 +178,6 @@ public class ScoreHandler {
     private void checkForTwoPairOrFourOfKind(List<Integer> pairCollector){
         int value = 0;
         int fourOfKind = 0;
-        System.out.println("thee of a aw");
         for(int i = 0; i < pairCollector.size(); i++){
             if(pairCollector.size() > 2) {
                 if((i+1) < pairCollector.size()) {
