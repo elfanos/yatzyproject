@@ -420,8 +420,8 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             if(sparseArray != null) {
                 for(int i = 0; i < sparseArray.size(); i++){
                     int key = sparseArray.keyAt(i);
-                    System.out.println("values " + (sparseArray.get(key).getScore()));
-                    System.out.println("surface Index " +  key);
+                  //  System.out.println("values " + (sparseArray.get(key).getScore()));
+                   // System.out.println("surface Index " +  key);
                 }
                 gameActivityInterface.onThrowPostPossibleScores(sparseArray);
                 return true;

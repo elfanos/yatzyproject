@@ -7,7 +7,9 @@ import com.example.pandamove.yatzy.dice.Dice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rallmo on 2017-04-05.
@@ -58,11 +60,19 @@ public class ScoreHandler {
         this.checkForFullHouse();
         this.checkForChance();
         this.checkForYatzy();
+        this.addZeroOnOtherScores();
     }
     public HashMap<String,Integer> possibleScores(){
         return allScores;
     }
 
+    private void addZeroOnOtherScores(){
+        for(int i = 0; i < scores.length; i++){
+            if(!allScores.containsKey(scores[i])){
+                allScores.put(scores[i], 0);
+            }
+        }
+    }
     private void checkForNumbers(){
         int one = 0;
         int two = 0;

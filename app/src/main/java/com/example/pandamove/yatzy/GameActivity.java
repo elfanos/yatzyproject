@@ -12,6 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.controllers.GameActivityInterface;
@@ -48,6 +50,12 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private ArrayList<Player> players;
 
     private GameObjects gameObjects;
+
+    private int ralle = 0;
+    private static final ArrayList<Animation> animations = new ArrayList<>();
+
+    private static Animation scoreAnimation;
+    Animation animation;
 
     private String[] scores = {
             "Header",
@@ -86,20 +94,29 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
+
+        animation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.anim_alpha);
+        //animation = null;
+
         players = new ArrayList<>();
         Player player = new Player("ralle", scores);
         player.setColumnPosition(0);
+        player.setNumberOfThrows(0);
+        player.setCurrentPlayer(true);
         players.add(player);
         Player player2 = new Player("ralle2",scores);
         player2.setColumnPosition(1);
+        player2.setNumberOfThrows(0);
         players.add(player2);
         Player player3 = new Player("ralle3", scores);
         player3.setColumnPosition(2);
+        player3.setNumberOfThrows(0);
         players.add(player3);
         Player player4 = new Player("ralle4",scores);
         player4.setColumnPosition(3);
         player4.setNumberOfThrows(0);
-        player4.setCurrentPlayer(true);
+        //player4.setCurrentPlayer(true);
         players.add(player4);
 
         gameObjects = new GameObjects(players);
@@ -145,18 +162,18 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         resetHashMap();
         ScoreHandler scoreHandler = new ScoreHandler(dices);
         listOfPossibleScores = scoreHandler.possibleScores();
-        printMap(listOfPossibleScores);
+       // printMap(listOfPossibleScores);
         resetHashMap();
         ScoreHandler scoreHandler2 = new ScoreHandler(dices);
         listOfPossibleScores = scoreHandler2.possibleScores();
         Fragment scoreFragment = fragments.get(1);
-        players.get(3).setCurrentPlayer(true);
+        players.get(2).setCurrentPlayer(true);
 
         Player player = checkCurrentPlayer();
         if(player != null) {
             player.getScoreKeeper().setScores(listOfPossibleScores);
             if (scoreFragment instanceof ScoreFragment) {
-                ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player);
+                ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
             }
         }
 
@@ -193,14 +210,25 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     }
     @Override
     public void roundsEnd(Player player){
-        player.setScoreIsSet(true);
-        players.get(0).setScoreIsSet(true);
-        players.get(1).setScoreIsSet(true);
-        players.get(2).setScoreIsSet(true);
-        this.setScoreForSumNNumbers(player);
+        //players.get(0).setScoreIsSet(true);
+        //players.get(1).setScoreIsSet(true);
+        //players.get(2).setScoreIsSet(true);
+       // this.setScoreForSumNNumbers(player);
+
+        this.getCurrentPlayer().setCurrentPlayer(false);
+        ralle++;
         if(gameObjects.checkIfLastPlayer()){
             gameObjects.initializeNextRound();
             ((TextView)findViewById(R.id.rounds)).setText(String.format("%s",gameObjects.getRound()));
+        }else{
+            System.out.println("game obje playa" + gameObjects.getNextPlayer(player.getColumnPosition()));
+            player.setCurrentPlayer(false);
+            player.setScoreIsSet(true);
+            players.get(
+                    gameObjects.getNextPlayer(player.getColumnPosition())
+            ).setCurrentPlayer(true);
+            System.out.println("false??: " + players.get(2).isCurrentPlayer());
+            System.out.println("true?: " + players.get(3).isCurrentPlayer());
         }
 
     }
@@ -266,7 +294,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     listOfPossibleScores.put(scores[8],diceScore[3]);
                     listOfPossibleScores.put(scores[8],diceScore[3]);
                    // this.printMap(listOfPossibleScores);
-                    ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player);
+                    ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
 
                 }
                 break;

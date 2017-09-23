@@ -39,6 +39,7 @@ public class GameObjects {
     }
     public void initializeNextRound(){
         if(!this.checkIfLastRound()){
+            System.out.println("yamanlast");
             this.setRound();
         }else{
             System.out.println("endgame");

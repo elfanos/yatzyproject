@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -56,6 +58,8 @@ public class ScoreFragment extends Fragment {
     private ListView scoreListView;
 
     private GameActivityInterface gameActivityInterface;
+
+    private Animation scoreSetAnimation;
     public ScoreFragment(){
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
@@ -89,7 +93,6 @@ public class ScoreFragment extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.scoregame_page, container, false);
         scoreListView = (ListView) view.findViewById(R.id.list_view_score);
-
         /**
          * TODO fix so that set column arent static?
          * */
@@ -130,27 +133,33 @@ public class ScoreFragment extends Fragment {
         return view;
     }
     public void updateAdapter(){
-
+        int headerItem = 0;
         scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
                 listOfScores, dices, gameActivityInterface);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
-                scoreViewAdapter.addSectionHeader(scores[i],players);
+                scoreViewAdapter.addSectionHeader(scores[i],players, headerItem);
+                headerItem++;
             }
             if(i != 0 && i < 7){
                 scoreViewAdapter.addItem(scores[i],players);
             }
             if(i > 6 && i <9){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                headerItem++;
             }
             if(i > 8 && i < 18 ){
                 scoreViewAdapter.addItem(scores[i], players);
             }
             if(i > 17){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                headerItem++;
             }
         }
         scoreListView.setAdapter(scoreViewAdapter);
+    }
+    public Animation getScoreAnimation(){
+        return null;
     }
     public int listOfScoresCount(){
         return listOfScores.size();
