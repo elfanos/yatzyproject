@@ -7,7 +7,9 @@ import com.example.pandamove.yatzy.dice.Dice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rallmo on 2017-04-05.
@@ -58,11 +60,19 @@ public class ScoreHandler {
         this.checkForFullHouse();
         this.checkForChance();
         this.checkForYatzy();
+        this.addZeroOnOtherScores();
     }
     public HashMap<String,Integer> possibleScores(){
         return allScores;
     }
 
+    private void addZeroOnOtherScores(){
+        for(int i = 0; i < scores.length; i++){
+            if(!allScores.containsKey(scores[i])){
+                allScores.put(scores[i], 0);
+            }
+        }
+    }
     private void checkForNumbers(){
         int one = 0;
         int two = 0;
@@ -154,6 +164,27 @@ public class ScoreHandler {
             }
         }
     }
+    private void checkForPairOrThreeOfAkind(List<Integer> pairCollector){
+        System.out.println("thee of a " + pairCollector.size());
+        int value = 0;
+        for(int i = 0; i < pairCollector.size(); i++){
+            if(pairCollector.size() > 1){
+                if((i+1) < pairCollector.size()){
+                    if(!pairCollector.get(i).equals(pairCollector.get(i+1))){
+
+                        value += pairCollector.get(i);
+                        value += pairCollector.get(i+1);
+                    }else{
+                        System.out.println("thee of a welwel ");
+                        value = 0;
+                    }
+                }
+            }
+        }
+        if(value != 0) {
+            allScores.put(scores[8], value);
+        }
+    }
     private void checkForTwoPairOrFourOfKind(List<Integer> pairCollector){
         int value = 0;
         int fourOfKind = 0;
@@ -161,14 +192,17 @@ public class ScoreHandler {
             if(pairCollector.size() > 2) {
                 if((i+1) < pairCollector.size()) {
                     if (!pairCollector.get(i).equals(pairCollector.get(i + 1))) {
+
                         value += pairCollector.get(i);
                         value += pairCollector.get(i + 1);
+
                     } else {
                         fourOfKind = pairCollector.get(i) + pairCollector.get(i + 1);
                     }
                 }
             }else{
-                value += pairCollector.get(i);
+                this.checkForPairOrThreeOfAkind(pairCollector);
+               // value += pairCollector.get(i);
             }
         }
         if(value != 0) {

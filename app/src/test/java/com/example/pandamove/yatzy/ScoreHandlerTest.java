@@ -401,5 +401,27 @@ public class ScoreHandlerTest {
         );
     }
 
+    @Test
+    public void checkTwoPair(){
+        dices = new SparseArray<Dice>();
+        //Should be dummy :D
+        Dice newDice = new Dice(true, 3, 0);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 1);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 2);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 4, 3);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 4);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 6, 5);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        scoreHandler = new ScoreHandler(dices);
+
+        Object yatzy = scoreHandler.possibleScores().get("2 Pair");
+        Assert.assertNull(yatzy);
+    }
+
 
 }

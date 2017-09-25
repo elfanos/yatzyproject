@@ -1,18 +1,16 @@
 package com.example.pandamove.yatzy.fragments;
 
 import android.content.Context;
-import android.hardware.SensorManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import com.example.pandamove.yatzy.controllers.ListPossibleScores;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
-import com.example.pandamove.yatzy.controllers.SensorChanging;
 import com.example.pandamove.yatzy.dice.Dice;
+import com.example.pandamove.yatzy.player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,11 +24,11 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
    // private InGameFragment inGameFragment;
     private ScoreFragment scoreFragment;
     private OnButtonClickedListener onButtonClickedListener;
-    private ListPossibleScores listPossibleScores;
+    private GameActivityInterface gameActivityInterface;
     private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
     private ArrayList<Dice> dices;
-    private SensorChanging sensorManager;
+    private ArrayList<Player> players;
     private int[] imageResId = {
 
     };
@@ -39,14 +37,14 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                                       OnButtonClickedListener onButtonClickedListener,
                                       SparseArray<Fragment> fragments, ArrayList<Dice> dices,
                                       HashMap<String, Integer> listOfPossibleScores,
-                                      ListPossibleScores listPossibleScores, SensorChanging sensorManager){
+                                      GameActivityInterface gameActivityInterface, ArrayList<Player> players){
         super(fm);
         this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
         this.dices = dices;
         this.listOfPossibleScores = listOfPossibleScores;
-        this.listPossibleScores = listPossibleScores;
-        this.sensorManager = sensorManager;
+        this.gameActivityInterface = gameActivityInterface;
+        this.players = players;
     }
 
     @Override
@@ -63,12 +61,13 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                 return inGameFragment.newInstance(
                         1,
                         onButtonClickedListener,
-                        dices,listPossibleScores,listOfPossibleScores
+                        dices, gameActivityInterface,listOfPossibleScores
                 );
             case 2:
                 return ScoreFragment.newInstance(
                         2,
-                        dices
+                        dices,
+                        players, gameActivityInterface
                 );
             default:
         }

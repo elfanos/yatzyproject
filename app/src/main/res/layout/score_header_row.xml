@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingBottom="0dp"
     android:paddingRight="10dp"
     android:paddingLeft="10dp"
     android:descendantFocusability="blocksDescendants">
@@ -30,40 +30,48 @@
 
         <TextView
             android:id="@+id/hplayerone"
-            android:layout_width="54dp"
+            android:layout_width="61dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="0dp"
             android:singleLine="false"
             android:text="Medium Text"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#2981a1" />
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/hplayertwo"
-            android:layout_width="53dp"
+            android:layout_width="61dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="0dp"
             android:text="Medium Text"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#26b91c" />
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/hplayerthree"
             android:layout_width="61dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="2dp"
             android:text="Medium Text"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#cb1a23" />
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/hplayerfour"
             android:layout_width="61dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_marginStart="0dp"
             android:text="Medium Text"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#e1de06" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -366,7 +366,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) 
 	{
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-		float[] values = hextoRGB("#354e15");
+		float[] values = hextoRGB("#FFFFFF");
 		GLES20.glClearColor(values[0], values[1], values[2], 1.0f);
 		// Use culling to remove back faces.
 //		GLES20.glEnable(GLES20.GL_CULL_FACE);

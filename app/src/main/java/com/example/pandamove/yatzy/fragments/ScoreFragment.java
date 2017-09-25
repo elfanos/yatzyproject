@@ -5,10 +5,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
@@ -32,6 +35,7 @@ public class ScoreFragment extends Fragment {
             "Five",
             "Six",
             "Sum",
+            "Bonus",
             "1 Pair",
             "2 Pair",
             "3 of a Kind",
@@ -52,15 +56,23 @@ public class ScoreFragment extends Fragment {
     private ArrayList<Dice> dices;
 
     private ListView scoreListView;
+
+    private GameActivityInterface gameActivityInterface;
+
+    private Animation scoreSetAnimation;
     public ScoreFragment(){
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
-    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices){
+    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices,
+                                            ArrayList<Player> players,
+                                            GameActivityInterface gameActivityInterface){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
         args.putParcelableArrayList("dices", dices);
+        args.putSerializable("players", players);
+        args.putSerializable("scoreinterface", gameActivityInterface);
         object.setArguments(args);
 
         return object;
@@ -71,6 +83,9 @@ public class ScoreFragment extends Fragment {
     public void onCreate(Bundle onSavedInstace){
         super.onCreate(onSavedInstace);
         dices = getArguments().getParcelableArrayList("dices");
+        players = (ArrayList<Player>) getArguments().getSerializable("players");
+        gameActivityInterface =
+                (GameActivityInterface) getArguments().getSerializable("scoreinterface");
 
     }
     @Override
@@ -78,11 +93,10 @@ public class ScoreFragment extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.scoregame_page, container, false);
         scoreListView = (ListView) view.findViewById(R.id.list_view_score);
-
         /**
          * TODO fix so that set column arent static?
          * */
-        Player player = new Player("ralle", scores);
+       /* Player player = new Player("ralle", scores);
         player.setColumnPosition(0);
         players.add(player);
         Player player2 = new Player("ralle2",scores);
@@ -93,7 +107,7 @@ public class ScoreFragment extends Fragment {
         players.add(player3);
         Player player4 = new Player("ralle4",scores);
         player4.setColumnPosition(3);
-        players.add(player4);
+        players.add(player4);*/
         if(scoreViewAdapter == null){
             this.updateAdapter();
         }
@@ -119,26 +133,33 @@ public class ScoreFragment extends Fragment {
         return view;
     }
     public void updateAdapter(){
-
-        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(), listOfScores, dices);
+        int headerItem = 0;
+        scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
+                listOfScores, dices, gameActivityInterface);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
-                scoreViewAdapter.addSectionHeader(scores[i],players);
+                scoreViewAdapter.addSectionHeader(scores[i],players, headerItem);
+                headerItem++;
             }
             if(i != 0 && i < 7){
                 scoreViewAdapter.addItem(scores[i],players);
             }
-            if(i > 6 && i <8){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+            if(i > 6 && i <9){
+                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                headerItem++;
             }
-            if(i > 7 && i < 17 ){
+            if(i > 8 && i < 18 ){
                 scoreViewAdapter.addItem(scores[i], players);
             }
-            if(i > 16){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
+            if(i > 17){
+                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                headerItem++;
             }
         }
         scoreListView.setAdapter(scoreViewAdapter);
+    }
+    public Animation getScoreAnimation(){
+        return null;
     }
     public int listOfScoresCount(){
         return listOfScores.size();
