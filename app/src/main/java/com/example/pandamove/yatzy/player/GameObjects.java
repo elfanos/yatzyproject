@@ -16,20 +16,20 @@ public class GameObjects {
         round = 1;
     }
     public int getNextPlayer(int playerPos){
-        if(players.size() >= 1) {
+        if(players.size() > 1) {
             switch (playerPos) {
                 case 0:
                     return 1;
                 case 1:
-                    if(players.size() >= 2) {
+                    if(players.size() > 2) {
                         return 2;
                     }
                 case 2:
-                    if(players.size() >= 3) {
+                    if(players.size() > 3) {
                         return 3;
                     }
                 case 3:
-                    if(players.size() >= 4) {
+                    if(players.size() > 4) {
                         return 0;
                     }
                 default:
@@ -41,6 +41,7 @@ public class GameObjects {
         if(!this.checkIfLastRound()){
             System.out.println("yamanlast");
             this.setRound();
+
         }else{
             System.out.println("endgame");
         }
@@ -51,6 +52,13 @@ public class GameObjects {
             return false;
         }else{
             return true;
+        }
+    }
+    public void refreshScoreIsSetted(){
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).isScoreIsSet()){
+                players.get(i).setScoreIsSet(false);
+            }
         }
     }
     public boolean checkIfLastPlayer(){

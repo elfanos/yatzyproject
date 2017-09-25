@@ -71,18 +71,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 			}
 
 
-		} else if (event.getAction() == MotionEvent.ACTION_MOVE)
-		{
-			renderer.xAngle += (touchedX - event.getX())/2f;
-			renderer.yAngle += (touchedY - event.getY())/2f;
-			/*System.out.println("touchedX: "+ touchedX);
-			System.out.println("eventX: "+ event.getX());
-			System.out.println("touchedY: "+ touchedY);
-			System.out.println("event.getY(): "+ event.getY());*/
-			/*System.out.println("le angle ratio x: " + (touchedX - event.getX())/2f);
-			System.out.println("le angle ratio y: " + (touchedY - event.getY())/2f);*/
-			touchedX = event.getX();
-			touchedY = event.getY();
 		}
 		return true;
 		

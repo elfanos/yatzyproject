@@ -21,5 +21,7 @@ public interface GameActivityInterface extends Serializable {
     void setThrows(View v);
     void setScoreForPlayer(View v);
     void roundsEnd(Player player);
+    void updateView(View v);
+    void updateHighScore(View v);
 
 }

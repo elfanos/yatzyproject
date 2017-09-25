@@ -1,11 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_light"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.pandamove.yatzy.GameActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relativeLayout2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/manyplayersText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="Select how many players"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:layout_below="@+id/yatzyTime"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/playerButtonOne"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/manyplayersText"
+        android:layout_marginEnd="3dp"
+        android:layout_marginTop="42dp"
+        android:layout_toStartOf="@+id/startGameButton"
+        android:background="@drawable/roundcorner_buttonone"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/playerButtonTwo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/playerButtonOne"
+        android:layout_marginEnd="3dp"
+        android:layout_toEndOf="@+id/playerButtonOne"
+        android:alpha="0.5"
+        android:background="@drawable/roundcorner_buttontwo"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="@android:color/background_light" />
+
+    <TextView
+        android:id="@+id/playerButtonThree"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/playerButtonTwo"
+        android:layout_marginEnd="3dp"
+        android:layout_toEndOf="@+id/playerButtonTwo"
+        android:alpha="0.5"
+        android:background="@drawable/roundcorner_buttonthree"
+        android:gravity="center"
+        android:text="3"
+        android:textColor="@android:color/background_light" />
+
+    <TextView
+        android:id="@+id/playerButtonFour"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/playerButtonThree"
+        android:layout_toEndOf="@+id/playerButtonThree"
+        android:alpha="0.5"
+        android:background="@drawable/roundcorner_buttonfour"
+        android:gravity="center"
+        android:text="4"
+        android:textColor="@android:color/background_light" />
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_marginTop="38dp"
+        android:layout_below="@+id/playerButtonOne"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/yatzyTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="78dp"
+        android:text="YATZY TIME"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

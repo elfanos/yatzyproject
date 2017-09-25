@@ -1,6 +1,7 @@
 package com.example.pandamove.yatzy.score;
 
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
@@ -72,6 +73,20 @@ public class ScoreListHandler {
         return yatzyScore;
     }
 
+    public void setScorePlayerOne(int scorePlayerOne) {
+        this.scorePlayerOne = scorePlayerOne;
+    }
+
+    public void setScorePlayerTwo(int scorePlayerTwo) {
+        this.scorePlayerTwo = scorePlayerTwo;
+    }
+
+    public void setScorePlayerThree(int scorePlayerThree) {
+        this.scorePlayerThree = scorePlayerThree;
+    }
+    public void setScorePlayerFour(int scorePlayerFour) {
+        this.scorePlayerFour = scorePlayerFour;
+    }
     public CellOnClickListener getListener(int player, TextView scoreTextView){
         switch (player){
             case 0:
@@ -99,6 +114,12 @@ public class ScoreListHandler {
     public int getHeaderItem(int headerColumn){
         return headerItem.getHeaderBackground(headerColumn);
     }
+    public void setHeaderValueScore(String row, Player player){
+        this.headerItem.setHeaderValue(row, player);
+    }
+    public String getHeaderScore(int playerPos){
+        return this.headerItem.getHeaderScore(playerPos);
+    }
     public boolean headerVisible(int headerColumn){
         return headerItem.getVisible(headerColumn);
     }
@@ -106,29 +127,36 @@ public class ScoreListHandler {
                             String yatzyScore, int position){
         switch (player.getColumnPosition()){
             case 0:
-            //    System.out.println("well wat is happening?");
-                playerOneListener = new CellOnClickListener(
-                        player, scoreViewAdapter, yatzyScore, position
-                        );
-                scoreViewAdapter.addToObserveListeners(position,playerOneListener);
+                if(player.getScoreKeeper().getActive(yatzyScore)) {
+                    playerOneListener = new CellOnClickListener(
+                            player, scoreViewAdapter, yatzyScore, position
+                    );
+                    scoreViewAdapter.addToObserveListeners(position, playerOneListener);
+                }
                 break;
             case 1:
-                playerTwoListener = new CellOnClickListener(
-                        player, scoreViewAdapter, yatzyScore, position
-                );
-                scoreViewAdapter.addToObserveListeners(position,playerTwoListener);
+                if(player.getScoreKeeper().getActive(yatzyScore)) {
+                    playerTwoListener = new CellOnClickListener(
+                            player, scoreViewAdapter, yatzyScore, position
+                    );
+                    scoreViewAdapter.addToObserveListeners(position, playerTwoListener);
+                }
                 break;
             case 2:
-                playerThreeListener = new CellOnClickListener(
-                        player, scoreViewAdapter, yatzyScore, position
-                );
-                scoreViewAdapter.addToObserveListeners(position,playerThreeListener);
+                if(player.getScoreKeeper().getActive(yatzyScore)) {
+                    playerThreeListener = new CellOnClickListener(
+                            player, scoreViewAdapter, yatzyScore, position
+                    );
+                    scoreViewAdapter.addToObserveListeners(position,playerThreeListener);
+                }
                 break;
             case 3:
-                playerFourListener = new CellOnClickListener(
-                        player, scoreViewAdapter, yatzyScore, position
-                );
-                scoreViewAdapter.addToObserveListeners(position,playerFourListener);
+                if(player.getScoreKeeper().getActive(yatzyScore)) {
+                    playerFourListener = new CellOnClickListener(
+                            player, scoreViewAdapter, yatzyScore, position
+                    );
+                    scoreViewAdapter.addToObserveListeners(position, playerFourListener);
+                }
                 break;
         }
 
@@ -167,8 +195,6 @@ public class ScoreListHandler {
                                    Player player, String yatzyScore, int whichBackground){
         //System.out.println("how manyawd" + viewCase);
         if(!player.getScoreKeeper().getActive(yatzyScore)){
-          //  System.out.println("le background" + whichBackground);
-             System.out.println("how many unactive!!!!!!!!!!!!!");
             viewCase = 2;
             switch (playerPos) {
                 case 0:
@@ -246,7 +272,6 @@ public class ScoreListHandler {
                             playerFourView = differentLayouts.get(2);
                             break;
                         case 3:
-                            System.out.println("jaman?=?");
                             playerFourView = differentLayouts.get(3);
                             break;
                     }
@@ -290,12 +315,13 @@ public class ScoreListHandler {
             case 0:
                 if(player.getScoreKeeper().getActive(row)) {
                     if(addOrTemp == 1) {
-                        player.getScoreKeeper().setUsedScore(row);
-                        System.out.println("wat is used?? ");
+                        // player.getScoreKeeper().setUsedScore(row);
+                        this.scorePlayerOne = player.getScoreKeeper().getScoreOnRow(row);
+                    }else if(addOrTemp == 0) {
+                        this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
                     }else if(addOrTemp == 2){
-
+                        this.setForHeader(player,row,player.getColumnPosition());
                     }
-                    this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
                    // players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
@@ -303,11 +329,13 @@ public class ScoreListHandler {
             case 1:
                 if(player.getScoreKeeper().getActive(row)) {
                     if(addOrTemp == 1) {
-                        player.getScoreKeeper().setUsedScore(row);
+                        // player.getScoreKeeper().setUsedScore(row);
+                        this.scorePlayerTwo = player.getScoreKeeper().getScoreOnRow(row);
+                    }else if(addOrTemp == 0) {
+                        this.scorePlayerTwo = player.getScoreKeeper().getScoresPossible(row);
                     }else if(addOrTemp == 2){
-
+                        this.setForHeader(player,row,player.getColumnPosition());
                     }
-                    this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
                   //  players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
@@ -320,9 +348,8 @@ public class ScoreListHandler {
                     }else if(addOrTemp == 0) {
                         this.scorePlayerThree = player.getScoreKeeper().getScoresPossible(row);
                     }else if(addOrTemp == 2){
-
+                        this.setForHeader(player,row,player.getColumnPosition());
                     }
-                   // players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;
@@ -335,23 +362,49 @@ public class ScoreListHandler {
                       //  player.getScoreKeeper().setUsedScore(row);
                         this.scorePlayerFour = player.getScoreKeeper().getScoreOnRow(row);
                     }else if(addOrTemp == 2){
-                        this.scorePlayerFour = player.getScoreKeeper().checkBonus();
-                    }else if(addOrTemp == 3){
-                        this.scorePlayerFour = player.getScoreKeeper().getSumOfNumbers();
-                    }else if(addOrTemp == 4){
-                        //total
-                        this.scorePlayerFour = player.getScoreKeeper().getTotal();
-                    }else if(addOrTemp == 5){
-                        //total of all
-                        this.scorePlayerFour = player.getScoreKeeper().getTotalOfAll();
+                        this.setForHeader(player,row,player.getColumnPosition());
                     }
-                   //players.get(player).getScoreKeeper().setColumnScore(row);
                     break;
                 }
                 break;
             default:
                 break;
         }
+    }
+    private void setForHeader(Player player, String row, int scoreColumn){
+        switch (row){
+            case "Sum":
+                this.setForHeadRightColumn(player.getScoreKeeper().getSumOfNumbers(),scoreColumn);
+                break;
+            case "Bonus":
+                this.setForHeadRightColumn(player.getScoreKeeper().checkBonus(),scoreColumn);
+                break;
+            case "Total":
+                this.setForHeadRightColumn(player.getScoreKeeper().getTotal(),scoreColumn);
+                break;
+            case "Total of All":
+                this.setForHeadRightColumn(player.getScoreKeeper().getTotalOfAll(),scoreColumn);
+                break;
+        }
+
+    }
+    private void setForHeadRightColumn( int score, int scoreColumn){
+        switch (scoreColumn){
+            case 0:
+                this.setScorePlayerOne(score);
+                break;
+            case 1:
+                this.setScorePlayerTwo(score);
+                break;
+            case 2:
+                this.setScorePlayerThree(score);
+                break;
+            case 3:
+                this.setScorePlayerFour(score);
+                break;
+            default:
+        }
+
     }
     public boolean getVisible(int player){
         switch (player){
@@ -379,6 +432,11 @@ public class ScoreListHandler {
         private int headerTwoView;
         private int headerThreeView;
         private int headerFourView;
+        private int headerFiveView;
+        private int headerPlayerOne;
+        private int headerPlayerTwo;
+        private int headerPlayerThree;
+        private int headerPlayerFour;
         private ArrayList<Integer> headerLayouts;
         private boolean textVisible;
         public HeaderItem(int id){
@@ -389,10 +447,13 @@ public class ScoreListHandler {
             headerLayouts.add(R.drawable.header_one_second);
             headerLayouts.add(R.drawable.header_one_third);
             headerLayouts.add(R.drawable.header_one_fourth);
+            headerLayouts.add(R.drawable.header_one_five);
             headerOneView = headerLayouts.get(0);
             headerTwoView = headerLayouts.get(1);
             headerThreeView = headerLayouts.get(2);
             headerFourView = headerLayouts.get(3);
+            headerFiveView = headerLayouts.get(4);
+
             if(id != 0){
                 textVisible = true;
             }else{
@@ -412,10 +473,75 @@ public class ScoreListHandler {
                     return headerThreeView;
                 case 3:
                     return headerFourView;
+                case 4:
+                    return headerFiveView;
                 default:
                     return 0;
             }
 
+        }
+        public void setHeaderValue(String row, Player player){
+            switch (player.getColumnPosition()){
+                case 0:
+                    this.setHeaderValueOnRow(row, player, headerPlayerOne);
+                    break;
+                case 1:
+                    this.setHeaderValueOnRow(row, player, headerPlayerTwo);
+                    break;
+                case 2:
+                    this.setHeaderValueOnRow(row, player, headerPlayerThree);
+                    break;
+                case 3:
+                    this.setHeaderValueOnRow(row, player, headerPlayerFour);
+                    break;
+            }
+        }
+        public void setHeaderValueOnRow(String row, Player player, int headerValue){
+
+            switch (row){
+                case "Sum":
+                    headerValue= player.getScoreKeeper().getSumOfNumbers();
+                    break;
+                case "Bonus":
+                    headerValue = player.getScoreKeeper().checkBonus();
+                    break;
+                case "Total":
+                    headerValue = player.getScoreKeeper().getTotal();
+                    break;
+                case "Total of All":
+                    headerValue = player.getScoreKeeper().getTotalOfAll();
+                    break;
+            }
+        }
+        public String getHeaderScore(int player) {
+            switch (player){
+                case 0:
+                    if(headerPlayerOne != 0) {
+                        return Integer.toString(headerPlayerOne);
+                    }else{
+                        return "0";
+                    }
+                case 1:
+                    if(headerPlayerTwo != 0) {
+                        return Integer.toString(headerPlayerTwo);
+                    }else{
+                        return "0";
+                    }
+                case 2:
+                    if(headerPlayerThree != 0) {
+                        return Integer.toString(headerPlayerThree);
+                    }else{
+                        return "0";
+                    }
+                case 3:
+                    if(headerPlayerFour != 0) {
+                        return Integer.toString(headerPlayerFour);
+                    }else{
+                        return "0";
+                    }
+                default:
+                    return "0";
+            }
         }
         public void setHeaderId(int headerId) {
             this.headerId = headerId;

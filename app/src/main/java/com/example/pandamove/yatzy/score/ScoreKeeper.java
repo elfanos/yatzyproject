@@ -181,7 +181,6 @@ public class ScoreKeeper {
         for(int i = 0; i < possibleScoreTable.size(); i++){
             if(possibleScoreTable.get(i).row.equals(row)){
                 possibleScoreTable.get(i).active = false;
-                System.out.println("hmm??");
                 this.scoreTables.add(possibleScoreTable.get(i));
                 this.clearScoreTablesScore();
             }
@@ -203,7 +202,6 @@ public class ScoreKeeper {
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < numbersRow.length; j++){
                 if(scoreTables.get(i).row.equals(numbersRow[j])){
-                    System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -214,11 +212,9 @@ public class ScoreKeeper {
     }
     public boolean checkIfItHalfScore() {
         int counter = 0;
-        System.out.println("Sizare row" +  scoreTables.size());
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < numbersRow.length; j++){
                 if(scoreTables.get(i).row.equals(numbersRow[j])){
-                    System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         counter++;
                     }
@@ -236,7 +232,7 @@ public class ScoreKeeper {
         Iterator iterator = differenceInNumbersScore.entrySet().iterator();
        while (iterator.hasNext()) {
            Map.Entry map = (Map.Entry) iterator.next();
-           System.out.println("le values" + map.getValue());
+          // System.out.println("le values" + map.getValue());
            bonus += (Integer) map.getValue();
        }
         if(this.checkIfItHalfScore()) {
@@ -253,7 +249,7 @@ public class ScoreKeeper {
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < combinationRow.length; j++){
                 if(scoreTables.get(i).row.equals(combinationRow[j])){
-                    System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
+                   // System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -268,7 +264,7 @@ public class ScoreKeeper {
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < combinationRow.length; j++){
                 if(scoreTables.get(i).row.equals(combinationRow[j])){
-                    System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
+         //           System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -276,7 +272,7 @@ public class ScoreKeeper {
             }
             for (int j = 0; j < numbersRow.length; j++){
                 if(scoreTables.get(i).row.equals(numbersRow[j])){
-                    System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
+           //         System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }

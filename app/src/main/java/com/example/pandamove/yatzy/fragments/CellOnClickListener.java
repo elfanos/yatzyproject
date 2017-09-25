@@ -39,7 +39,6 @@ public class CellOnClickListener implements View.OnClickListener {
     public void onClick(View view) {
         if(view.isPressed()) {
             HashMap<Integer,CellOnClickListener> listeners = scoreViewAdapter.getObserveListeners();
-            System.out.println("how many??: " + scoreViewAdapter.getObserveListeners().size());
            // System.out.println("le click ??" + currentTextView.getText().toString());
             player.setNumberOfThrows(0);
             player.incrementRound();
@@ -65,7 +64,6 @@ public class CellOnClickListener implements View.OnClickListener {
         for(int i = 0; i < scoreViewAdapter.getCount(); i++){
             System.out.println("w" + scoreViewAdapter.getItem(i));
             if(scoreViewAdapter.getItem(i).equals(row)){
-                System.out.println("wat to oo?aaaaaaaaaaaaaaaaa");
             }
         }
     }

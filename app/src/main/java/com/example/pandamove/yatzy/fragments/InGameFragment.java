@@ -1,6 +1,7 @@
 package com.example.pandamove.yatzy.fragments;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -124,6 +125,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
 
 
+
         diceList = new ArrayList<>();
         diceSelectedButtons = new ArrayList<>();
 
@@ -151,9 +153,11 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         throwRunnables = new ArrayList<>();
         hashDices = new SparseArray<>();
         buttonThrow = (Button) view.findViewById(R.id.throwButton);
+
+        gameActivityInterface.updateView(view);
+        gameActivityInterface.updateHighScore(view);
+
         this.initializeDiceSurface(view);
-        this.initializeDiceSelectedButtons(view);
-        this.setListenerForButton();
         //Initialize dices in default mode
         for(int i = 0; i < diceList.size(); i++){
             Dice dice = new Dice(true,0,i);
@@ -178,42 +182,14 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                 hashDices,listOfPossibleScores, gameActivityInterface,throwHandler);
         System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
 
-        diceSelectedButtons.get(2).setVisibility(View.VISIBLE);
 
         handler = new Handler(callback);
 
-        gameActivityInterface.setPlayerView(view);
-        gameActivityInterface.setScoreView(view);
+            gameActivityInterface.setPlayerView(view);
+            gameActivityInterface.setScoreView(view);
 
-        buttonThrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!gameActivityInterface.getIfRoundIsOver()) {
-                    if (!throwIsExcuting()) {
-                        gameActivityInterface.setThrows(v);
-                        for (int i = 0; i < throwRunnables.size(); i++) {
-                            if (i + 1 < throwRunnables.size()) {
-                                //This is a hack, use one invisible open gl as surface thread
-                                //and apply rotation on the other surface that's why zero
-                                //is skipped.
-                                if (throwRunnables.get(i + 1).getSurface().isSurfaceIsActive()) {
-                                    numberOfThreadsStarted = i;
-                                    diceList.get(0).queueEvent(throwRunnables.get(i + 1));
-                                    if (throwRunnables.get(i + 1).getRunning()) {
-                                        throwRunnables.get(i + 1).endThis();
-                                    } else {
-                                        throwRunnables.get(i + 1).start();
-                                    }
-                                }
-                            }
 
-                        }
-                    } else {
-                        System.out.println("still throwing :D");
-                    }
-                }
-            }
-        });
+        buttonThrow.setOnClickListener(new ThrowListener(view));
         (view.findViewById(R.id.buttonScore)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -223,6 +199,10 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         System.out.println("waddup??");
         return view;
+    }
+
+    public View getFragmentView(){
+        return getView();
     }
 
     public boolean throwIsExcuting(){
@@ -257,29 +237,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         diceList.add(
                 (DiceSurfaceView) view.findViewById(R.id.dicesurface6)
         );
-    }
-    /**
-     * Insert all Dice buttons into a list
-     *
-     * @param v the view to get buttons from xml
-     * */
-    public void initializeDiceSelectedButtons(View v){
-        diceSelectedButtons.add(
-                (ImageButton) v.findViewById(R.id.s_diceOne)
-        );
-        diceSelectedButtons.add(
-                (ImageButton) v.findViewById(R.id.s_diceTwo)
-        );
-        diceSelectedButtons.add(
-                (ImageButton) v.findViewById(R.id.s_diceThree)
-        );
-        diceSelectedButtons.add(
-                (ImageButton) v.findViewById(R.id.s_diceFour)
-        );
-        diceSelectedButtons.add(
-                (ImageButton) v.findViewById(R.id.s_diceFive)
-        );
-
     }
     /**
      * Set listener for a dice buttons inside
@@ -530,6 +487,41 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             diceList.get(i).onResume();
         }
        // mUnityPlayer.resume();
+    }
+
+    public class ThrowListener implements View.OnClickListener{
+        private View inGameView;
+
+        public ThrowListener(View inGameView){
+            this.inGameView = inGameView;
+        }
+        @Override
+        public void onClick(View v){
+            if (!throwIsExcuting()) {
+
+                gameActivityInterface.setThrows(inGameView);
+
+                for (int i = 0; i < throwRunnables.size(); i++) {
+                    if (i + 1 < throwRunnables.size()) {
+                        //This is a hack, use one invisible open gl as surface thread
+                        //and apply rotation on the other surface that's why zero
+                        //is skipped.
+                        if (throwRunnables.get(i + 1).getSurface().isSurfaceIsActive()) {
+                            numberOfThreadsStarted = i;
+                            diceList.get(0).queueEvent(throwRunnables.get(i + 1));
+                            if (throwRunnables.get(i + 1).getRunning()) {
+                                throwRunnables.get(i + 1).endThis();
+                            } else {
+                                throwRunnables.get(i + 1).start();
+                            }
+                        }
+                    }
+
+                }
+            } else {
+                System.out.println("still throwing :D");
+            }
+        }
     }
 
     /**
