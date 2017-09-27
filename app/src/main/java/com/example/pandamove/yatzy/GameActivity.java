@@ -148,8 +148,12 @@ public class GameActivity extends AppCompatActivity{
     public void endGame(){
         Intent endGame = new Intent(
                 GameActivity.this,
-                EndGameActivity.class
+                EndActivity.class
         );
+        Bundle playerBundle = new Bundle();
+        playerBundle.putSerializable("players", CommunicationHandler.getInstance().getPlayers());
+        playerBundle.putSerializable("playersIcon", CommunicationHandler.getInstance().getPlayersIcon());
+        endGame.putExtras(playerBundle);
         startActivity(endGame);
     }
     public void initializePlayerIcon(){

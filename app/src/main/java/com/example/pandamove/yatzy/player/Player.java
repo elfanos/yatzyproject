@@ -15,10 +15,8 @@ public class Player implements Serializable{
     private ScoreKeeper scoreKeeper;
     private int columnPosition;
     private boolean currentPlayer;
-    private HashMap<String,Integer> scoresInRow;
     private int round;
     private int numberOfThrows;
-    private boolean roundEnds;
     private boolean scoreIsSet;
 
     /**
@@ -30,7 +28,6 @@ public class Player implements Serializable{
      * */
     public Player(String name, String[] scores){
         scoreKeeper = new ScoreKeeper(scores);
-        scoresInRow = new HashMap<>();
         this.name = name;
         round = 1;
     }
@@ -38,39 +35,23 @@ public class Player implements Serializable{
     public boolean isScoreIsSet() {
         return scoreIsSet;
     }
-
     public void setScoreIsSet(boolean scoreIsSet) {
         this.scoreIsSet = scoreIsSet;
     }
-
     public void incrementRound(){
         round++;
     }
     public int getRound() {
         return round;
     }
-
-    public void setRound(int round) {
-        this.round = round;
-    }
-
     public int getNumberOfThrows() {
         return numberOfThrows;
     }
-
     public void setNumberOfThrows(int numberOfThrows) {
         this.numberOfThrows = numberOfThrows;
     }
     public void increseNumberOfThrows(){
         this.numberOfThrows++;
-    }
-
-    public boolean isRoundEnds() {
-        return roundEnds;
-    }
-
-    public void setRoundEnds(boolean roundEnds) {
-        this.roundEnds = roundEnds;
     }
     public String getName(){
         return name;
@@ -81,19 +62,14 @@ public class Player implements Serializable{
     public int getColumnPosition() {
         return columnPosition;
     }
-
     public void setColumnPosition(int columnPosition) {
         this.columnPosition = columnPosition;
     }
-
     public boolean isCurrentPlayer() {
         return currentPlayer;
     }
     public void setCurrentPlayer(boolean currentPlayer) {
         this.currentPlayer = currentPlayer;
-    }
-    public void setRowValueAdded(){
-        Iterator iterator = scoresInRow.entrySet().iterator();
     }
 
 }
