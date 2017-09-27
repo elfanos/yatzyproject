@@ -1,5 +1,6 @@
 package com.example.pandamove.yatzy.controllers;
 
+import android.app.Activity;
 import android.util.SparseArray;
 import android.view.View;
 
@@ -20,7 +21,7 @@ public interface GameActivityInterface extends Serializable {
     void setScoreView(View v);
     void setThrows(View v);
     void setScoreForPlayer(View v);
-    void roundsEnd(Player player);
+    void roundsEnd(Player player,Activity activity);
     void updateView(View v);
     void updateHighScore(View v);
 

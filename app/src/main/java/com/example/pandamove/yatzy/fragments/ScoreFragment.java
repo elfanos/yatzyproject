@@ -57,7 +57,7 @@ public class ScoreFragment extends Fragment {
 
     private ListView scoreListView;
 
-    private GameActivityInterface gameActivityInterface;
+//    private GameActivityInterface gameActivityInterface;
 
     private Animation scoreSetAnimation;
     public ScoreFragment(){
@@ -65,14 +65,13 @@ public class ScoreFragment extends Fragment {
         listOfScores = new ArrayList<>();
     }
     public static ScoreFragment newInstance(int page, ArrayList<Dice> dices,
-                                            ArrayList<Player> players,
-                                            GameActivityInterface gameActivityInterface){
+                                            ArrayList<Player> players){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
         args.putParcelableArrayList("dices", dices);
         args.putSerializable("players", players);
-        args.putSerializable("scoreinterface", gameActivityInterface);
+    //    args.putSerializable("scoreinterface", gameActivityInterface);
         object.setArguments(args);
 
         return object;
@@ -84,8 +83,8 @@ public class ScoreFragment extends Fragment {
         super.onCreate(onSavedInstace);
         dices = getArguments().getParcelableArrayList("dices");
         players = (ArrayList<Player>) getArguments().getSerializable("players");
-        gameActivityInterface =
-                (GameActivityInterface) getArguments().getSerializable("scoreinterface");
+   /*     gameActivityInterface =
+                (GameActivityInterface) getArguments().getSerializable("scoreinterface");*/
 
     }
     @Override
@@ -135,7 +134,7 @@ public class ScoreFragment extends Fragment {
     public void updateAdapter(){
         int headerItem = 0;
         scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
-                listOfScores, dices, gameActivityInterface);
+                listOfScores, dices);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
                 scoreViewAdapter.addSectionHeader(scores[i],players, headerItem);

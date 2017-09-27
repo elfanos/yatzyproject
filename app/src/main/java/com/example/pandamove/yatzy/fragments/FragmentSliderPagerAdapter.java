@@ -23,8 +23,6 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     private Context context;
    // private InGameFragment inGameFragment;
     private ScoreFragment scoreFragment;
-    private OnButtonClickedListener onButtonClickedListener;
-    private GameActivityInterface gameActivityInterface;
     private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
     private ArrayList<Dice> dices;
@@ -34,16 +32,13 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     };
 
     public FragmentSliderPagerAdapter(FragmentManager fm,
-                                      OnButtonClickedListener onButtonClickedListener,
                                       SparseArray<Fragment> fragments, ArrayList<Dice> dices,
                                       HashMap<String, Integer> listOfPossibleScores,
-                                      GameActivityInterface gameActivityInterface, ArrayList<Player> players){
+                                     ArrayList<Player> players){
         super(fm);
-        this.onButtonClickedListener = onButtonClickedListener;
         this.fragments = fragments;
         this.dices = dices;
         this.listOfPossibleScores = listOfPossibleScores;
-        this.gameActivityInterface = gameActivityInterface;
         this.players = players;
     }
 
@@ -60,14 +55,14 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                 InGameFragment inGameFragment = new InGameFragment();
                 return inGameFragment.newInstance(
                         1,
-                        onButtonClickedListener,
-                        dices, gameActivityInterface,listOfPossibleScores
+                       listOfPossibleScores,
+                        dices
                 );
             case 2:
                 return ScoreFragment.newInstance(
                         2,
                         dices,
-                        players, gameActivityInterface
+                        players
                 );
             default:
         }

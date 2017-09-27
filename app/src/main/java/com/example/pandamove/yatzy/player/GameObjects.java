@@ -1,12 +1,13 @@
 package com.example.pandamove.yatzy.player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rallesport on 2017-09-18.
  */
 
-public class GameObjects {
+public class GameObjects implements Serializable{
     private int round;
     private int halfScore;
     private static final int NUMBEROFROUNDS = 14;
@@ -82,6 +83,9 @@ public class GameObjects {
        this.round++;
     }
 
+    public void setRoundTest(int test){
+        this.round = test;
+    }
     public int getHalfScore() {
         return halfScore;
     }

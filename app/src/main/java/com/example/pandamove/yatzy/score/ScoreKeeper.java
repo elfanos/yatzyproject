@@ -2,6 +2,7 @@ package com.example.pandamove.yatzy.score;
 
 import com.example.pandamove.yatzy.player.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Rallmo on 2017-04-05.
  */
-public class ScoreKeeper {
+public class ScoreKeeper implements Serializable{
     private String[] scores;
     private HashMap<String, Boolean> checkIfScoresIsSetted;
     private int numberScore;
@@ -382,7 +383,7 @@ public class ScoreKeeper {
         return numberScore;
     }
 
-    static class ScoreTable{
+    static class ScoreTable implements Serializable{
         int score;
         boolean active;
         String row;

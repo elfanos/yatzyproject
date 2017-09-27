@@ -1,5 +1,6 @@
 package com.example.pandamove.yatzy.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
@@ -27,13 +29,12 @@ import java.util.TreeSet;
  * Created by Rallmo on 2017-04-05.
  */
 public class ScoreViewAdapter extends BaseAdapter {
-    private Context context;
+    private Activity context;
     private List<ScoreListHandler> playerList;
     private LayoutInflater inflater;
     private static final int SCORE_ITEM = 1;
     private static final int HEADER_ITEM = 0;
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
-    private GameActivityInterface gameActivityInterface;
     private final int SUM_OF_FIRST_SECTION = 7;
     private final int BONUS_OF_FIRST_SECTION = 7;
     private final int SUM_OF_TOTAL_SCORE = 17;
@@ -74,17 +75,15 @@ public class ScoreViewAdapter extends BaseAdapter {
     public int getImageIndex(){
         return imageIndex;
     }
-    public ScoreViewAdapter(Context context,
+    public ScoreViewAdapter(Activity context,
                             List<ScoreListHandler> playerList,
-                            ArrayList<Dice> dices,
-                            GameActivityInterface gameActivityInterface){
+                            ArrayList<Dice> dices){
 
 
         this.playerList = playerList;
         this.context = context;
         observeListeners = new HashMap<>();
         this.dices = dices;
-        this.gameActivityInterface = gameActivityInterface;
     }
     public Animation getSetScoreAnimation() {
         return setScoreAnimation;
@@ -246,7 +245,9 @@ public class ScoreViewAdapter extends BaseAdapter {
                                this.updateHeaderItems(player,((ScoreListHandler) this.getItem(i)));
 
                                 this.notifyDataSetChanged();
-                               gameActivityInterface.roundsEnd(player);
+                              // gameActivityInterface.roundsEnd(player, context);
+
+                                CommunicationHandler.getInstance().roundsEnd(player, context);
                             }else{
                                 System.out.println("not active yo");
                             }
