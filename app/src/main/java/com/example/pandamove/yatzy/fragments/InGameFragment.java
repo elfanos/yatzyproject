@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.pandamove.yatzy.*;
+import com.example.pandamove.yatzy.controllers.BaseBackPressedListener;
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
@@ -152,6 +153,9 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         buttonThrow = (Button) view.findViewById(R.id.throwButton);
         CommunicationHandler.getInstance().updateView(view);
         CommunicationHandler.getInstance().updateHighScore(view);
+        ((GameActivity)getActivity()).
+                setOnBackPressedListener(new BaseBackPressedListener(getActivity()));
+
 
     /*    gameActivityInterface.updateView(view);
         gameActivityInterface.updateHighScore(view);*/
@@ -200,11 +204,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         view.findViewById(R.id.buttonScore).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent endGame = new Intent(
-                        getActivity(),
-                        EndGameActivity.class
-                );
-                startActivity(endGame);
+
             }
         });
 

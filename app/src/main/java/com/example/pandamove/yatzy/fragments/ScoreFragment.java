@@ -10,7 +10,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.pandamove.yatzy.GameActivity;
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.BaseBackPressedListener;
 import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
@@ -92,6 +94,8 @@ public class ScoreFragment extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.scoregame_page, container, false);
         scoreListView = (ListView) view.findViewById(R.id.list_view_score);
+        ((GameActivity)getActivity()).
+                setOnBackPressedListener(new BaseBackPressedListener(getActivity()));
         /**
          * TODO fix so that set column arent static?
          * */

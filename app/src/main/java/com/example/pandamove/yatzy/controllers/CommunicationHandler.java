@@ -3,6 +3,7 @@ package com.example.pandamove.yatzy.controllers;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
@@ -28,46 +29,6 @@ import java.util.HashMap;
  */
 
 public class CommunicationHandler implements GameActivityInterface, OnButtonClickedListener{
-
-   /*
-    private OnButtonClickedListener buttonClickedListener;
-    private GameActivityInterface gameActivityController;
-    private GameObjects gameObjects;
-    private ArrayList<Player> players = new ArrayList<>();
-    private ArrayList<TextView> highScore;
-    private ArrayList<Integer> playersIcon;
-    private SparseArray<Fragment> fragments;
-    private HashMap<String,Integer> listOfPossibleScores;
-    private LeaderBoard leaderBoard;
-    private Animation animation;
-    private TextView rounds;
-    private GameActivity temp;*/
-   /* public CommunicationHandler(ArrayList<Player> players,
-                                SparseArray<Fragment> fragments,
-                                ArrayList<TextView> highScore, ArrayList<Integer> playersIcon,
-                                HashMap<String,Integer> listOfPossibleScores,
-                                LeaderBoard leaderBoard, Animation animation, TextView rounds,
-                                GameActivity temp
-                                ){
-        this.players = players;
-        this.fragments = fragments;
-        this.highScore = highScore;
-        this.playersIcon = playersIcon;
-        this.listOfPossibleScores = listOfPossibleScores;
-        this.leaderBoard = leaderBoard;
-        this.animation = animation;
-        this.rounds = rounds;
-        this.temp = temp;
-        gameObjects = new GameObjects(this.players);
-        gameObjects.setRoundTest(13);
-
-        try{
-            buttonClickedListener = this;
-            gameActivityController = this;
-        } catch (ClassCastException e){
-            System.out.println("Exception lal" + e);
-        }
-    }*/
 
     private static CommunicationHandler instance = null;
 
@@ -143,6 +104,14 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         this.gameActivity = gameActivity;
     }
 
+    public int getCurrentFragment() {
+        return currentFragment;
+    }
+
+    public void setCurrentFragment(int currentFragment) {
+        this.currentFragment = currentFragment;
+    }
+
     private GameActivity gameActivity;
     private OnButtonClickedListener buttonClickedListener;
     private GameActivityInterface gameActivityController;
@@ -154,6 +123,7 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     private HashMap<String,Integer> listOfPossibleScores;
     private LeaderBoard leaderBoard;
     private Animation animation;
+    private int currentFragment = 0;
 
     public static CommunicationHandler getInstance(){
         if(instance==null){
@@ -171,13 +141,6 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     }
 
     public void onEndGame(Activity activity){
-        /*Intent endGame = new Intent(
-                activity,
-                EndGameActivity.class
-        );
-        if(activity != null) {
-            activity.startActivity(endGame);
-        }*/
         Intent jaman = new Intent(gameActivity, EndGameActivity.class);
         gameActivity.startActivity(jaman);
     }
@@ -210,8 +173,6 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
                 ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
             }
         }
-
-
     }
     public View inGameFragmentView(){
         Fragment inGameFragment = fragments.get(0);
@@ -415,6 +376,5 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
 
     }
-
 
 }

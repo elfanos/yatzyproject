@@ -1,27 +1,19 @@
 package com.example.pandamove.yatzy;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
-import com.example.pandamove.yatzy.controllers.GameActivityInterface;
-import com.example.pandamove.yatzy.controllers.OnButtonClickedListener;
+import com.example.pandamove.yatzy.controllers.OnBackPressedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
 import com.example.pandamove.yatzy.fragments.InGameFragment;
@@ -29,13 +21,8 @@ import com.example.pandamove.yatzy.fragments.ScoreFragment;
 import com.example.pandamove.yatzy.player.GameObjects;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.LeaderBoard;
-import com.example.pandamove.yatzy.score.ScoreHandler;
-import com.example.pandamove.yatzy.score.ScoreListHandler;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class GameActivity extends AppCompatActivity{
 
@@ -55,7 +42,12 @@ public class GameActivity extends AppCompatActivity{
     private static final ArrayList<Animation> animations = new ArrayList<>();
 
     private ArrayList<TextView> highScore = new ArrayList<>();
+
     private GameObjects gameObjects;
+
+    protected OnBackPressedListener onBackPressedListener;
+
+    //private
 
     private static Animation scoreAnimation;
 
@@ -128,6 +120,39 @@ public class GameActivity extends AppCompatActivity{
         this.initializeCommunicationHandler();
 
     }
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        this.onBackPressedListener = onBackPressedListener;
+    }
+    @Override
+    public void onBackPressed() {
+
+
+        if (onBackPressedListener != null) {
+            System.out.println("yoman3232?");
+            onBackPressedListener.doBack();
+            this.changeFragment(0);
+        }else{
+            super.onBackPressed();
+        }
+    }
+    public void changeFragment(int id){
+        if (id == 0) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(
+                    R.id.viewpager,
+                    fragments.get(0)
+            );
+            ft.commit();
+        }
+        else if (id == 1) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(
+                    R.id.viewpager,
+                    CommunicationHandler.getInstance().getFragments().get(0)
+            );
+            ft.commit();
+        }
+    }
     public void initializeCommunicationHandler(){
         CommunicationHandler.getInstance().setPlayers(players);
         CommunicationHandler.getInstance().setAnimation(animation);
@@ -137,6 +162,7 @@ public class GameActivity extends AppCompatActivity{
         CommunicationHandler.getInstance().setListOfPossibleScores(listOfPossibleScores);
         CommunicationHandler.getInstance().setLeaderBoard(leaderBoard);
         CommunicationHandler.getInstance().setGameObjects(gameObjects);
+        CommunicationHandler.getInstance().setCurrentFragment(0);
         CommunicationHandler.getInstance().setGameActivity(this);
     }
     public ScoreFragment getFragmentOne(){
