@@ -36,6 +36,9 @@ public class StartActivity extends AppCompatActivity  implements GameActivityInt
 
                 Intent gameActivityIntent = new Intent(StartActivity.this,
                         GameActivity.class);
+                gameActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                gameActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                gameActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 gameActivityIntent.putExtra("players", howManyPlayers);
                 startActivity(gameActivityIntent);
 

@@ -2,6 +2,7 @@ package com.example.pandamove.yatzy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,8 @@ import android.util.SparseArray;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.controllers.OnBackPressedListener;
 import com.example.pandamove.yatzy.dice.Dice;
@@ -88,6 +91,7 @@ public class GameActivity extends AppCompatActivity{
 
     /*Keep track on fragments*/
     private SparseArray<Fragment> fragments;
+    private Boolean exit = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +104,7 @@ public class GameActivity extends AppCompatActivity{
         this.initializePlayerIcon();
         this.initializePlayers(numberOfPlayers);
         gameObjects = new GameObjects(players);
-        gameObjects.setRoundTest(13);
-
-
+        gameObjects.setRoundTest(1);
 
         fragments = new SparseArray<>();
         mPager = (ViewPager) findViewById(R.id.viewpager);
@@ -125,32 +127,23 @@ public class GameActivity extends AppCompatActivity{
     }
     @Override
     public void onBackPressed() {
+        if(CommunicationHandler.getInstance().getCurrentFragment() == 1){
+            CommunicationHandler.getInstance().goToInGameView();
+        }else{;
+            if (exit) {
+                finish(); // finish activity
+            } else {
+                Toast.makeText(this, "Press Back again to Exit and Stop the Game.",
+                        Toast.LENGTH_SHORT).show();
+                exit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        exit = false;
+                    }
+                }, 3 * 1000);
 
-
-        if (onBackPressedListener != null) {
-            System.out.println("yoman3232?");
-            onBackPressedListener.doBack();
-            this.changeFragment(0);
-        }else{
-            super.onBackPressed();
-        }
-    }
-    public void changeFragment(int id){
-        if (id == 0) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(
-                    R.id.viewpager,
-                    fragments.get(0)
-            );
-            ft.commit();
-        }
-        else if (id == 1) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(
-                    R.id.viewpager,
-                    CommunicationHandler.getInstance().getFragments().get(0)
-            );
-            ft.commit();
+            }
         }
     }
     public void initializeCommunicationHandler(){
@@ -162,8 +155,8 @@ public class GameActivity extends AppCompatActivity{
         CommunicationHandler.getInstance().setListOfPossibleScores(listOfPossibleScores);
         CommunicationHandler.getInstance().setLeaderBoard(leaderBoard);
         CommunicationHandler.getInstance().setGameObjects(gameObjects);
-        CommunicationHandler.getInstance().setCurrentFragment(0);
         CommunicationHandler.getInstance().setGameActivity(this);
+        CommunicationHandler.getInstance().setInitializeDices(false);
     }
     public ScoreFragment getFragmentOne(){
         return ((ScoreFragment)fragments.get(1));

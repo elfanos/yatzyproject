@@ -26,6 +26,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 	float lastPositionY = 0;
 	private boolean surfaceIsActive;
 	private int currentDiceNumber;
+
 	Cuberenderer renderer;
 
 	/**
@@ -75,6 +76,9 @@ public class DiceSurfaceView extends GLSurfaceView {
 		return true;
 		
 	}
+	public Cuberenderer getRenderer() {
+		return renderer;
+	}
 	/**
 	 * Rotate the dice until it reach 360 degree
 	 *
@@ -89,7 +93,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 			if(angleValue > -360) {
 			//	System.out.println("le loop: " + angleValue);
 				//angleValue--;
-				angleValue = angleValue - 2;
+				angleValue = angleValue - 10;
 				this.setRenderAngle(axis, angleValue);
 				this.setAngleValue(axis,angleValue,throwThread);
 			}else{
@@ -103,7 +107,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 			if(angleValue < 360) {
 			//	System.out.println("inla loop positive " + angleValue);
 				//angleValue++;
-				angleValue = angleValue + 2;
+				angleValue = angleValue + 10;
 				this.setRenderAngle(axis, angleValue);
 				this.setAngleValue(axis,angleValue,throwThread);
 			}else{
@@ -115,7 +119,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 		}else if(angleValue == 0){
 		//	System.out.println("smthing herE?");
 			//angleValue--;
-			angleValue = angleValue - 2;
+			angleValue = angleValue - 10;
 			this.setAngleValue(axis,angleValue,throwThread);
 			this.rotationNotReversed(
 					throwThread, angleValue,
@@ -181,7 +185,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 					throwThread.endThis();
 				} else {
 					//angleValue--;
-					angleValue = angleValue - 2;
+					angleValue = angleValue - 10;
 					this.setRenderAngle(axis, angleValue);
 					this.setAngleValue(axis, angleValue, throwThread);
 				}
@@ -218,7 +222,7 @@ public class DiceSurfaceView extends GLSurfaceView {
 					throwThread.endThis();
 				} else {
 					//angleValue++;
-					angleValue = angleValue + 2;
+					angleValue = angleValue + 10;
 					this.setRenderAngle(axis, angleValue);
 					this.setAngleValue(axis, angleValue, throwThread);
 				}

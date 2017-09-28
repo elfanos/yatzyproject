@@ -1,5 +1,6 @@
 package com.example.pandamove.yatzy.score;
 
+import android.app.admin.SystemUpdatePolicy;
 import android.util.SparseArray;
 import android.widget.ArrayAdapter;
 
@@ -45,12 +46,24 @@ public class ScoreHandler {
     };
 
 
+    /**
+     * Set the values collected from the rolling phase
+     * and add it to the dices array in ScoreHandler
+     * Also initialize the scoring process
+     *
+     * @param dices is array of all scores retrived from
+     *              the rolling phase
+     * */
     public ScoreHandler(SparseArray<Dice> dices) {
         this.dices = dices;
         allScores = new HashMap<>();
         pairs = new ArrayList<>();
         this.checkScores();
     }
+    /**
+     * Starts all anonymous methods inside
+     * the scorehandler to calculate right score
+     * */
     private void checkScores(){
         this.checkForNumbers();
         this.checkForHighestScore();
@@ -62,10 +75,19 @@ public class ScoreHandler {
         this.checkForYatzy();
         this.addZeroOnOtherScores();
     }
+    /**
+     * @return possibleScores a hashmap that
+     *          contains all possible scores
+     * */
     public HashMap<String,Integer> possibleScores(){
         return allScores;
     }
 
+
+    /**
+     * Initialize zero value on every score to avoid
+     * null pointer when adding the score to the ScoreAdapter
+     * */
     private void addZeroOnOtherScores(){
         for(int i = 0; i < scores.length; i++){
             if(!allScores.containsKey(scores[i])){
@@ -73,6 +95,12 @@ public class ScoreHandler {
             }
         }
     }
+    /**
+     * Check all score for each number, iterate through the
+     * array and check dices for number value between, 1,2,3,4,5,6
+     * and add if there exist duplicates or more of the same number
+     *
+     * */
     private void checkForNumbers(){
         int one = 0;
         int two = 0;
@@ -110,6 +138,12 @@ public class ScoreHandler {
         }
 
     }
+    /**
+     * Check for the highest pair inb the pairCollector
+     * list
+     *
+     * @param pairCollector contains pairs in a list
+     * */
     private int checkTheHighestPair(List<Integer> pairCollector){
         int value = 0;
         if(pairCollector.size() != 0) {
@@ -121,51 +155,71 @@ public class ScoreHandler {
         }
         return value;
     }
-    private void checkForPair(int position, List<Integer> pairCollector){
-        for(int i = position; i < dices.size(); i++){
-            if((i+1) < dices.size()) {
-                if (dices.get(position).getScore() == dices.get(i + 1).getScore()) {
-                    int value = (dices.get(position).getScore()) + (dices.get(i + 1).getScore());
-                    pairCollector.add(value);
-                    pairs.add(value);
+
+    /**
+     * Check for pair inside the dices SparseArrayList
+     *
+     * @param position which position is going to be checked in the list
+     * @param pairCollector container for the pairs
+     *
+     * */
+    private void checkForPair(int position, List<Integer> pairCollector, boolean gotOnePair){
+        if(position < dices.size()) {
+            for (int i = position; i < dices.size(); i++) {
+                if ((i + 1) < dices.size()) {
+                    if (dices.get(position).getScore() == dices.get(i + 1).getScore()) {
+                        int value = (dices.get(position).getScore()) + (dices.get(i + 1).getScore());
+                        pairCollector.add(value);
+                        pairs.add(value);
+                        if (!gotOnePair) {
+                            this.checkForPair((i + 2), pairCollector, true);
+                            break;
+                        }else{
+                            break;
+                        }
+                    }
                 }
             }
         }
     }
+
+    /**
+     * Method to check if there is more then on pair inside the list
+     * then check if it is 4 of a kind or 2 pair
+     *
+     * @param position position in the dices SparaseArray
+     * @param pairCollector container for the pairs
+     * */
     private void checkForPairs(int position,List<Integer> pairCollector){
-        this.checkForPair(position, pairCollector);
+        boolean gotOnePair = false;
+        this.checkForPair(position, pairCollector, gotOnePair);
+       // System.out.println("Le pair size? " + pairCollector.size());
         int highestPair = this.checkTheHighestPair(pairCollector);
+        //System.out.println("Le pair after? " + pairCollector.size());
         allScores.put(scores[7], highestPair);
         if(pairCollector.size() > 1) {
             this.checkForTwoPairOrFourOfKind(pairCollector);
         }
     }
+
+    /**
+     *
+     * pair or pairs
+     * */
     private void checkForHighestScore(){
         List<Integer> scoreCollector = new ArrayList<>();
-        //Use 4 pivot to check all pairs
-        boolean [] pivot = { false, false, false, false};
-        //Skip first element since it is a dummy
-        for(int i = 0; i < pivot.length; i++) {
-            if (!pivot[0]) {
-                pivot[0] = true;
-                this.checkForPairs(1, scoreCollector);
-            } else if (!pivot[1]) {
-                //second element
-                this.checkForPairs(2, scoreCollector);
-                pivot[1] = true;
-            } else if (!pivot[2]) {
-                //third element
-                this.checkForPairs(3, scoreCollector);
-                pivot[2] = true;
-            } else if (!pivot[3]) {
-                //fourth element
-                this.checkForPairs(4, scoreCollector);
-                pivot[3] = true;
-            }
-        }
+        this.checkForPairs(1,scoreCollector);
     }
+
+    /**
+     * Method that will find if there is a duplicate of the
+     * two pairs inside the pairCollector if so it is
+     * 4 of a kind.
+     *
+     * @param pairCollector container for all the pairs
+     * */
     private void checkForPairOrThreeOfAkind(List<Integer> pairCollector){
-        System.out.println("thee of a " + pairCollector.size());
+     //   System.out.println("thee of a " + pairCollector.size());
         int value = 0;
         for(int i = 0; i < pairCollector.size(); i++){
             if(pairCollector.size() > 1){
@@ -175,7 +229,7 @@ public class ScoreHandler {
                         value += pairCollector.get(i);
                         value += pairCollector.get(i+1);
                     }else{
-                        System.out.println("thee of a welwel ");
+                      //  System.out.println("thee of a welwel ");
                         value = 0;
                     }
                 }

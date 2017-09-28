@@ -423,5 +423,32 @@ public class ScoreHandlerTest {
         Assert.assertNull(yatzy);
     }
 
+    @Test
+    public void checkTwoPairFives(){
+        dices = new SparseArray<Dice>();
+        //Should be dummy :D
+        Dice newDice = new Dice(true, 3, 0);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 1);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 2);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 4, 3);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 5, 4);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 4, 5);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        scoreHandler = new ScoreHandler(dices);
+
+        int fives = scoreHandler.possibleScores().get("2 Pair");
+        Assert.assertEquals("All scores should be",
+                18, fives
+        );
+        int fives2 = scoreHandler.possibleScores().get("4 of a Kind");
+        Assert.assertEquals("All scores should be",
+                0, fives2
+        );
+    }
 
 }

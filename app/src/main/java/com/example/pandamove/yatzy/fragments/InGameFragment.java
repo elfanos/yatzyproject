@@ -62,8 +62,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private static final int STOP_THRESHOLD = 60;
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
-    private OnButtonClickedListener onButtonClickedListener;
-    private GameActivityInterface gameActivityInterface;
     private HashMap listOfPossibleScores;
     private ArrayList<DiceSurfaceView> diceList;
     private ArrayList<Dice> dices;
@@ -76,6 +74,9 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     private Random rand = new Random();
     public int numberOfThreadsDone = 0;
     public int numberOfThreadsStarted = 0;
+    private int numberOfDicesFinnished = 0;
+    private boolean sendScores = false;
+    private boolean diceInitialized = false;
 
 
     /**
@@ -151,25 +152,14 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         throwRunnables = new ArrayList<>();
         hashDices = new SparseArray<>();
         buttonThrow = (Button) view.findViewById(R.id.throwButton);
+        CommunicationHandler.getInstance().setInGameView(view);
         CommunicationHandler.getInstance().updateView(view);
         CommunicationHandler.getInstance().updateHighScore(view);
         ((GameActivity)getActivity()).
                 setOnBackPressedListener(new BaseBackPressedListener(getActivity()));
 
-
-    /*    gameActivityInterface.updateView(view);
-        gameActivityInterface.updateHighScore(view);*/
-
         this.initializeDiceSurface(view);
-        //Initialize dices in default mode
-        for(int i = 0; i < diceList.size(); i++){
-            Dice dice = new Dice(true,0,i);
-            dices.add(dice);
-        }
-        for(int i = 0; i< diceList.size(); i++){
-            Dice dice = new Dice(true,1,i);
-            hashDices.put(dice.getSurfaceIndex(),dice);
-        }
+        this.initializeDices();
         throwHandler = new Handler(throwCallback);
         //Initialize throw threads
         for(int i = 0; i < diceList.size(); i++){
@@ -180,42 +170,41 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             hashDices.get(i).setScore(random+1);
             throwRunnables.add(throwThread);
         }
-
         throwRunnable = new ThrowThread(diceList.get(0),hashDices.get(1),
                 hashDices,listOfPossibleScores,throwHandler);
-        System.out.println("le score?: " + diceList.get(0).getCurrentDiceNumber());
-
 
         handler = new Handler(callback);
         CommunicationHandler.getInstance().setPlayerView(view);
         CommunicationHandler.getInstance().setScoreView(view);
-            /*gameActivityInterface.setPlayerView(view);
-            gameActivityInterface.setScoreView(view);*/
-
+        this.beginARollRound(view);
 
         buttonThrow.setOnClickListener(new ThrowListener(view));
-        /*(view.findViewById(R.id.buttonScore)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButtonClickedListener.onButtonClicked(view);
-            }
-        });*/
 
         view.findViewById(R.id.buttonScore).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                resetSelectedDices();
             }
         });
 
-        System.out.println("waddup??");
         return view;
     }
-
-    public View getFragmentView(){
-        return getView();
+    public void initializeDices(){
+        for(int i = 0; i < diceList.size(); i++){
+            Dice dice = new Dice(true,0,i);
+            dices.add(dice);
+        }
+        for(int i = 0; i< diceList.size(); i++){
+            Dice dice = new Dice(true,1,i);
+            hashDices.put(dice.getSurfaceIndex(),dice);
+        }
     }
-
+    public void resetSelectedDices(){
+        for(int i = 0; i < diceList.size(); i++){
+            throwRunnables.get(i).getSurface().getRenderer().setDiceSelected(false);
+            throwRunnables.get(i).getSurface().setSurfaceIsActive(true);
+        }
+    }
     public boolean throwIsExcuting(){
         for(int i = 0; i < throwRunnables.size(); i++){
             if(throwRunnables.get(i).getRunning()){
@@ -223,6 +212,44 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             }
         }
         return false;
+    }
+
+    public void beginARollRound(View view){
+        if(CommunicationHandler.getInstance().getCurrentPlayer().getNumberOfThrows() < 3) {
+            if (!throwIsExcuting()) {
+                CommunicationHandler.getInstance().setThrows(
+                        view
+                );
+                for (int i = 0; i < throwRunnables.size(); i++) {
+                    if (i + 1 < throwRunnables.size()) {
+                        //This is a hack, use one invisible open gl as surface thread
+                        //and apply rotation on the other surface that's why zero
+                        //is skipped.
+                        if (throwRunnables.get(i + 1).getSurface().isSurfaceIsActive()) {
+                            numberOfThreadsStarted = i;
+                            diceList.get(0).queueEvent(throwRunnables.get(i + 1));
+                            if (throwRunnables.get(i + 1).getRunning()) {
+                                throwRunnables.get(i + 1).endThis();
+                            } else {
+                                numberOfDicesFinnished++;
+                                throwRunnables.get(i + 1).start();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private class ThrowListener implements View.OnClickListener{
+        private View inGameView;
+
+        public ThrowListener(View inGameView){
+            this.inGameView = inGameView;
+        }
+        @Override
+        public void onClick(View v){
+          beginARollRound(inGameView);
+        }
     }
     /**
      *  Insert all diceSurface into a list
@@ -248,17 +275,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         diceList.add(
                 (DiceSurfaceView) view.findViewById(R.id.dicesurface6)
         );
-    }
-    /**
-     * Set listener for a dice buttons inside
-     * diceSelectedButtons
-     * */
-    public void setListenerForButton(){
-        for(int i = 0; i < diceSelectedButtons.size(); i++){
-            diceSelectedButtons.get(i).setOnClickListener(
-                    new DiceSelectedListener()
-            );
-        }
     }
 
     /**
@@ -361,7 +377,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             }
         }
     }
-
     private void unregisterSensorListener() {
         sensorManager.unregisterListener(this);
     }
@@ -385,6 +400,10 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         @Override
         public boolean handleMessage(Message message) {
             SparseArray<Dice> sparseArray = message.getData().getSparseParcelableArray("scoreArray");
+           //int temp = message.getData().getInt("threadsDone");
+            //numberOfDicesFinnished++;
+           // System.out.println("numberOfDicesFinnished");
+
             if(sparseArray != null) {
                 for(int i = 0; i < sparseArray.size(); i++){
                     int key = sparseArray.keyAt(i);
@@ -393,12 +412,18 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                 }
                // gameActivityInterface.onThrowPostPossibleScores(sparseArray);
                 CommunicationHandler.getInstance().onThrowPostPossibleScores(sparseArray);
+                if(CommunicationHandler.getInstance().
+                        getCurrentPlayer().getNumberOfThrows() == 3) {
+                    CommunicationHandler.getInstance().goToScoreView();
+                }
                 return true;
             }else{
                 return false;
             }
+
         }
     };
+
     private Callback callback = new Callback() {
         public boolean handleMessage(Message msg){
             int diceNumber = msg.getData().getInt("dicenumber");
@@ -476,65 +501,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         }
     }*/
 
-    // Quit Unity
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    // Pause Unity
-    @Override
-    public void onPause() {
-        super.onPause();
-        for(int i = 0; i< diceList.size(); i++){
-            diceList.get(i).onPause();
-        }
-    }
-
-    // Resume Unity
-    @Override
-    public void onResume() {
-        super.onResume();
-        for(int i = 0; i< diceList.size(); i++){
-            diceList.get(i).onResume();
-        }
-       // mUnityPlayer.resume();
-    }
-
-    public class ThrowListener implements View.OnClickListener{
-        private View inGameView;
-
-        public ThrowListener(View inGameView){
-            this.inGameView = inGameView;
-        }
-        @Override
-        public void onClick(View v){
-            if (!throwIsExcuting()) {
-
-//                gameActivityInterface.setThrows(inGameView);
-                CommunicationHandler.getInstance().setThrows(inGameView);
-                for (int i = 0; i < throwRunnables.size(); i++) {
-                    if (i + 1 < throwRunnables.size()) {
-                        //This is a hack, use one invisible open gl as surface thread
-                        //and apply rotation on the other surface that's why zero
-                        //is skipped.
-                        if (throwRunnables.get(i + 1).getSurface().isSurfaceIsActive()) {
-                            numberOfThreadsStarted = i;
-                            diceList.get(0).queueEvent(throwRunnables.get(i + 1));
-                            if (throwRunnables.get(i + 1).getRunning()) {
-                                throwRunnables.get(i + 1).endThis();
-                            } else {
-                                throwRunnables.get(i + 1).start();
-                            }
-                        }
-                    }
-
-                }
-            } else {
-                System.out.println("still throwing :D");
-            }
-        }
-    }
 
     /**
      * Created by Rallmo on 2017-04-05.
@@ -547,9 +513,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
     public class  ThrowThread implements Runnable{
         private volatile boolean running = false;
         private Thread thread;
-        private DiceSurfaceView diceSurface;
         private Dice dice;
-       // private ArrayList<Dice> dices;
         private SparseArray<Dice> dices;
         private DiceSurfaceView surface;
         boolean reversedX = false;
@@ -560,8 +524,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         boolean isRotationYDone = false;
         boolean newAngleIsSetted = false;
         private Handler uiHandler;
-        private HashMap listOfScores;
-        private GameActivityInterface gameActivityInterface;
         int[] currentAngle = null;
         int xAngle = 0;
         int yAngle = 0;
@@ -583,7 +545,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             this.dice = dice;
             this.dices = dices;
             this.uiHandler = uiHandler;
-            this.listOfScores = listOfScores;
             currentAngle = surface.getAngleOfDice(
                     this.dice.getScore()
             );
@@ -610,7 +571,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
                             this, currentAngle, yAngle,
                             reversedY, positiveAngleY,"y", isRotationYDone
                     );
-                    Thread.sleep(10);
+                    Thread.sleep(30);
                 }catch (InterruptedException e){
                     System.out.println("interrupted e");
                 }
@@ -620,7 +581,7 @@ public class InGameFragment extends Fragment implements SensorEventListener{
         /**
          * Start a new thread
          * */
-        synchronized public void start(){
+        public synchronized void start(){
             running = true;
             this.resetValues();
             if (thread == null) {
@@ -629,10 +590,10 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             }
         }
 
-        public void updateDiceInList(){
+        public synchronized void updateDiceInList(){
          //   System.out.println("wats le score? " + dice.getScore());
+            System.out.println("le score? " + dice.getScore());
             dices.setValueAt(dice.getSurfaceIndex(),dice);
-
         }
 
         public synchronized void setGetScore(int diceNumber){
@@ -669,36 +630,55 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             }
         }
 
-        private boolean checkIfThreadIsDone(){
-            if(numberOfThreadsDone >= numberOfThreadsStarted){
-                numberOfThreadsDone = 0;
-              //  System.out.println("new checkscore");
-                return true;
-            }
-            return false;
-        }
+        public synchronized void checkIfAllThreadsIsDone(){
+            int counter = 0;
+            for(int i = 0; i < throwRunnables.size(); i++){
+                System.out.println(
+                        "yoyoyo? :_  "   +  throwRunnables.get(i).getRunning()
+                );
+                System.out.println(" le scores??: " + throwRunnables.get(i).getScoreDice().getScore());
+                if (!throwRunnables.get(i).getRunning()) {
 
-        private void sendMessageToMainThread(){
+                    this.setAngleAfterAnimation(
+                            throwRunnables.get(i)
+                    );
+                    counter++;
+                }
+            }
+            if(counter == 5){
+                sendScores = true;
+                this.setAllAngleToScore();
+            }
+        }
+        private void setAllAngleToScore(){
+            for(int i = 0; i < throwRunnables.size(); i++){
+                    this.setAngleAfterAnimation(
+                            throwRunnables.get(i)
+                    );
+            }
+        }
+        private void setAngleAfterAnimation(ThrowThread object){
+            int newAngle = object.getScoreDice().getScore();
+            object.getSurface().changePositionOfDice(newAngle);
+        }
+        private synchronized void sendMessageToMainThread(){
             Message m = new Message();
             Bundle bundle = new Bundle();
             bundle.putSparseParcelableArray("scoreArray", dices); // for example
+            //bundle.putInt("threadsDone"); // for example
             m.setData(bundle);
             uiHandler.sendMessage(m);
         }
         /**
          * Shutdown the thread
          * */
-       public synchronized void endThis() {
+       public void endThis() {
             numberOfThreadsDone++;
-
-            /*if(this.checkIfThreadIsDone()){
-
-                System.out.println("it is the end?");
-                this.sendMessageToMainThread();
-            }else{
-                System.out.println("jamna?" + numberOfThreadsDone);
-            }*/
-           this.sendMessageToMainThread();
+           this.checkIfAllThreadsIsDone();
+           if(sendScores) {
+               this.sendMessageToMainThread();
+               sendScores = false;
+           }
             if (thread != null) {
                 running = false;
                 thread = null;
@@ -767,25 +747,8 @@ public class InGameFragment extends Fragment implements SensorEventListener{
             currentAngle = value;
         }
 
-        /**
-         * check if angle is greater then zero
-         * if so it is a positive angle otherwise
-         * negative
-         *
-         * @param x current angle of x
-         * @param y current angle of y
-         * */
-        private synchronized void checkIfPositiveAngle(int x, int y){
-            if(x > 0){
-                positiveAngleX = true;
-            }else{
-                positiveAngleX = false;
-            }
-            if(y > 0){
-                positiveAngleY = true;
-            }else{
-                positiveAngleY = false;
-            }
+        public Dice getScoreDice(){
+            return dice;
         }
 
         /**

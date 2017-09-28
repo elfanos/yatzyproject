@@ -74,6 +74,7 @@ public class EndActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
             Intent newGame = new Intent(getApplication(), StartActivity.class);
+            newGame.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(newGame);
         }
     }
@@ -87,12 +88,19 @@ public class EndActivity extends AppCompatActivity {
         }
         @Override
         public void onClick(View v){
-            Intent newGame = new Intent(getApplication(), ScoreViewActivity.class);
+            Intent scoreView = new Intent(getApplication(), ScoreViewActivity.class);
             Bundle scoreBundle = new Bundle();
             scoreBundle.putSerializable("playersIcon", playersIcon);
             scoreBundle.putSerializable("players", players);
-            newGame.putExtras(scoreBundle);
-            startActivity(newGame);
+            scoreView.putExtras(scoreBundle);
+            startActivity(scoreView);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent newGame = new Intent(getApplication(), StartActivity.class);
+        newGame.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(newGame);
     }
 }

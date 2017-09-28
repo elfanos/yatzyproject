@@ -11,8 +11,6 @@ import java.util.Comparator;
  */
 
 public class LeaderBoard {
-    private ArrayList<Player> players;
-
 
 
     public ArrayList<Player> checkTopList(ArrayList<Player> players){

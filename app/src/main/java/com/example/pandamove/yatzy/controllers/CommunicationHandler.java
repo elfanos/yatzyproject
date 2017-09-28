@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
@@ -105,13 +106,28 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     }
 
     public int getCurrentFragment() {
-        return currentFragment;
+        return (((ViewPager) gameActivity.findViewById(R.id.viewpager)).getCurrentItem());
     }
 
-    public void setCurrentFragment(int currentFragment) {
-        this.currentFragment = currentFragment;
+
+    public View getInGameView() {
+        return inGameView;
     }
 
+    public void setInGameView(View inGameView) {
+        this.inGameView = inGameView;
+    }
+
+    public boolean isInitializeDices() {
+        return initializeDices;
+    }
+
+    public void setInitializeDices(boolean initializeDices) {
+        this.initializeDices = initializeDices;
+    }
+
+    private boolean initializeDices;
+    private View inGameView;
     private GameActivity gameActivity;
     private OnButtonClickedListener buttonClickedListener;
     private GameActivityInterface gameActivityController;
@@ -123,7 +139,7 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     private HashMap<String,Integer> listOfPossibleScores;
     private LeaderBoard leaderBoard;
     private Animation animation;
-    private int currentFragment = 0;
+    private int testish = 0;
 
     public static CommunicationHandler getInstance(){
         if(instance==null){
@@ -158,21 +174,24 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     }
     @Override
     public void onThrowPostPossibleScores(SparseArray<Dice> dices){
-        resetHashMap();
-        ScoreHandler scoreHandler = new ScoreHandler(dices);
-        listOfPossibleScores = scoreHandler.possibleScores();
-        //printMap(listOfPossibleScores);
-        resetHashMap();
-        ScoreHandler scoreHandler2 = new ScoreHandler(dices);
-        listOfPossibleScores = scoreHandler2.possibleScores();
-        Fragment scoreFragment = fragments.get(1);
-        Player player = checkCurrentPlayer();
-        if(player != null) {
-            player.getScoreKeeper().setScores(listOfPossibleScores);
-            if (scoreFragment instanceof ScoreFragment) {
-                ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
+
+            testish++;
+            resetHashMap();
+            ScoreHandler scoreHandler = new ScoreHandler(dices);
+            listOfPossibleScores = scoreHandler.possibleScores();
+            //printMap(listOfPossibleScores);
+            resetHashMap();
+            ScoreHandler scoreHandler2 = new ScoreHandler(dices);
+            listOfPossibleScores = scoreHandler2.possibleScores();
+            Fragment scoreFragment = fragments.get(1);
+            Player player = checkCurrentPlayer();
+            System.out.println("Testish: " + testish);
+            if (player != null) {
+                player.getScoreKeeper().setScores(listOfPossibleScores);
+                if (scoreFragment instanceof ScoreFragment) {
+                    ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
+                }
             }
-        }
     }
     public View inGameFragmentView(){
         Fragment inGameFragment = fragments.get(0);
@@ -203,27 +222,35 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     }
     @Override
     public void roundsEnd(Player player, Activity activity){
-        if(gameObjects.getRound() < 14) {
-            player.setCurrentPlayer(false);
-            player.setScoreIsSet(true);
-            System.out.println("wats let round? " + gameObjects.getRound());
+        testish = 0;
+        player.setCurrentPlayer(false);
+        player.setScoreIsSet(true);
+        System.out.println("wats let round? " + gameObjects.getRound());
+        //If more players
+        if (gameObjects.checkIfLastPlayer()) {
+            if(gameObjects.getRound() < 14) {
+                this.setNewRound(player);
+                this.generateNewDices();
+            } else
+                gameActivity.endGame();
 
-            if (gameObjects.checkIfLastPlayer()) {
-                this.setNewRound(player);
-            } else if (gameObjects.getNextPlayer(player.getColumnPosition()) == 0) {
-                this.setNewRound(player);
-            } else {
-                players.get(
-                        gameObjects.getNextPlayer(player.getColumnPosition())
-                ).setCurrentPlayer(true);
-                this.updateView(this.inGameFragmentView());
-                this.updateHighScore(this.inGameFragmentView());
-            }
-        }else{
-            System.out.println("jaman lets find it??");
-            //this.onEndGame(activity);
-            gameActivity.endGame();
         }
+        //If one player
+        else if (gameObjects.getNextPlayer(player.getColumnPosition()) == 0) {
+            if(gameObjects.getRound() < 14) {
+                this.setNewRound(player);
+                this.generateNewDices();
+            } else
+                gameActivity.endGame();
+        } else {
+            players.get(
+                    gameObjects.getNextPlayer(player.getColumnPosition())
+            ).setCurrentPlayer(true);
+            this.generateNewDices();
+            this.updateView(this.inGameFragmentView());
+            this.updateHighScore(this.inGameFragmentView());
+        }
+
     }
     @Override
     public void updateView(View v){
@@ -298,8 +325,9 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     }
     @Override
     public void updateHighScore(View v){
-        ArrayList<Player> highScorePlayers = new ArrayList<>();
-        highScorePlayers = players;
+        ArrayList<Player> highScorePlayers = null;
+        highScorePlayers = new ArrayList<>();
+        highScorePlayers.addAll(players);
         highScorePlayers = leaderBoard.checkTopList(highScorePlayers);
         for(int i = 0; i < highScorePlayers.size(); i++){
             this.setViewOnHighScore(highScorePlayers.get(i), i, v);
@@ -376,5 +404,21 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
 
     }
+    public void generateNewDices(){
+        ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(0,true);
+        ((InGameFragment)this.getFragments().get(0)).resetSelectedDices();
+        ((InGameFragment)this.getFragments().get(0)).beginARollRound(inGameView);
+        this.setInitializeDices(false);
+    }
+    public void goToScoreView(){
+        ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(1,true);
+    }
+    public void goToInGameView(){
+        ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(0,true);
+    }
+    public int onBackPressed(){
+        return (((ViewPager) gameActivity.findViewById(R.id.viewpager)).getCurrentItem());
+    }
+
 
 }
