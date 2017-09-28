@@ -180,12 +180,6 @@ public class InGameFragment extends Fragment implements SensorEventListener{
 
         buttonThrow.setOnClickListener(new ThrowListener(view));
 
-        view.findViewById(R.id.buttonScore).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetSelectedDices();
-            }
-        });
 
         return view;
     }

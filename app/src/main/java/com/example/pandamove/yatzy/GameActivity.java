@@ -126,6 +126,14 @@ public class GameActivity extends AppCompatActivity{
         this.onBackPressedListener = onBackPressedListener;
     }
     @Override
+    public void onStop(){
+        super.onStop();
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+    }
+    @Override
     public void onBackPressed() {
         if(CommunicationHandler.getInstance().getCurrentFragment() == 1){
             CommunicationHandler.getInstance().goToInGameView();
