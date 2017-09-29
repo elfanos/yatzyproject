@@ -388,7 +388,6 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
      * */
     @Override
     public void onButtonClicked(View v){
-        System.out.println("le id: " + v.getId());
 
 
     }
