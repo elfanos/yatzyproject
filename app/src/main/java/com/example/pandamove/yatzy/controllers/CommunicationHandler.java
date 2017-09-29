@@ -388,20 +388,7 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
      * */
     @Override
     public void onButtonClicked(View v){
-        System.out.println("le id: " + v.getId());
-        switch (v.getId()){
-            case R.id.buttonScore:
-                //System.out.println("pressed test button");
-                Fragment scoreFragment =  fragments.get(1);
-                Player player = players.get(1);
-                if(scoreFragment instanceof ScoreFragment){
 
-
-                }
-                break;
-            default:
-                break;
-        }
 
     }
     public void generateNewDices(){
