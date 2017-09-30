@@ -1,11 +1,15 @@
-package com.example.pandamove.yatzy;
+package com.example.pandamove.yatzy.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,18 +19,23 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
-import com.example.pandamove.yatzy.controllers.OnBackPressedListener;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
-import com.example.pandamove.yatzy.fragments.InGameFragment;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
-import com.example.pandamove.yatzy.player.GameObjects;
+import com.example.pandamove.yatzy.controllers.GameObjects;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.LeaderBoard;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * GameActivity
+ * The activity during the yatzy game
+ *
+ * @author Rasmus Dahlkvist
+ * */
 public class GameActivity extends AppCompatActivity{
 
     private ViewPager mPager;
@@ -48,13 +57,6 @@ public class GameActivity extends AppCompatActivity{
 
     private GameObjects gameObjects;
 
-    protected OnBackPressedListener onBackPressedListener;
-
-    //private
-
-    private static Animation scoreAnimation;
-
-   // private CommunicationHandler communicationHandler;
     private LeaderBoard leaderBoard = new LeaderBoard();
     Animation animation;
 
@@ -92,6 +94,12 @@ public class GameActivity extends AppCompatActivity{
     /*Keep track on fragments*/
     private SparseArray<Fragment> fragments;
     private Boolean exit = false;
+
+    private SensorManager sm;
+
+    private float acelVal; //Accelaration and gravity
+    private float acelLast; //Lastt ac and graveitiy
+    private float shake; // acce and differ gravity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +112,7 @@ public class GameActivity extends AppCompatActivity{
         this.initializePlayerIcon();
         this.initializePlayers(numberOfPlayers);
         gameObjects = new GameObjects(players);
-        gameObjects.setRoundTest(1);
+        gameObjects.setRoundTest(0);
 
         fragments = new SparseArray<>();
         mPager = (ViewPager) findViewById(R.id.viewpager);
@@ -118,12 +126,15 @@ public class GameActivity extends AppCompatActivity{
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
-
         this.initializeCommunicationHandler();
 
-    }
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
-        this.onBackPressedListener = onBackPressedListener;
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sm.registerListener(sensorEventListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+
+        acelVal = SensorManager.GRAVITY_EARTH;
+        acelLast = SensorManager.GRAVITY_EARTH;
+        shake = 0.00f;
+
     }
     @Override
     public void onStop(){
@@ -133,11 +144,16 @@ public class GameActivity extends AppCompatActivity{
     public void onDestroy(){
         super.onDestroy();
     }
+
+    /**
+     * On back pressed check if the user really want to end the game
+     * Show a toast text hen if so it exit the game and application
+     * */
     @Override
     public void onBackPressed() {
         if(CommunicationHandler.getInstance().getCurrentFragment() == 1){
             CommunicationHandler.getInstance().goToInGameView();
-        }else{;
+        }else{
             if (exit) {
                 finish(); // finish activity
             } else {
@@ -154,6 +170,43 @@ public class GameActivity extends AppCompatActivity{
             }
         }
     }
+
+    /**
+     * Create a sensor event listerner the listen if the user
+     * is shaking the phone or not
+     * */
+    private final SensorEventListener sensorEventListener = new SensorEventListener() {
+
+        /**
+         * Using sensor to check gravity of the phone and position
+         * Check the trashhold and if its over it will call shakeActivity
+         * */
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            acelLast = acelVal;
+            acelVal = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = acelVal - acelLast;
+            shake = shake * 0.9f + delta;
+
+            if(shake > 12){
+                CommunicationHandler.getInstance().shakeActivity();
+            }
+		}
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+		}
+	};
+
+	/**
+     * Initialize values to the communicationHandler
+     *
+     * */
     public void initializeCommunicationHandler(){
         CommunicationHandler.getInstance().setPlayers(players);
         CommunicationHandler.getInstance().setAnimation(animation);
@@ -166,12 +219,10 @@ public class GameActivity extends AppCompatActivity{
         CommunicationHandler.getInstance().setGameActivity(this);
         CommunicationHandler.getInstance().setInitializeDices(false);
     }
-    public ScoreFragment getFragmentOne(){
-        return ((ScoreFragment)fragments.get(1));
-    }
-    public Fragment inGameFragment(){
-        return fragments.get(0);
-    }
+
+    /**
+     * End the game and send user to end activity
+     * */
     public void endGame(){
         Intent endGame = new Intent(
                 GameActivity.this,
@@ -182,7 +233,12 @@ public class GameActivity extends AppCompatActivity{
         playerBundle.putSerializable("playersIcon", CommunicationHandler.getInstance().getPlayersIcon());
         endGame.putExtras(playerBundle);
         startActivity(endGame);
+        finish();
     }
+
+    /**
+     * Initialize player icon
+     * */
     public void initializePlayerIcon(){
         playersIcon = new ArrayList<>();
         playersIcon.add(R.drawable.playericon_one);
@@ -195,6 +251,10 @@ public class GameActivity extends AppCompatActivity{
         highScore.add(((TextView) findViewById(R.id.playerThird)));
         highScore.add(((TextView) findViewById(R.id.playerForth)));
     }
+
+    /**
+     * Add two players
+     * */
     public void addTwoPlayers(){
         Player player = new Player("Yellow", scores);
         player.setColumnPosition(0);
@@ -206,6 +266,9 @@ public class GameActivity extends AppCompatActivity{
         player2.setNumberOfThrows(0);
         players.add(player2);
     }
+    /**
+     * Add three players
+     * */
     public void addThreePlayers(){
         Player player = new Player("Yellow", scores);
         player.setColumnPosition(0);
@@ -221,6 +284,9 @@ public class GameActivity extends AppCompatActivity{
         player3.setNumberOfThrows(0);
         players.add(player3);
     }
+    /**
+     * initialize player based on how many players there is
+     * */
     public void initializePlayers(int numberOfPlayers){
         switch (numberOfPlayers){
             case 1:
@@ -241,6 +307,10 @@ public class GameActivity extends AppCompatActivity{
                 break;
         }
     }
+
+    /**
+     * Add four players
+     * */
     public void addFourPlayers(){
         Player player = new Player("Yellow", scores);
         player.setColumnPosition(0);

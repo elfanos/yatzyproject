@@ -3,16 +3,6 @@ package com.example.pandamove.yatzy;
 /**
  * Created by rallesport on 2017-06-01.
  */
-import com.example.pandamove.yatzy.player.Player;
-import com.example.pandamove.yatzy.score.ScoreListHandler;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScoreListHandlerTest {
     /*private List<Player> players = new ArrayList<>();

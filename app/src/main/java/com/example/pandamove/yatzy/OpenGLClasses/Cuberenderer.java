@@ -1,4 +1,4 @@
-package com.example.pandamove.yatzy;
+package com.example.pandamove.yatzy.OpenGLClasses;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -14,6 +14,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+
+import com.example.pandamove.yatzy.R;
 
 
 public class Cuberenderer implements GLSurfaceView.Renderer 
@@ -101,14 +103,6 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	/**
 	 * Initialize the model data.
 	 */
-
-	public float getRotationRatio() {
-		return rotationRatio;
-	}
-
-	public void setRotationRatio(float rotationRatio) {
-		this.rotationRatio = rotationRatio;
-	}
 
 	public Cuberenderer(DiceSurfaceView diceSurfaceView)
 	{	
@@ -315,9 +309,6 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}
 	
 
-	public FloatBuffer getmCubeColors(){
-		return mCubeColors;
-	}
 
 	public boolean isDiceSelected() {
 		return diceSelected;
@@ -327,14 +318,12 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		this.diceSelected = diceSelected;
 	}
 	
-	public static int loadTexture(GLSurfaceView mActivityContext2, final int resourceId)
-	{
+	public static int loadTexture(GLSurfaceView mActivityContext2, final int resourceId) {
 	    final int[] textureHandle = new int[1];
 	 
 	    GLES20.glGenTextures(1, textureHandle, 0);
 	 
-	    if (textureHandle[0] != 0)
-	    {
+	    if (textureHandle[0] != 0) {
 	        final BitmapFactory.Options options = new BitmapFactory.Options();
 	        options.inScaled = false;   // No pre-scaling
 	 
@@ -355,16 +344,14 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	        bitmap.recycle();
 	    }
 	 
-	    if (textureHandle[0] == 0)
-	    {
+	    if (textureHandle[0] == 0) {
 	        throw new RuntimeException("Error loading texture.");
 	    }
 	 
 	    return textureHandle[0];
 	}
 	@Override
-	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) 
-	{
+	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		float[] values = hextoRGB("#FFFFFF");
 		GLES20.glClearColor(values[0], values[1], values[2], 1.0f);
@@ -426,8 +413,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		// Load in the vertex shader.
 		int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
 
-		if (vertexShaderHandle != 0) 
-		{
+		if (vertexShaderHandle != 0) {
 			// Pass in the shader source.
 			GLES20.glShaderSource(vertexShaderHandle, vertexShader);
 
@@ -439,23 +425,20 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 			GLES20.glGetShaderiv(vertexShaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
 
 			// If the compilation failed, delete the shader.
-			if (compileStatus[0] == 0) 
-			{				
+			if (compileStatus[0] == 0) {
 				GLES20.glDeleteShader(vertexShaderHandle);
 				vertexShaderHandle = 0;
 			}
 		}
 
-		if (vertexShaderHandle == 0)
-		{
+		if (vertexShaderHandle == 0) {
 			throw new RuntimeException("Error creating vertex shader.");
 		}
 		
 		// Load in the fragment shader shader.
 		int fragmentShaderHandle = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
 
-		if (fragmentShaderHandle != 0) 
-		{
+		if (fragmentShaderHandle != 0) {
 			// Pass in the shader source.
 			GLES20.glShaderSource(fragmentShaderHandle, fragmentShader);
 
@@ -474,16 +457,14 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 			}
 		}
 
-		if (fragmentShaderHandle == 0)
-		{
+		if (fragmentShaderHandle == 0) {
 			throw new RuntimeException("Error creating fragment shader.");
 		}
 		
 		// Create a program object and store the handle to it.
 		 mProgramHandle = GLES20.glCreateProgram();
 		
-		if (mProgramHandle != 0) 
-		{
+		if (mProgramHandle != 0) {
 			// Bind the vertex shader to the program.
 			GLES20.glAttachShader(mProgramHandle, vertexShaderHandle);			
 
@@ -509,15 +490,13 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 			GLES20.glGetProgramiv(mProgramHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
 
 			// If the link failed, delete the program.
-			if (linkStatus[0] == 0) 
-			{				
+			if (linkStatus[0] == 0) {
 				GLES20.glDeleteProgram(mProgramHandle);
 				mProgramHandle = 0;
 			}
 		}
 		
-		if (mProgramHandle == 0)
-		{
+		if (mProgramHandle == 0) {
 			throw new RuntimeException("Error creating program.");
 		}
         
@@ -525,9 +504,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}	
 	
 	@Override
-	public void onSurfaceChanged(GL10 glUnused, int width, int height) 
-	{
-		System.out.println("surfacechanged");
+	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
 		// Set the OpenGL viewport to the same size as the surface.
 		GLES20.glViewport(0, 0, width, height);
 
@@ -548,11 +525,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}	
 
 	@Override
-	public void onDrawFrame(GL10 glUnused) 
-	{
-		//System.out.println("drawframe");
-		/*System.out.println("angel x: " + xAngle);
-		System.out.println("angel y: " + yAngle);*/
+	public void onDrawFrame(GL10 glUnused) {
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);			        
                 
 		 GLES20.glUseProgram(mProgramHandle);
@@ -643,8 +616,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}	
 	
 
-	private void draw(final FloatBuffer acubeBuffer, final int i)
-	{		
+	private void draw(final FloatBuffer acubeBuffer, final int i) {
 
 		// Pass in the position information. each vertex needs 3 values and each face of the
 //		cube needs 4 vertices. so total 3*4 = 12
@@ -689,11 +661,6 @@ public class Cuberenderer implements GLSurfaceView.Renderer
                          
 	}
 
-	public void turnFaceOnClick(){
-		//System.out.println("inside turnface");
-		// Draw the triangle facing straight on.
-
-	}
 	/* re-map RGB colors so they can be used in OpenGL */
 	private float[] map(float[]rgb) {
 

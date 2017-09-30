@@ -26,6 +26,7 @@
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="127dp"
+            android:background="#2E4057"
             android:text="new Game" />
 
         <Button
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/newGameButton"
             android:layout_below="@+id/newGameButton"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="25dp"
+            android:background="#2E4057"
             android:text="Scores" />
 
         <TextView

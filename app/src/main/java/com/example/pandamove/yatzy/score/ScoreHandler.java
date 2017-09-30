@@ -1,19 +1,14 @@
 package com.example.pandamove.yatzy.score;
-
-import android.app.admin.SystemUpdatePolicy;
 import android.util.SparseArray;
-import android.widget.ArrayAdapter;
-
 import com.example.pandamove.yatzy.dice.Dice;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Rallmo on 2017-04-05.
+ *
+ * Class which handles the score, using logic
+ * to find the right score based on the rules of yatzy
  *
  * @author Rasmus Dahlkvist
  */
@@ -102,12 +97,7 @@ public class ScoreHandler {
      *
      * */
     private void checkForNumbers(){
-        int one = 0;
-        int two = 0;
-        int three = 0;
-        int four = 0;
-        int five = 0;
-        int six = 0;
+        int one = 0, two = 0, three = 0, four= 0, five = 0, six = 0;
         for(int i = 1; i < dices.size(); i++){
             switch (dices.get(i).getScore()){
                 case 1:
@@ -136,7 +126,6 @@ public class ScoreHandler {
                     break;
             }
         }
-
     }
     /**
      * Check for the highest pair inb the pairCollector
@@ -193,9 +182,7 @@ public class ScoreHandler {
     private void checkForPairs(int position,List<Integer> pairCollector){
         boolean gotOnePair = false;
         this.checkForPair(position, pairCollector, gotOnePair);
-       // System.out.println("Le pair size? " + pairCollector.size());
         int highestPair = this.checkTheHighestPair(pairCollector);
-        //System.out.println("Le pair after? " + pairCollector.size());
         allScores.put(scores[7], highestPair);
         if(pairCollector.size() > 1) {
             this.checkForTwoPairOrFourOfKind(pairCollector);
@@ -219,7 +206,6 @@ public class ScoreHandler {
      * @param pairCollector container for all the pairs
      * */
     private void checkForPairOrThreeOfAkind(List<Integer> pairCollector){
-     //   System.out.println("thee of a " + pairCollector.size());
         int value = 0;
         for(int i = 0; i < pairCollector.size(); i++){
             if(pairCollector.size() > 1){
@@ -229,7 +215,6 @@ public class ScoreHandler {
                         value += pairCollector.get(i);
                         value += pairCollector.get(i+1);
                     }else{
-                      //  System.out.println("thee of a welwel ");
                         value = 0;
                     }
                 }
@@ -239,6 +224,13 @@ public class ScoreHandler {
             allScores.put(scores[8], value);
         }
     }
+    /**
+     * check for two pair or four of kind by iterating through the pairColletor
+     * list and check if contains duplicate or not then add the 2 pairs
+     * or four of a kind insidet the allscores hashmap.
+     *
+     * @param pairCollector
+     * */
     private void checkForTwoPairOrFourOfKind(List<Integer> pairCollector){
         int value = 0;
         int fourOfKind = 0;
@@ -256,7 +248,6 @@ public class ScoreHandler {
                 }
             }else{
                 this.checkForPairOrThreeOfAkind(pairCollector);
-               // value += pairCollector.get(i);
             }
         }
         if(value != 0) {
@@ -265,6 +256,12 @@ public class ScoreHandler {
             allScores.put(scores[10], fourOfKind);
         }
     }
+
+    /**
+     * Method which check for three of a kind by using
+     * three pivot element to iterate through the arraylist
+     * checking each nodes neighbour (pivot element).
+     * */
     private void checkForScoreThreeOfKind(){
         List<Integer> scoreCollector = new ArrayList<>();
         boolean [] pivot = { false, false, false};
@@ -285,6 +282,9 @@ public class ScoreHandler {
             threeOfKind = scoreCollector.get(0);
         }
     }
+    /**
+     * Checking the list neighbour if they are the same value
+     * */
     private void checkForThreeOfAKind(int position, List<Integer> scoreCollector){
         for(int i = position; i < dices.size(); i++){
             if((i+1) < dices.size()) {
@@ -294,6 +294,10 @@ public class ScoreHandler {
             }
         }
     }
+    /**
+     * Check other the arraylist neighbours add the three combination if the arraylist
+     * contains three of the same.
+     * */
     private void checkCombination(int firstPosition, int lastCombPosition, List<Integer> scoreCollector){
         for(int i = lastCombPosition; i < dices.size(); i++){
             if((i+1) < dices.size()) {
@@ -307,6 +311,12 @@ public class ScoreHandler {
 
         }
     }
+    /**
+     * Using boolean list to check for straight score
+     * Checking all score one by one in the array of dices.
+     * if the matrix allchecked contains only true values
+     * it is a low straight
+     * */
     private void checkForLowStraight(){
         boolean [] allChecked = {false, false, false, false, false};
         int dicesInStraight = 0;
@@ -343,6 +353,12 @@ public class ScoreHandler {
             allScores.put(scores[12], value);
         }
     }
+    /**
+     * Same principle as lowstraight checking the score of
+     * each dice in the list then add true if they contain the right
+     * score check if all boolean in the matrix allchecked are true
+     * if so it is a straight
+     * */
     private void checkForBigStraight(){
         boolean [] allChecked = {false, false, false, false, false};
         int dicesInStraight = 0;
@@ -379,6 +395,13 @@ public class ScoreHandler {
             allScores.put(scores[13], value);
         }
     }
+
+    /**
+     *
+     * Checking for fullhouse by checking if it exist a pair and
+     * a three of a kind in the scorelisthandle if so it first
+     * check if there are duplicates if not it is a three of a kind
+     * */
     private void checkForFullHouse(){
         int fullHouse = 0;
         if(threeOfKind != 0 && pairs.size() != 0){
@@ -393,6 +416,9 @@ public class ScoreHandler {
             allScores.put(scores[11], fullHouse);
         }
     }
+    /**
+     * Sums all the score on the current dices
+     * */
     private void checkForChance(){
         int value = 0;
         for(int i = 1; i < dices.size(); i++){
@@ -402,6 +428,10 @@ public class ScoreHandler {
         allScores.put(scores[14], value);
 
     }
+    /**
+     * Check if all dices in the list are the same
+     * if so it sums the value of them and then add it with 50.
+     * */
     private void checkForYatzy(){
         int incrementDices = 0;
         int value = 0;
@@ -416,7 +446,7 @@ public class ScoreHandler {
             for(int i = 1; i < dices.size(); i++){
                 value += dices.get(i).getScore();
             }
-            allScores.put(scores[15], value);
+            allScores.put(scores[15], (50+value));
         }
     }
 

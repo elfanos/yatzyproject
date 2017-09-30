@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.CellOnClickListener;
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;

@@ -5,15 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.example.pandamove.yatzy.GameActivity;
 import com.example.pandamove.yatzy.R;
-import com.example.pandamove.yatzy.controllers.BaseBackPressedListener;
-import com.example.pandamove.yatzy.controllers.GameActivityInterface;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
@@ -22,11 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Rallmo on 2017-04-05.
+ * Fragment Class
+ * A class which is used for the list view adapter
+ * to view all possible score given when the user play
+ * a round of yatzy
+ *
+ * @author Rasmus Dahlkvist
  */
 public class ScoreFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
-    private ListView listView;
     private List<ScoreListHandler> listOfScores;
     private String[] scores = {
             "YATZY",
@@ -50,22 +48,30 @@ public class ScoreFragment extends Fragment {
             "Total",
             "Total of All"
     };
-
     private List<Player> players;
-
     private ScoreViewAdapter scoreViewAdapter;
-
     private ArrayList<Dice> dices;
-
     private ListView scoreListView;
 
-//    private GameActivityInterface gameActivityInterface;
-
-    private Animation scoreSetAnimation;
+    /**
+     * Intance for the score fragment initialize
+     * two array list one for player and one list of scores
+     * */
     public ScoreFragment(){
         players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
+
+    /**
+     * New instance is used for saftey when using
+     * fragment, it make a instance of itself instead
+     * of creating instance in another class. Save all important
+     * information in bundles and send it to oncreate
+     *
+     * @param page fragment number
+     * @param dices alla dices in a arraylist
+     * @param players all the players in an arraylist
+     * */
     public static ScoreFragment newInstance(int page, ArrayList<Dice> dices,
                                             ArrayList<Player> players){
         Bundle args = new Bundle();
@@ -73,68 +79,46 @@ public class ScoreFragment extends Fragment {
         args.putInt(ARG_PAGE, page);
         args.putParcelableArrayList("dices", dices);
         args.putSerializable("players", players);
-    //    args.putSerializable("scoreinterface", gameActivityInterface);
         object.setArguments(args);
 
         return object;
     }
 
 
+    /**
+     * Creates the fragment
+     * retrive all important value by using getArgument
+     * */
     @Override
     public void onCreate(Bundle onSavedInstace){
         super.onCreate(onSavedInstace);
         dices = getArguments().getParcelableArrayList("dices");
         players = (ArrayList<Player>) getArguments().getSerializable("players");
-   /*     gameActivityInterface =
-                (GameActivityInterface) getArguments().getSerializable("scoreinterface");*/
-
     }
+
+    /**
+     * Create the view for the fragment
+     *
+     * @param inflater get the xml file layout
+     * @param container all the view inside the xml file
+     * @param savedInstanceState get saved instance if there is any saved instance
+     * */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.scoregame_page, container, false);
         scoreListView = (ListView) view.findViewById(R.id.list_view_score);
-        ((GameActivity)getActivity()).
-                setOnBackPressedListener(new BaseBackPressedListener(getActivity()));
-        /**
-         * TODO fix so that set column arent static?
-         * */
-       /* Player player = new Player("ralle", scores);
-        player.setColumnPosition(0);
-        players.add(player);
-        Player player2 = new Player("ralle2",scores);
-        player2.setColumnPosition(1);
-        players.add(player2);
-        Player player3 = new Player("ralle3", scores);
-        player3.setColumnPosition(2);
-        players.add(player3);
-        Player player4 = new Player("ralle4",scores);
-        player4.setColumnPosition(3);
-        players.add(player4);*/
+
         if(scoreViewAdapter == null){
             this.updateAdapter();
         }
-        /*scoreViewAdapter = new ScoreViewAdapter(inflater.getContext());
-        for(int i = 0; i < scores.length; i++ ){
-            if(i == 0){
-                scoreViewAdapter.addSectionHeader(scores[i],players);
-            }
-            if(i != 0 && i < 7){
-                scoreViewAdapter.addItem(scores[i],players);
-            }
-            if(i > 6 && i <8){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
-            }
-            if(i > 7 && i < 17 ){
-                scoreViewAdapter.addItem(scores[i], players);
-            }
-            if(i > 16){
-                scoreViewAdapter.addSectionHeader(scores[i], players);
-            }
-        }
-        scoreListView.setAdapter(scoreViewAdapter);*/
         return view;
     }
+
+    /**
+     * Update or initialize a new list view adapter add all
+     * the items
+     * */
     public void updateAdapter(){
         int headerItem = 0;
         scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
@@ -161,18 +145,16 @@ public class ScoreFragment extends Fragment {
         }
         scoreListView.setAdapter(scoreViewAdapter);
     }
-    public Animation getScoreAnimation(){
-        return null;
-    }
-    public int listOfScoresCount(){
-        return listOfScores.size();
-    }
+    /**
+     * @return scoreListViewAdapter return the list adapter
+     * */
     public ScoreViewAdapter getScoreListAdapater (){
         return (ScoreViewAdapter) scoreListView.getAdapter();
     }
-    public ListView getListView(){
-        return scoreListView;
-    }
+
+    /**
+     * @return size of the players arraylist
+     * */
     public int getPlayerListSize(){
         return players.size();
     }

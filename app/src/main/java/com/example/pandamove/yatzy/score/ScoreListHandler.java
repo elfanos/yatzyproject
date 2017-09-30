@@ -1,24 +1,21 @@
 package com.example.pandamove.yatzy.score;
 
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.pandamove.yatzy.R;
-import com.example.pandamove.yatzy.fragments.CellOnClickListener;
+import com.example.pandamove.yatzy.controllers.CellOnClickListener;
 import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
 import com.example.pandamove.yatzy.player.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Rallmo on 2017-04-06.
+ * Class scorelistHandler works like
+ * a decorator and controller for the list adapter
+ * in the scorefragment
+ *
+ * @author Rasmus Dahlkvist
  */
 public class ScoreListHandler {
 
@@ -50,6 +47,13 @@ public class ScoreListHandler {
     private ArrayList<Integer> differentLayouts;
     private int imageScore;
 
+    /**
+     * Constructor for scoreList handler
+     * @param players list of all players
+     * @param yatzyScore the yatzy score of the handler
+     * @param scoreSetted if the score is setted or not
+     * @param imageId for the handler to help return right view
+     * */
     public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted, int imageId){
         this.players = players;
         this.yatzyScore = yatzyScore;
@@ -66,27 +70,49 @@ public class ScoreListHandler {
         differentLayouts.add(R.drawable.layout_border_scored);
         differentLayouts.add(R.drawable.layout_border_zero_score);
     }
+    /**
+     * @return the imageScore as an integer
+     * */
     public int getImageScore(){
         return imageScore;
     }
+
+    /**
+     * @return the yatzy score as a string
+     * */
     public String getYatzyScore() {
         return yatzyScore;
     }
 
+    /**
+     * @param scorePlayerOne set score on playerOne
+     * */
     public void setScorePlayerOne(int scorePlayerOne) {
         this.scorePlayerOne = scorePlayerOne;
     }
 
+    /**
+     * @param scorePlayerTwo set score on player two
+     * */
     public void setScorePlayerTwo(int scorePlayerTwo) {
         this.scorePlayerTwo = scorePlayerTwo;
     }
 
+
+    /**
+     * @param scorePlayerThree set score on player three
+     * */
     public void setScorePlayerThree(int scorePlayerThree) {
         this.scorePlayerThree = scorePlayerThree;
     }
+
+    /**
+     * @param scorePlayerFour set score on player four
+     * */
     public void setScorePlayerFour(int scorePlayerFour) {
         this.scorePlayerFour = scorePlayerFour;
     }
+
     public CellOnClickListener getListener(int player, TextView scoreTextView){
         switch (player){
             case 0:
@@ -374,7 +400,14 @@ public class ScoreListHandler {
     private void setForHeader(Player player, String row, int scoreColumn){
         switch (row){
             case "Sum":
-                this.setForHeadRightColumn(player.getScoreKeeper().getSumOfNumbers(),scoreColumn);
+                if(player.getScoreKeeper().checkBonus() >= 50) {
+                    int total =
+                            (player.getScoreKeeper().getSumOfNumbers() +
+                                    player.getScoreKeeper().checkBonus());
+                    this.setForHeadRightColumn(total,scoreColumn);
+                }else {
+                    this.setForHeadRightColumn(player.getScoreKeeper().getSumOfNumbers(), scoreColumn);
+                }
                 break;
             case "Bonus":
                 this.setForHeadRightColumn(player.getScoreKeeper().checkBonus(),scoreColumn);

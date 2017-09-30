@@ -1,7 +1,5 @@
 package com.example.pandamove.yatzy.score;
 
-import com.example.pandamove.yatzy.player.Player;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,12 +7,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by Rallmo on 2017-04-05.
+ * Class which keep track of a player scores
+ * during the game.
+ *
+ * @author Rasmus Dahlkvist
  */
 public class ScoreKeeper implements Serializable{
     private String[] scores;
     private HashMap<String, Boolean> checkIfScoresIsSetted;
-    private int numberScore;
     private ArrayList<ScoreTable> possibleScoreTable;
     private ArrayList<ScoreTable> scoreTables;
     private HashMap<String, Integer> listOfScores;
@@ -49,6 +49,18 @@ public class ScoreKeeper implements Serializable{
             "Yatzy",
     };
 
+    /**
+     * Class constructor
+     * initalized by getting all the scores
+     * that are in the game of yatzy
+     * Initialize two hashmap one for checking if score
+     * is setted on the current row, One for the difference in number
+     * score.
+     * Initialize a possible score table which will use as temporary list
+     * while giving the user a view of possible score, then the value will
+     * be added to the main list scoreTables
+     *
+     * */
     public ScoreKeeper(String[] scores){
         checkIfScoresIsSetted = new HashMap<>();
         scoreTables = new ArrayList<>();
@@ -71,28 +83,6 @@ public class ScoreKeeper implements Serializable{
         this.listOfScores = listOfScores;
         this.setTempScore();
     }
-    public void setColumnScore(String row){
-        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
-        while (iterator.hasNext()){
-            Map.Entry map = (Map.Entry) iterator.next();
-            if(map.getKey() == row){
-                map.setValue(true);
-            }
-        }
-    }
-
-    public int getCurrentScore(){
-        int score = 0;
-        if(scoreTables.size() != 0){
-            for(int i = 0; i < scoreTables.size(); i++){
-                if(scoreTables.get(i).active){
-                    score += scoreTables.get(i).score;
-                    return score;
-                }
-            }
-        }
-        return score;
-    }
     /**
      * Sets values to a the temporary possibleScores arraylist
      * that will be used to display all possible scores for the user
@@ -110,12 +100,24 @@ public class ScoreKeeper implements Serializable{
             possibleScoreTable.add(scoreTable);
         }
     }
+
+    /**
+     * @return the size of scoreTables list
+     * */
     public Integer sizeOfScores(){
         return scoreTables.size();
     }
+
+    /**
+     * @return size of possibleScoreTable
+     * */
     public Integer sizeOfPossibleScores(){
         return possibleScoreTable.size();
     }
+
+    /**
+     * Clear the possibleScoreTable
+     * */
     private void clearScoreTablesScore(){
         possibleScoreTable.clear();
     }
@@ -188,16 +190,14 @@ public class ScoreKeeper implements Serializable{
         }
         this.setBonus();
     }
-    public boolean checkIfColumnGotScore(String row) {
-        Iterator iterator = checkIfScoresIsSetted.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry map = (Map.Entry) iterator.next();
-            if (map.getKey() == row) {
-                return (Boolean) map.getValue();
-            }
-        }
-        return false;
-    }
+
+    /**
+     * Get the usm of numbers score in the game,
+     * Sum all the rows which is a number score and return
+     * the number score sum.
+     *
+     * @return the sum of all number score in the scoreTables
+     * */
     public int getSumOfNumbers(){
         int sum = 0;
         for (int i = 0; i < scoreTables.size(); i++) {
@@ -211,6 +211,15 @@ public class ScoreKeeper implements Serializable{
         }
         return sum;
     }
+
+    /**
+     *
+     * A method which iterate through scoreTables to find
+     * if all score is setted on the numbers row by using a counter.
+     * If so it returns true
+     *
+     * @return true or false based on the if the counter is 6 or higher
+     * */
     public boolean checkIfItHalfScore() {
         int counter = 0;
         for (int i = 0; i < scoreTables.size(); i++) {
@@ -228,12 +237,21 @@ public class ScoreKeeper implements Serializable{
             return false;
         }
     }
+
+    /**
+     * Return the bonus in the numbers row, and also check if it is
+     * all the number score is setted if so it check if the bonus is avaible
+     * for the current player or not if so it returns a value of 50 added with
+     * extra bonus which is the numbers summed on the number score row is bigger the
+     * three duplicates.
+     *
+     * @return bonus as integer which contain the bonus score
+     * */
     public int checkBonus(){
         int bonus = 0;
         Iterator iterator = differenceInNumbersScore.entrySet().iterator();
        while (iterator.hasNext()) {
            Map.Entry map = (Map.Entry) iterator.next();
-          // System.out.println("le values" + map.getValue());
            bonus += (Integer) map.getValue();
        }
         if(this.checkIfItHalfScore()) {
@@ -245,12 +263,18 @@ public class ScoreKeeper implements Serializable{
         }
         return bonus;
     }
+
+    /**
+     * Return the total score of the rows for 1 pair and so on that arent
+     * number scores
+     *
+     * @return sum of the rows for total
+     * */
     public int getTotal(){
         int sum = 0;
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < combinationRow.length; j++){
                 if(scoreTables.get(i).row.equals(combinationRow[j])){
-                   // System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -260,12 +284,18 @@ public class ScoreKeeper implements Serializable{
         }
         return sum;
     }
+
+    /**
+     * iterate through all both combination row and numbers row add all values
+     * to sum .
+     *
+     * @return sum of all the score in all rows for the player
+     * */
     public int getTotalOfAll(){
         int sum = 0;
         for (int i = 0; i < scoreTables.size(); i++) {
             for (int j = 0; j < combinationRow.length; j++){
                 if(scoreTables.get(i).row.equals(combinationRow[j])){
-         //           System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -273,7 +303,6 @@ public class ScoreKeeper implements Serializable{
             }
             for (int j = 0; j < numbersRow.length; j++){
                 if(scoreTables.get(i).row.equals(numbersRow[j])){
-           //         System.out.println("Score row" + scoreTables.get(i).row + scoreTables.size());
                     if(!scoreTables.get(i).active) {
                         sum += scoreTables.get(i).score;
                     }
@@ -282,6 +311,14 @@ public class ScoreKeeper implements Serializable{
         }
         return sum;
     }
+
+    /**
+     * Set bonus for each number row, check if the score contains more
+     * then three duplicates or not, then calculate the difference.
+     * The difference will be visualized for the user to give them info
+     * about how far behind or in front the user are from getting the bonus
+     *
+     * */
     private void setBonus(){
         int endScore = 0;
         for(int i = 0; i < scoreTables.size(); i++){
@@ -314,7 +351,7 @@ public class ScoreKeeper implements Serializable{
         }
     }
     public int checkIfHalfScore(){
-     int pivot = 0;
+        int pivot = 0;
         if(!checkIfScoresIsSetted.get(scores[7])) {
             if (checkIfScoresIsSetted.get(scores[1])) {
                 pivot++;
@@ -372,17 +409,11 @@ public class ScoreKeeper implements Serializable{
         }
         return 0;
     }
-    public void setNumberScore(int numberScore) {
-        this.numberScore = numberScore;
-    }
 
-    public int getTotalScore(){
-        return 0;
-    }
-    public int getNumberScore(){
-        return numberScore;
-    }
-
+    /**
+     * Class for keeping important score values inside the
+     * scoreTables list
+     * */
     static class ScoreTable implements Serializable{
         int score;
         boolean active;

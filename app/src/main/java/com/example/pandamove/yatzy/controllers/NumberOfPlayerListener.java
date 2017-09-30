@@ -1,14 +1,16 @@
-package com.example.pandamove.yatzy.score;
+package com.example.pandamove.yatzy.controllers;
 
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.pandamove.yatzy.StartActivity;
+import com.example.pandamove.yatzy.activities.StartActivity;
 
 import java.util.ArrayList;
 
 /**
- * Created by rallesport on 2017-09-25.
+ *
+ * Listener for number of players
+ * @author Rasmus Dahlkvist
  */
 
 public class NumberOfPlayerListener implements View.OnClickListener  {
@@ -21,6 +23,10 @@ public class NumberOfPlayerListener implements View.OnClickListener  {
         this.currentButton = currentButton;
         this.startActivity = startActivity;
     }
+
+    /**
+     * @param v which view is clicked
+     * */
     @Override
     public void onClick(View v){
         if(v.isPressed()){
@@ -28,10 +34,14 @@ public class NumberOfPlayerListener implements View.OnClickListener  {
             this.setLowAlphaOnButtons();
         }
     }
+
+    /**
+     * Change alpha based on which button is clicked
+     * */
     public void setLowAlphaOnButtons(){
         for(int i = 0; i < allButtons.size(); i++){
             if(!allButtons.get(i).equals(this.currentButton)){
-                allButtons.get(i).setAlpha(0.5f);
+                allButtons.get(i).setAlpha(0.3f);
             }else{
                 this.startActivity.setHowManyPlayers((i+1));
             }

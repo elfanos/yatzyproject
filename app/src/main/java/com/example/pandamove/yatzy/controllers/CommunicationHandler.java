@@ -3,25 +3,22 @@ package com.example.pandamove.yatzy.controllers;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.TextView;
 
-import com.example.pandamove.yatzy.EndGameActivity;
-import com.example.pandamove.yatzy.GameActivity;
+import com.example.pandamove.yatzy.activities.EndActivity;
+import com.example.pandamove.yatzy.activities.GameActivity;
 import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.InGameFragment;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
-import com.example.pandamove.yatzy.player.GameObjects;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.LeaderBoard;
 import com.example.pandamove.yatzy.score.ScoreHandler;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,99 +26,126 @@ import java.util.HashMap;
  * Created by Rasmus on 26/09/17.
  */
 
-public class CommunicationHandler implements GameActivityInterface, OnButtonClickedListener{
+public class CommunicationHandler implements GameActivityInterface{
 
     private static CommunicationHandler instance = null;
 
-    public GameObjects getGameObjects() {
-        return gameObjects;
-    }
-
+    /**
+     * @param gameObjects set a gameObject
+     * */
     public void setGameObjects(GameObjects gameObjects) {
         this.gameObjects = gameObjects;
     }
 
+    /**
+     * @return players an list of players
+     * */
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Set a list of players
+     * @param players a list of players
+     * */
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
-    public ArrayList<TextView> getHighScore() {
-        return highScore;
-    }
 
+    /**
+     * @param highScore send in a arraylist which contain highscore
+     * */
     public void setHighScore(ArrayList<TextView> highScore) {
         this.highScore = highScore;
     }
 
+    /**
+     * @return the playersIcon as a list
+     * */
     public ArrayList<Integer> getPlayersIcon() {
         return playersIcon;
     }
 
+
+    /**
+     * Set playersicon
+     *
+     * @param playersIcon the players icon as list
+     * */
     public void setPlayersIcon(ArrayList<Integer> playersIcon) {
         this.playersIcon = playersIcon;
     }
 
+
+    /**
+     * @return fragments as sparseArray
+     * */
     public SparseArray<Fragment> getFragments() {
         return fragments;
     }
 
+    /**
+     * Set the current fragments
+     * @param fragments as sparaseArray
+     * */
     public void setFragments(SparseArray<Fragment> fragments) {
         this.fragments = fragments;
     }
 
-    public HashMap<String, Integer> getListOfPossibleScores() {
-        return listOfPossibleScores;
-    }
-
+    /**
+     * Set list of possible scores
+     * @param listOfPossibleScores as hashmap
+     * */
     public void setListOfPossibleScores(HashMap<String, Integer> listOfPossibleScores) {
         this.listOfPossibleScores = listOfPossibleScores;
     }
 
-    public LeaderBoard getLeaderBoard() {
-        return leaderBoard;
-    }
-
+    /**
+     * Set leaderBoard
+     *
+     * @param leaderBoard as leaderBoard
+     * */
     public void setLeaderBoard(LeaderBoard leaderBoard) {
         this.leaderBoard = leaderBoard;
     }
 
-    public Animation getAnimation() {
-        return animation;
-    }
-
+    /**
+     * Set aniumation animation
+     *
+     * @param animation
+     * */
     public void setAnimation(Animation animation) {
         this.animation = animation;
     }
 
-    public GameActivity getGameActivity() {
-        return gameActivity;
-    }
 
+    /**
+     * Set the gameacitivty
+     * @param gameActivity
+     * */
     public void setGameActivity(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
     }
 
+    /**
+     * @return the currenfragment that is viewed
+     * */
     public int getCurrentFragment() {
         return (((ViewPager) gameActivity.findViewById(R.id.viewpager)).getCurrentItem());
     }
 
 
-    public View getInGameView() {
-        return inGameView;
-    }
-
+    /**
+     * @param inGameView the ingameView
+     * */
     public void setInGameView(View inGameView) {
         this.inGameView = inGameView;
     }
 
-    public boolean isInitializeDices() {
-        return initializeDices;
-    }
-
+    /**
+     * @param initializeDices boolean true or false
+     * */
     public void setInitializeDices(boolean initializeDices) {
         this.initializeDices = initializeDices;
     }
@@ -129,7 +153,6 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     private boolean initializeDices;
     private View inGameView;
     private GameActivity gameActivity;
-    private OnButtonClickedListener buttonClickedListener;
     private GameActivityInterface gameActivityController;
     private GameObjects gameObjects;
     private ArrayList<Player> players = new ArrayList<>();
@@ -141,24 +164,15 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
     private Animation animation;
     private int testish = 0;
 
+    /**
+     * Create a getInstance for the communication handler
+     * so it never is instanced twice in the applicaiton
+     * */
     public static CommunicationHandler getInstance(){
         if(instance==null){
             instance = new CommunicationHandler();
         }
         return instance;
-    }
-
-    public OnButtonClickedListener getButtonClickedListener() {
-        return buttonClickedListener;
-    }
-
-    public GameActivityInterface getGameActivityController() {
-        return gameActivityController;
-    }
-
-    public void onEndGame(Activity activity){
-        Intent jaman = new Intent(gameActivity, EndGameActivity.class);
-        gameActivity.startActivity(jaman);
     }
 
     /**
@@ -172,14 +186,19 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
         return null;
     }
+
+    /**
+     * Collect the dices from the opengl roll and add to the scorehandler
+     * which return the row and values for visulasition in the list adapter
+     *
+     * @param dices
+     * */
     @Override
     public void onThrowPostPossibleScores(SparseArray<Dice> dices){
-
             testish++;
             resetHashMap();
             ScoreHandler scoreHandler = new ScoreHandler(dices);
             listOfPossibleScores = scoreHandler.possibleScores();
-            //printMap(listOfPossibleScores);
             resetHashMap();
             ScoreHandler scoreHandler2 = new ScoreHandler(dices);
             listOfPossibleScores = scoreHandler2.possibleScores();
@@ -193,6 +212,10 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
                 }
             }
     }
+
+    /**
+     * @return view of ingamefragment
+     * */
     public View inGameFragmentView(){
         Fragment inGameFragment = fragments.get(0);
         if(inGameFragment instanceof InGameFragment){
@@ -200,6 +223,9 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
         return null;
     }
+    /**
+     * @return  the current player
+     * */
     public Player getCurrentPlayer(){
         for(int i = 0; i < players.size(); i++){
             if(players.get(i).isCurrentPlayer()){
@@ -208,12 +234,14 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
         return null;
     }
+    /**
+     * set new round
+     * */
     public void setNewRound(Player player){
         //Need next player refresh score setted
         // start next round end?
         gameObjects.refreshScoreIsSetted();
         gameObjects.initializeNextRound();
-//        rounds.setText(String.format("%s",gameObjects.getRound()));
         players.get(
                 gameObjects.getNextPlayer(player.getColumnPosition())
         ).setCurrentPlayer(true);
@@ -252,6 +280,12 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
         }
 
     }
+
+    /**
+     * Update the view bsed on current player
+     *
+     * @param v the view
+     * */
     @Override
     public void updateView(View v){
         //this.initializePlayerIcon();
@@ -274,7 +308,12 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
                 break;
         }
     }
-    public void setViewBasedOnPlayer(Player player, View v){
+    /**
+     * Set the view based on a player
+     * @param player
+     * @param v
+     * */
+    private void setViewBasedOnPlayer(Player player, View v){
         (v.findViewById(R.id.currentPlayer)).
                 setBackgroundResource(
                         playersIcon.get(player.getColumnPosition())
@@ -287,7 +326,14 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
                 setText(String.format("%s", gameObjects.getRound()));
 
     }
-    public void setViewOnHighScore(Player player, int position, View v){
+    /**
+     * Set view on high score
+     *
+     * @param player
+     * @param position'
+     * @param v
+     * */
+    private void setViewOnHighScore(Player player, int position, View v){
         switch (position){
             case 0:
                 (v.findViewById(R.id.playerLeader)).setBackgroundResource(
@@ -323,6 +369,12 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
                 break;
         }
     }
+    /**
+     * Update highscore
+     *
+     * @param v
+     *
+     * */
     @Override
     public void updateHighScore(View v){
         ArrayList<Player> highScorePlayers = null;
@@ -333,79 +385,76 @@ public class CommunicationHandler implements GameActivityInterface, OnButtonClic
             this.setViewOnHighScore(highScorePlayers.get(i), i, v);
         }
     }
-    @Override
-    public void setScoreForPlayer(View v){
-        Player player = this.getCurrentPlayer();
-        ((TextView)v.findViewById(R.id.currentplayerscore)).setText(String.format("%s",
-                player.getScoreKeeper().getCurrentScore()));
-    }
-    @Override
-    public void incrementRoundsForPlayer(View v){
-        Player player = this.getCurrentPlayer();
-        player.incrementRound();
-        // ((TextView)v.findViewById(R.id.))
-    }
+
+    /**
+     * set the player view
+     *
+     * @param v
+     * */
     @Override
     public void setPlayerView(View v){
         Player player = this.getCurrentPlayer();
         ((TextView)v.findViewById(R.id.currentPlayer)).
                 setText(String.format("%s", player.getName()));
     }
+
+    /**
+     * set the score view
+     *
+     * @param v
+     * */
     @Override
     public void setScoreView(View v){
         Player player = this.getCurrentPlayer();
         ((TextView)v.findViewById(R.id.currentplayerscore)).
                 setText(String.format("%s", player.getRound()));
     }
-    @Override
-    public boolean getIfRoundIsOver(){
-        Player player = this.getCurrentPlayer();
-        if(player.getNumberOfThrows() > 2){
-            return true;
-        }else{
-            return false;
-        }
-    }
+
+    /**
+     *
+     * set throws
+     *
+     * @param v
+     * */
     @Override
     public void setThrows(View v){
         Player player = this.getCurrentPlayer();
-        // if(player == null){
-        //    player = players.get(0);
-        // }
         player.increseNumberOfThrows();
         ((TextView)v.findViewById(R.id.thrownumber)).setText(String.format("%s",
                 player.getNumberOfThrows()));
     }
+    /**
+     * refresh hashmap
+     * */
     public void resetHashMap(){
         listOfPossibleScores = null;
         listOfPossibleScores = new HashMap<>();
     }
+
     /**
-     * params
-     * which yatzyscore
-     * score
-     * player
+     * generate new dices to a new throw on round end
+     *
      * */
-    @Override
-    public void onButtonClicked(View v){
-
-
-    }
-    public void generateNewDices(){
+    private void generateNewDices(){
         ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(0,true);
         ((InGameFragment)this.getFragments().get(0)).resetSelectedDices();
         ((InGameFragment)this.getFragments().get(0)).beginARollRound(inGameView);
         this.setInitializeDices(false);
     }
-    public void goToScoreView(){
-        ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(1,true);
+    /**
+     * shake activity
+     * */
+    public void shakeActivity(){
+        if(this.getCurrentFragment() == 0){
+            ((InGameFragment)this.getFragments().get(0)).beginARollRound(inGameView);
+        }
     }
+
+    /**
+     * Change viewpager to ingameview
+     * */
     public void goToInGameView(){
         ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(0,true);
     }
-    public int onBackPressed(){
-        return (((ViewPager) gameActivity.findViewById(R.id.viewpager)).getCurrentItem());
-    }
-
 
 }

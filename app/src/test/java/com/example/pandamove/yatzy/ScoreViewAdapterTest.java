@@ -1,31 +1,9 @@
 package com.example.pandamove.yatzy;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.example.pandamove.yatzy.fragments.ScoreFragment;
-import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
-import com.example.pandamove.yatzy.player.Player;
-import com.example.pandamove.yatzy.score.ScoreListHandler;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startFragment;

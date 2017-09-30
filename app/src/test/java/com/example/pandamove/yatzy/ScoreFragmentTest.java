@@ -1,13 +1,13 @@
 package com.example.pandamove.yatzy;
 
 import android.app.Application;
-import android.content.Context;
 import android.hardware.SensorManager;
 import android.test.ApplicationTestCase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.example.pandamove.yatzy.activities.GameActivity;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
 
 import junit.framework.Assert;
@@ -17,13 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowSensorManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 /**

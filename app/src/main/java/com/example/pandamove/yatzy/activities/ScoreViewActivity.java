@@ -1,4 +1,4 @@
-package com.example.pandamove.yatzy;
+package com.example.pandamove.yatzy.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,12 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.player.Player;
 
 import java.util.ArrayList;
 
 /**
- * Created by rallesport on 2017-09-27.
+ * Activity for the score view show the score leader board
+ * @author Rasmus Dahlkvist
  */
 
 public class ScoreViewActivity extends AppCompatActivity {
@@ -33,6 +35,10 @@ public class ScoreViewActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *Initialize the scoreview based on how
+     * many players that were in the game
+     * */
     public void initializeScoreViews(){
         for(int i = 0; i < players.size(); i++) {
             switch (i) {
@@ -51,6 +57,10 @@ public class ScoreViewActivity extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * Add first player
+     * */
     public void addFirstPlayer(){
         ((TextView)findViewById(R.id.n_numberOne)).setText(
                 players.get(0).getName()
@@ -65,6 +75,13 @@ public class ScoreViewActivity extends AppCompatActivity {
                 String.format("%s", players.get(0).getScoreKeeper().getTotalOfAll())
         );
     }
+
+    /**
+     * Return background based on player name
+     *
+     * @param leader playerName
+     * @return playerIcons as integer
+     * */
     public int getBackground(String leader){
         switch (leader){
             case "Yellow":
@@ -78,6 +95,9 @@ public class ScoreViewActivity extends AppCompatActivity {
         }
         return 0;
     }
+    /**
+     * Add second player
+     * */
     public void addSecondPlayer(){
         ((TextView)findViewById(R.id.n_numberTwo)).setText(
                 players.get(1).getName()
@@ -93,6 +113,10 @@ public class ScoreViewActivity extends AppCompatActivity {
         );
 
     }
+
+    /**
+     * Add third player
+     * */
     public void addThirdPlayer(){
         ((TextView)findViewById(R.id.n_numberThree)).setText(
                 players.get(2).getName()
@@ -107,6 +131,10 @@ public class ScoreViewActivity extends AppCompatActivity {
                 String.format("%s", players.get(2).getScoreKeeper().getTotalOfAll())
         );
     }
+
+    /**
+     * Add fourth player
+     * */
     public void addFourthPlayer(){
         ((TextView)findViewById(R.id.n_numberFour)).setText(
                 players.get(0).getName()

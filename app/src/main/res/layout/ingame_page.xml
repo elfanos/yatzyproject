@@ -27,8 +27,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true">
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true">
 
                     <TextView
                         android:id="@+id/currentPlayer"
@@ -103,8 +103,8 @@
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/playerThird"
-                        android:textColor="@android:color/background_light"
-                        android:layout_below="@+id/currentplayerscore" />
+                        android:layout_below="@+id/currentplayerscore"
+                        android:textColor="@android:color/background_light" />
 
                     <TextView
                         android:id="@+id/rounds"
@@ -267,10 +267,11 @@
                     android:id="@+id/throwButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="122dp"
-                    android:text="Roll"
                     android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="122dp"
+                    android:background="#2E4057"
+                    android:text="Roll" />
 
                 <RelativeLayout
                     android:id="@+id/relativeLayout"
@@ -282,7 +283,7 @@
 
                     <view
                         android:id="@+id/dicesurface5"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_below="@+id/dicesurface2"
@@ -291,7 +292,7 @@
 
                     <view
                         android:id="@+id/dicesurface6"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_below="@+id/dicesurface3"
@@ -299,7 +300,7 @@
 
                     <view
                         android:id="@+id/dicesurface4"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_alignStart="@+id/dicesurface"
@@ -307,7 +308,7 @@
 
                     <view
                         android:id="@+id/dicesurface"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="150dp"
                         android:layout_alignParentStart="true"
@@ -316,14 +317,14 @@
 
                     <view
                         android:id="@+id/dicesurface2"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_toEndOf="@+id/dicesurface" />
 
                     <view
                         android:id="@+id/dicesurface3"
-                        class="com.example.pandamove.yatzy.DiceSurfaceView"
+                        class="com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_toEndOf="@+id/dicesurface2" />

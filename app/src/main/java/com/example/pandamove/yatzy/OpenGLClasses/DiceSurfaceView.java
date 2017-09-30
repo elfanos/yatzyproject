@@ -1,4 +1,4 @@
-package com.example.pandamove.yatzy;
+package com.example.pandamove.yatzy.OpenGLClasses;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -55,11 +55,8 @@ public class DiceSurfaceView extends GLSurfaceView {
 	 *              dice surface
 	 * */
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
-		if (event.getAction() == MotionEvent.ACTION_DOWN)
-		{
-
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			touchedX = event.getX();
 			touchedY = event.getY();
 			System.out.println("yalla");
@@ -70,8 +67,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 				renderer.setDiceSelected(false);
 				this.setSurfaceIsActive(true);
 			}
-
-
 		}
 		return true;
 		
@@ -91,8 +86,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 									int angleValue, boolean reversed, String axis){
 		if(angleValue < 0 && !reversed){
 			if(angleValue > -360) {
-			//	System.out.println("le loop: " + angleValue);
-				//angleValue--;
 				angleValue = angleValue - 10;
 				this.setRenderAngle(axis, angleValue);
 				this.setAngleValue(axis,angleValue,throwThread);
@@ -117,8 +110,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 				this.setAngleValue(axis,0,throwThread);
 			}
 		}else if(angleValue == 0){
-		//	System.out.println("smthing herE?");
-			//angleValue--;
 			angleValue = angleValue - 10;
 			this.setAngleValue(axis,angleValue,throwThread);
 			this.rotationNotReversed(
@@ -176,28 +167,19 @@ public class DiceSurfaceView extends GLSurfaceView {
 									  int currentAngle[], int angleValue,
 									  String axis, boolean rotationsIsDone){
 		if (rotationsIsDone) {
-			//	System.out.println("inlast: " + angleValue);
-			//System.out.println("inewx: " + currentAngle[0]);
 			if(throwThread.getNewAngleIsSetted()) {
 				if (angleValue == getCurrentAngle(axis, currentAngle)) {
-					//System.out.println("current anga??: " + xAngle);
 					this.setRenderAngle(axis, angleValue);
 					throwThread.endThis();
 				} else {
-					//angleValue--;
 					angleValue = angleValue - 10;
 					this.setRenderAngle(axis, angleValue);
 					this.setAngleValue(axis, angleValue, throwThread);
 				}
 			} else{
-				System.out.println("five amigos?");
 				this.setNewDiceAngleForXnY(throwThread);
 			}
-		} else {
-			System.out.println("jaman should be her2222e");
-
 		}
-
 	}
 
 	/**
@@ -215,25 +197,18 @@ public class DiceSurfaceView extends GLSurfaceView {
 									  int currentAngle[], int angleValue,
 									  String axis, boolean rotationsIsDone){
 		if(rotationsIsDone) {
-			//System.out.println("inlast: " + angleValue);
 			if(throwThread.getNewAngleIsSetted()) {
 				if (angleValue == getCurrentAngle(axis, currentAngle)) {
 					this.setRenderAngle(axis, angleValue);
 					throwThread.endThis();
 				} else {
-					//angleValue++;
 					angleValue = angleValue + 10;
 					this.setRenderAngle(axis, angleValue);
 					this.setAngleValue(axis, angleValue, throwThread);
 				}
 			}else{
-				//System.out.println("current Angle x? " + currentAngle[0]);
-				//System.out.println("current Angle y? " + currentAngle[1]);
-				//System.out.println("five amigos?");
 				this.setNewDiceAngleForXnY(throwThread);
 			}
-		}else{
-			System.out.println("jaman should be he66666re");
 		}
 	}
 	/**
@@ -245,14 +220,10 @@ public class DiceSurfaceView extends GLSurfaceView {
 	public void setNewDiceAngleForXnY(InGameFragment.ThrowThread throwThread){
 		Random rand = new Random();
 		int diceNumber = rand.nextInt(5+1);
-		/*throwThread.setNewDiceScoreAngle(
-				diceNumber
-		);*/
 		throwThread.setCurrentAngle(this.getAngleOfDice(diceNumber));
 		throwThread.setGetScore(diceNumber);
 		throwThread.resetValues();
 		throwThread.setNewAngleIsSetted(true);
-		//this.setCurrentAngle(surface.getAngleOfDice(diceNumber));
 	}
 	/**
 	 * Set if the rotations is done or not
@@ -347,16 +318,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 		}
 	}
 
-
-	public void setRotationOnShake(float speed){
-		renderer.xAngle += (lastPositionX - (speed / 2f)) / 4f;
-		renderer.yAngle += (lastPositionY - (speed)) / 4f;
-
-		lastPositionX = speed/2f;
-		lastPositionY = speed;
-
-	}
-
 	/**
 	 * Create a integer array which contains
 	 * two value 0 = xAngle and yAngle = 1, which is
@@ -406,61 +367,68 @@ public class DiceSurfaceView extends GLSurfaceView {
 				/*One*/
 				renderer.xAngle = -180;
 				renderer.yAngle = 0;
-				//this.setCurrentDiceNumber(1);
 				break;
 			case 2:
 				/*two*/
 				renderer.xAngle = 90;
 				renderer.yAngle = 90;
-			//	this.setCurrentDiceNumber(2);
-
 				break;
 			case 3:
 				/*Three*/
 				renderer.xAngle = 0;
 				renderer.yAngle = 0;
-			//	this.setCurrentDiceNumber(3);
 				break;
 			case 4:
 				/*four*/
 				renderer.xAngle = -90;
 				renderer.yAngle = 0;
-//				this.setCurrentDiceNumber(4);
-
 				break;
 			case 5:
 				/*Five*/
 				renderer.xAngle = 0;
 				renderer.yAngle = -270;
-				//this.setCurrentDiceNumber(5);
 				break;
 			case 6:
 				/*Six*/
 				renderer.xAngle = 0;
 				renderer.yAngle = -90;
-			//	this.setCurrentDiceNumber(6);
 				break;
 		}
 	}
+
+	/**
+	 * @return if the surface is active or not
+	 * */
 	public boolean isSurfaceIsActive() {
 		return surfaceIsActive;
 	}
 
+	/**
+	 * Set a value of the surface
+	 *
+	 * @param surfaceIsActive boolean true or not, active or not
+	 * */
 	public void setSurfaceIsActive(boolean surfaceIsActive) {
 		this.surfaceIsActive = surfaceIsActive;
 	}
 
-	public int getCurrentDiceNumber() {
-		return currentDiceNumber;
-	}
-
+	/**
+	 * Set the current diceNumber on the surface which dice
+	 * the surface will controll.
+	 *
+	 * @param currentDiceNumber which dicesNumber
+	 * */
 	public void setCurrentDiceNumber(int currentDiceNumber) {
 		this.currentDiceNumber = currentDiceNumber;
 	}
-	/*@Override
-	public void queueEvent (Runnable r){
 
-	}*/
+	/**
+	 * Set messure for the dicesurfaceview instead of
+	 * using default values
+	 *
+	 * @param widthMeasureSpec the width of the surface
+	 * @param heightMeasureSpec the height of the surface
+	 * */
 	@Override public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, widthMeasureSpec);
 		int size = MeasureSpec.getSize(widthMeasureSpec);
