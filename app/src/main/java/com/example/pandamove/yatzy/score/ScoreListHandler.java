@@ -37,13 +37,6 @@ public class ScoreListHandler {
 
     private boolean isHeaderItem;
     private HeaderItem headerItem = null;
-
-    private int[] visability = {
-            0,4,8
-    };
-    private int[] playerID = {
-            1,2,3,4
-    };
     private ArrayList<Integer> differentLayouts;
     private int imageScore;
 
@@ -128,27 +121,54 @@ public class ScoreListHandler {
         }
     }
 
+    /**
+     * Set a headerItem with a headerId
+     *
+     * @param headerId headerId as integer
+     * */
     public void setHeaderItem(int headerId){
         isHeaderItem = true;
         headerItem = new HeaderItem(headerId);
         //header pos
         //header
     }
+
+    /**
+     * @return isHeaderItem true or false check if
+     *          ScoreListHandler contains  a headerItem
+     * */
     public boolean isHeaderItem() {
         return isHeaderItem;
     }
+
+    /**
+     * @return headerItem item has a new background
+     *          as int to define it
+     * */
     public int getHeaderItem(int headerColumn){
         return headerItem.getHeaderBackground(headerColumn);
     }
+
+    /**
+     * Set header value score
+     *
+     * @param row first value in the header row
+     * @param player current player
+     * */
     public void setHeaderValueScore(String row, Player player){
         this.headerItem.setHeaderValue(row, player);
     }
-    public String getHeaderScore(int playerPos){
-        return this.headerItem.getHeaderScore(playerPos);
-    }
-    public boolean headerVisible(int headerColumn){
-        return headerItem.getVisible(headerColumn);
-    }
+
+
+    /**
+     * Set a new listenere for a
+     * cell in the list view
+     *
+     * @param player current player
+     * @param scoreViewAdapter the listview adapter
+     * @param yatzyScore the yatzyScore of the row
+     * @param position in the listview
+     * */
     public void setListener(Player player, ScoreViewAdapter scoreViewAdapter,
                             String yatzyScore, int position){
         switch (player.getColumnPosition()){
@@ -157,36 +177,38 @@ public class ScoreListHandler {
                     playerOneListener = new CellOnClickListener(
                             player, scoreViewAdapter, yatzyScore, position
                     );
-                    scoreViewAdapter.addToObserveListeners(position, playerOneListener);
-                }
+                    scoreViewAdapter.addToObserveListeners(position, playerOneListener);}
                 break;
             case 1:
                 if(player.getScoreKeeper().getActive(yatzyScore)) {
                     playerTwoListener = new CellOnClickListener(
-                            player, scoreViewAdapter, yatzyScore, position
-                    );
+                            player, scoreViewAdapter, yatzyScore, position);
                     scoreViewAdapter.addToObserveListeners(position, playerTwoListener);
                 }
                 break;
             case 2:
                 if(player.getScoreKeeper().getActive(yatzyScore)) {
                     playerThreeListener = new CellOnClickListener(
-                            player, scoreViewAdapter, yatzyScore, position
-                    );
+                            player, scoreViewAdapter, yatzyScore, position);
                     scoreViewAdapter.addToObserveListeners(position,playerThreeListener);
                 }
                 break;
             case 3:
                 if(player.getScoreKeeper().getActive(yatzyScore)) {
                     playerFourListener = new CellOnClickListener(
-                            player, scoreViewAdapter, yatzyScore, position
-                    );
+                            player, scoreViewAdapter, yatzyScore, position);
                     scoreViewAdapter.addToObserveListeners(position, playerFourListener);
                 }
                 break;
         }
-
     }
+
+    /**
+     * Destroy listener
+     * @param player the player which
+     *               the listener is going to
+     *               be destroy on
+     * */
     public void destroyListener(int player){
         switch (player){
             case 0:
@@ -203,6 +225,15 @@ public class ScoreListHandler {
                 break;
         }
     }
+
+    /**
+     * Return a score background
+     *
+     * @param player which player background
+     *
+     * @return playerView as integer depending on
+     *         which player sent in the parameter
+     * */
     public int getScoreBackground(int player){
         switch (player){
             case 0:
@@ -217,11 +248,21 @@ public class ScoreListHandler {
                 return 0;
         }
     }
-    public void setScoreBackground(int playerPos, int viewCase,
-                                   Player player, String yatzyScore, int whichBackground){
-        //System.out.println("how manyawd" + viewCase);
+
+    /**
+     * Set score background to inactive if the cell
+     * is inactive
+     *
+     * @param player current player
+     * @param playerPos the player position in the row
+     * @param yatzyScore the row yatzyScore
+     * @param whichBackground which process the method is called on
+     *                        if its temporary scoring or setUsedScore
+     *
+     * */
+    public void setScoreBackgroundInActive(int playerPos, int viewCase,
+                                           Player player, String yatzyScore, int whichBackground){
         if(!player.getScoreKeeper().getActive(yatzyScore)){
-            viewCase = 2;
             switch (playerPos) {
                 case 0:
                     playerOneView = differentLayouts.get(2);
@@ -237,75 +278,126 @@ public class ScoreListHandler {
                     break;
             }
         }else {
-            switch (playerPos) {
-                case 0:
-                    switch (viewCase) {
-                        case 0:
-                            playerOneView = differentLayouts.get(0);
-                            break;
-                        case 1:
-                            playerOneView = differentLayouts.get(1);
-                            break;
-                        case 2:
-                            playerOneView = differentLayouts.get(2);
-                            break;
-                        case 3:
-                            playerOneView = differentLayouts.get(3);
-                            break;
-                    }
-                    break;
-                case 1:
-                    switch (viewCase) {
-                        case 0:
-                            playerTwoView = differentLayouts.get(0);
-                            break;
-                        case 1:
-                            playerTwoView = differentLayouts.get(1);
-                            break;
-                        case 2:
-                            playerTwoView = differentLayouts.get(2);
-                            break;
-                        case 3:
-                            playerTwoView = differentLayouts.get(3);
-                            break;
-                    }
-                    break;
-                case 2:
-                    switch (viewCase) {
-                        case 0:
-                            playerThreeView = differentLayouts.get(0);
-                            break;
-                        case 1:
-                            playerThreeView = differentLayouts.get(1);
-                            break;
-                        case 2:
-                            playerThreeView = differentLayouts.get(2);
-                            break;
-                        case 3:
-                            playerThreeView = differentLayouts.get(3);
-                            break;
-                    }
-                    break;
-                case 3:
-                    switch (viewCase) {
-                        case 0:
-                            playerFourView = differentLayouts.get(0);
-                            break;
-                        case 1:
-                            playerFourView = differentLayouts.get(1);
-                            break;
-                        case 2:
-                            playerFourView = differentLayouts.get(2);
-                            break;
-                        case 3:
-                            playerFourView = differentLayouts.get(3);
-                            break;
-                    }
-                    break;
-            }
+            this.setScoreBackgroundWhenActive(playerPos,viewCase);
+        }
+    }
+    /**
+     * Set scorebackground when on active cell
+     *
+     * @param playerPos which player based on column
+     * @param viewCase which background view
+     * */
+    public void setScoreBackgroundWhenActive(int playerPos, int viewCase){
+        switch (playerPos){
+            case 0:
+                this.setPlayerOneView(viewCase);
+                break;
+            case 1:
+                this.setPlayerTwoView(viewCase);
+                break;
+            case 2:
+                this.setPlayerThreeView(viewCase);
+                break;
+            case 3:
+                this.setPlayerFourView(viewCase);
+                break;
         }
     }
 
+    /**
+     * Set a new layout in the current cell for a player
+     *
+     * @param viewCase which background layout on the current cell
+     * */
+    public void setPlayerOneView(int viewCase) {
+        switch (viewCase){
+            case 0:
+                playerOneView = differentLayouts.get(0);
+                break;
+            case 1:
+                playerOneView = differentLayouts.get(1);
+                break;
+            case 2:
+                playerOneView = differentLayouts.get(2);
+                break;
+            case 3:
+                playerOneView = differentLayouts.get(3);
+                break;
+        }
+    }
+
+    /**
+     * Set a new layout in the current cell for a player
+     *
+     * @param viewCase which background layout on the current cell
+     * */
+    public void setPlayerTwoView(int viewCase) {
+        switch (viewCase){
+            case 0:
+                this.playerTwoView  = differentLayouts.get(0);
+                break;
+            case 1:
+                this.playerTwoView  = differentLayouts.get(1);
+                break;
+            case 2:
+                this.playerTwoView  = differentLayouts.get(2);
+                break;
+            case 3:
+                this.playerTwoView  = differentLayouts.get(3);
+                break;
+        }
+    }
+
+    /**
+     * Set a new layout in the current cell for a player
+     *
+     * @param viewCase which background layout on the current cell
+     * */
+    public void setPlayerThreeView(int viewCase) {
+
+        switch (viewCase){
+            case 0:
+                this.playerThreeView = differentLayouts.get(0);
+                break;
+            case 1:
+                this.playerThreeView = differentLayouts.get(1);
+                break;
+            case 2:
+                this.playerThreeView = differentLayouts.get(2);
+                break;
+            case 3:
+                this.playerThreeView = differentLayouts.get(3);
+                break;
+        }
+    }
+
+    /**
+     * Set a new layout in the current cell for a player
+     *
+     * @param viewCase which background layout on the current cell
+     * */
+    public void setPlayerFourView(int viewCase) {
+        switch (viewCase){
+            case 0:
+                this.playerFourView = differentLayouts.get(0);
+                break;
+            case 1:
+                this.playerFourView = differentLayouts.get(1);
+                break;
+            case 2:
+                this.playerFourView = differentLayouts.get(2);
+                break;
+            case 3:
+                this.playerFourView = differentLayouts.get(3);
+                break;
+        }
+    }
+
+    /**
+     * Get score for a player in a cell
+     *
+     * @param player the current player
+     * */
     public String getScore(int player) {
         switch (player){
             case 0:
@@ -336,60 +428,90 @@ public class ScoreListHandler {
                 return "0";
         }
     }
+
+    /**
+     * Set the score to a new value
+     *
+     * @param value the new score
+     * @param playerPos the position of the player in the row
+     * */
+    public void setStateScoreOnPlayer(int value, int playerPos){
+        switch (playerPos){
+            case 1:
+                this.setScorePlayerOne(value);
+                break;
+            case 2:
+                this.setScorePlayerTwo(value);
+                break;
+            case 3:
+                this.setScorePlayerThree(value);
+                break;
+            case 4:
+                this.setScorePlayerFour(value);
+                break;
+        }
+    }
+
+    /**
+     * Give a score value based on which state the
+     * set score is on
+     *
+     * @param state the score state
+     * @param value the current player values
+     * @param player player position in the row
+     * @param row the yatzy score
+     * */
+    public void stateOfSetScore(int state, Player value, int player, String row){
+        switch (state){
+            case 0:
+                this.setStateScoreOnPlayer(
+                        value.getScoreKeeper().getScoresPossible(row), player
+                );
+                break;
+            case 1:
+                this.setStateScoreOnPlayer(
+                        value.getScoreKeeper().getScoreOnRow(row), player
+                );
+                break;
+            case 2:
+                this.setForHeader(value,row,value.getColumnPosition());
+                break;
+        }
+
+    }
+
+    /**
+     * check if score cell is active or not
+     * and find the right player and go to
+     * state score
+     *
+     * @param player current player
+     * @param row the yatzy score
+     * @param addOrTemp the state of th score
+     * */
     public void setScore(Player player, String row, int addOrTemp) {
         switch (player.getColumnPosition()){
             case 0:
                 if(player.getScoreKeeper().getActive(row)) {
-                    if(addOrTemp == 1) {
-                        // player.getScoreKeeper().setUsedScore(row);
-                        this.scorePlayerOne = player.getScoreKeeper().getScoreOnRow(row);
-                    }else if(addOrTemp == 0) {
-                        this.scorePlayerOne = player.getScoreKeeper().getScoresPossible(row);
-                    }else if(addOrTemp == 2){
-                        this.setForHeader(player,row,player.getColumnPosition());
-                    }
-                   // players.get(player).getScoreKeeper().setColumnScore(row);
+                    this.stateOfSetScore(addOrTemp,player,1,row);
                     break;
                 }
                 break;
             case 1:
                 if(player.getScoreKeeper().getActive(row)) {
-                    if(addOrTemp == 1) {
-                        // player.getScoreKeeper().setUsedScore(row);
-                        this.scorePlayerTwo = player.getScoreKeeper().getScoreOnRow(row);
-                    }else if(addOrTemp == 0) {
-                        this.scorePlayerTwo = player.getScoreKeeper().getScoresPossible(row);
-                    }else if(addOrTemp == 2){
-                        this.setForHeader(player,row,player.getColumnPosition());
-                    }
-                  //  players.get(player).getScoreKeeper().setColumnScore(row);
+                    this.stateOfSetScore(addOrTemp,player,2,row);
                     break;
                 }
                 break;
             case 2:
                 if(player.getScoreKeeper().getActive(row)) {
-                    if(addOrTemp == 1) {
-                      // player.getScoreKeeper().setUsedScore(row);
-                        this.scorePlayerThree = player.getScoreKeeper().getScoreOnRow(row);
-                    }else if(addOrTemp == 0) {
-                        this.scorePlayerThree = player.getScoreKeeper().getScoresPossible(row);
-                    }else if(addOrTemp == 2){
-                        this.setForHeader(player,row,player.getColumnPosition());
-                    }
+                    this.stateOfSetScore(addOrTemp,player,3,row);
                     break;
                 }
                 break;
             case 3:
                 if(player.getScoreKeeper().getActive(row)) {
-
-                    if(addOrTemp == 0) {
-                        this.scorePlayerFour = player.getScoreKeeper().getScoresPossible(row);
-                    }else if(addOrTemp == 1) {
-                      //  player.getScoreKeeper().setUsedScore(row);
-                        this.scorePlayerFour = player.getScoreKeeper().getScoreOnRow(row);
-                    }else if(addOrTemp == 2){
-                        this.setForHeader(player,row,player.getColumnPosition());
-                    }
+                    this.stateOfSetScore(addOrTemp,player,4,row);
                     break;
                 }
                 break;
@@ -397,6 +519,13 @@ public class ScoreListHandler {
                 break;
         }
     }
+
+    /**
+     * Set value for the row in the header
+     *
+     * @param player current player the header is set for
+     * @param row the yatzyscore on the row
+     * */
     private void setForHeader(Player player, String row, int scoreColumn){
         switch (row){
             case "Sum":

@@ -100,7 +100,7 @@ public class CellOnClickListener implements View.OnClickListener {
                         !this.checkIfSumOrBonus((ScoreListHandler) scoreViewAdapter.
                                 getItem(i))){
                     ((ScoreListHandler) scoreViewAdapter.getItem(i)).
-                            setScoreBackground(player.
+                            setScoreBackgroundInActive(player.
                                     getColumnPosition(), 0, player, "nothing", 2);
                 }else{
                     Animation animation = new AlphaAnimation(0.0f, 0.5f);

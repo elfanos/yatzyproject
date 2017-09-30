@@ -24,7 +24,12 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * Created by Rallmo on 2017-04-05.
+ *
+ * Class scoreviewadapter is the baseadapter
+ * which contains all the yatzyscore and give the user
+ * option to select one score when the rolls are finnished
+ *
+ * @author Rasmus Dahlkvist
  */
 public class ScoreViewAdapter extends BaseAdapter {
     private Activity context;
@@ -70,33 +75,57 @@ public class ScoreViewAdapter extends BaseAdapter {
             R.mipmap.ic_dicefive,
             R.mipmap.ic_dicesix
     };
-    public int getImageIndex(){
-        return imageIndex;
-    }
+
+    /**
+     * Constructor for ScoreViewAdapter
+     *
+     * @param context the main activity which
+     *                the list view is present on
+     * @param playerList a list containing ScoreListHandler
+     * @param dices list which contains Dice
+     * */
     public ScoreViewAdapter(Activity context,
                             List<ScoreListHandler> playerList,
                             ArrayList<Dice> dices){
-
-
         this.playerList = playerList;
         this.context = context;
         observeListeners = new HashMap<>();
         this.dices = dices;
     }
-    public Animation getSetScoreAnimation() {
-        return setScoreAnimation;
-    }
 
+    /**
+     * Set the score animation
+     *
+     * @param setScoreAnimation a animation value
+     * */
     public void setSetScoreAnimation(Animation setScoreAnimation) {
         this.setScoreAnimation = setScoreAnimation;
     }
 
+    /**
+     * Add item in the list and notify the listview
+     * also create a scorelist handler of the item
+     * and add it to the playerList
+     *
+     * @param yatzyScore the yatzyScore of the add item
+     * @param players list of all players
+     **/
     public void addItem(String yatzyScore, List<Player> players){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false, imageId[imageIndex]);
         playerList.add(scoreHandler);
         this.notifyDataSetChanged();
         imageIndex++;
     }
+
+    /**
+     * Add a new sectionheader for the list view, and also
+     * create a new scorehandler for the section and
+     * add it to the playerlist
+     *
+     * @param header the header name of the first column in the header
+     * @param players in the header section
+     * @param position position in the listview of the header
+     * */
     public void addSectionHeader(String header, List<Player> players, int position){
         ScoreListHandler scoreHandler = new ScoreListHandler(players, header, false, imageId[1]);
         scoreHandler.setHeaderItem(position);
@@ -105,28 +134,61 @@ public class ScoreViewAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    /**
+     * Add a cellonclicklistener to the
+     * hashmap observelistener with an id
+     *
+     * @param index
+     * @param listener
+     * */
     public void addToObserveListeners(int index,CellOnClickListener listener){
         observeListeners.put(index,listener);
     }
 
+    /**
+     * @return observeListener a hashmap of CellOnClickListener with an id
+     * */
     public HashMap<Integer,CellOnClickListener> getObserveListeners(){
         return observeListeners;
     }
+
+    /**
+     * @param position which position of the row for the item
+     *
+     * @return playerList a item in the list view
+     * */
     @Override
     public Object getItem(int position){
         return playerList.get(position);
     }
 
+    /**
+     * Get the number of items in the list view by returning the size of playerList
+     * @return playerList.size
+     * */
     @Override
     public int getCount(){
         return playerList.size();
     }
 
+    /**
+     * getItemId based on position
+     *
+     * @param position of the item
+     *
+     * @return the position of the item id
+     * */
     @Override
     public long getItemId(int position) {
         return position;
     }
 
+    /**
+     * @param position of the view type
+     *
+     * @return a value between 0-1 if there is a header or item
+     *          using treeSet to change between 0-1
+     * */
     @Override
     public int getItemViewType(int position) {
         return sectionHeader.contains(position) ? HEADER_ITEM : SCORE_ITEM;
@@ -140,16 +202,32 @@ public class ScoreViewAdapter extends BaseAdapter {
         return 2;
     }
 
-
+    /**
+     * Set score on player based on row and the current player
+     * position in the row which the score is about to be
+     * viewed in.
+     *
+     * @param i position in list
+     * @param player the current player
+     * @param row the row in the list
+     * */
     public void setScoreOnPlayer(int i, Player player, String row){
         int score = player.getScoreKeeper().getScoresPossible(row);
         this.checkIfScoreExist(player);
 
         ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
-        ((ScoreListHandler) this.getItem(i)).setScoreBackground(player.getColumnPosition(),1, player, row,0);
+        ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(player.getColumnPosition(),1, player, row,0);
         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
         this.notifyDataSetChanged();
     }
+
+    /**
+     * Check if score exist on a row by checking
+     * for zero value in the scorekeeper for
+     * the current player
+     *
+     * @param player the current player
+     * */
     public void checkIfScoreExist(Player player){
         for(int i = 0; i < this.getCount(); i++){
             if(this.getItem(i) instanceof  ScoreListHandler){
@@ -159,14 +237,10 @@ public class ScoreViewAdapter extends BaseAdapter {
                                     getYatzyScore());
                     if(value == 0 && !this.checkIfSumOrBonus(row)){
                         ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
-                        ((ScoreListHandler) this.getItem(i)).setScoreBackground(player.getColumnPosition(),3, player, row,2);
+                        ((ScoreListHandler) this.getItem(i)).
+                                setScoreBackgroundInActive(player.getColumnPosition(),3, player, row,2);
                         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
                         this.notifyDataSetChanged();
-                      //  System.out.println("Value? " + value);
-                      //  System.out.println("Row? " + row);
-
-                    }else if(!this.checkIfSumOrBonus(row)){
-
                     }
                     if(checkIfSumOrBonus(row)){
                         ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
@@ -184,9 +258,13 @@ public class ScoreViewAdapter extends BaseAdapter {
         return false;
     }
 
+
     /**
-     * TODO fix so it check for each yatzy score then
-     * apply design on the cells based on player
+     * View combination start the communication for the
+     * gathered from the inGameViews sparsearray of dice scores.
+     *
+     * @param animation the animation generated in the drawable file
+     * @param player current player in the game
      * */
     public void viewCombination(Player player, Animation animation){
         this.setSetScoreAnimation(animation);
@@ -215,9 +293,13 @@ public class ScoreViewAdapter extends BaseAdapter {
         }
     }
 
+
     /**
-     * TODO fix test for the new implemented list view
-     * which fix the bakground on each cell.
+     * Add a score for the current player and
+     * add it to the scorelisthandler decorater
+     *
+     * @param yatzyScore the yatzyScore row
+     * @param player the current player
      * */
     public void addScore(String yatzyScore, Player player){
         for(int i = 0; i < this.getCount(); i++){
@@ -226,7 +308,7 @@ public class ScoreViewAdapter extends BaseAdapter {
 
                     this.notifyDataSetChanged();
 
-                    ((ScoreListHandler) this.getItem(i)).setScoreBackground(
+                    ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(
                             player.getColumnPosition(),2, player, yatzyScore, 1
                     );
                     switch (this.checkIfTotalOrSum(
@@ -240,14 +322,9 @@ public class ScoreViewAdapter extends BaseAdapter {
                                    ((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                                    this.notifyDataSetChanged();
                                }
-                               this.updateHeaderItems(player,((ScoreListHandler) this.getItem(i)));
-
+                               this.updateHeaderItems(player);
                                 this.notifyDataSetChanged();
-                              // gameActivityInterface.roundsEnd(player, context);
-
                                 CommunicationHandler.getInstance().roundsEnd(player, context);
-                            }else{
-                                System.out.println("not active yo");
                             }
                             break;
                         case 1:
@@ -263,7 +340,15 @@ public class ScoreViewAdapter extends BaseAdapter {
             }
         }
     }
-    public void updateHeaderItems(Player player, ScoreListHandler scoreListHandler){
+
+    /**
+     * Updates the headeritem with value in the
+     * list view
+     *
+     * @param player the current player which the column
+     *               in the header should be update on.
+     * */
+    public void updateHeaderItems(Player player){
         for(int i = 0; i < this.getCount(); i++){
             if(this.getItem(i) instanceof ScoreListHandler){
 
@@ -277,7 +362,13 @@ public class ScoreViewAdapter extends BaseAdapter {
         }
     }
     /**
-     * TODO Remake this shit haha xD
+     *
+     * Method which check if its total or sum where the row
+     * of the header should be updated on
+     *
+     * @param scoreListHandler the object containing the players
+     * @param currentPlayer the currentPlayer given as an integer to
+     *                      find values for the player
      * */
     public int checkIfTotalOrSum(ScoreListHandler scoreListHandler, int currentPlayer){
         return scoreListHandler.getPlayers().
@@ -285,6 +376,18 @@ public class ScoreViewAdapter extends BaseAdapter {
                 getScoreKeeper().
                 checkIfHalfScore();
     }
+
+    /**
+     * Method which returns the view of a row
+     * in the list view. Containing all the
+     * values from the ingameview that is relevant.
+     * Like the score that the user have on the dices.
+     *
+     * @param position of the row item
+     * @param scoreView the view of the current item row
+     * @param parent the viewgroup containg all the views for
+     *               the specific row
+     * */
     @Override
     public View getView(int position, View scoreView, ViewGroup parent){
         YatzyScoreBoard scoreBoard;
@@ -380,32 +483,16 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard.playerOneScore.setBackgroundResource(scoreListHandler.getScoreBackground(0));
             scoreBoard.playerOneScore.setOnClickListener(scoreListHandler.getListener(0, scoreBoard.playerOneScore));
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-         /*   if (scoreListHandler.getVisible(0)) {
-                scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            } else {
-                scoreBoard.playerOneScore.setVisibility(View.INVISIBLE);
-            }*/
 
             scoreBoard.playerTwoScore.setText(String.format("%s", scoreListHandler.getScore(1)));
             scoreBoard.playerTwoScore.setBackgroundResource(scoreListHandler.getScoreBackground(1));
             scoreBoard.playerTwoScore.setOnClickListener(scoreListHandler.getListener(1, scoreBoard.playerTwoScore));
             scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
-          /*  if (scoreListHandler.getVisible(1)) {
-                scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
-            } else {
-                scoreBoard.playerTwoScore.setVisibility(View.INVISIBLE);
-            }*/
-
 
             scoreBoard.playerThreeScore.setText(String.format("%s", scoreListHandler.getScore(2)));
             scoreBoard.playerThreeScore.setBackgroundResource(scoreListHandler.getScoreBackground(2));
             scoreBoard.playerThreeScore.setOnClickListener(scoreListHandler.getListener(2, scoreBoard.playerThreeScore));
             scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
-            /*if (scoreListHandler.getVisible(2)) {
-                scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
-            } else {
-                scoreBoard.playerThreeScore.setVisibility(View.INVISIBLE);
-            }*/
 
             scoreBoard.playerFourScore.setText(String.format("%s", scoreListHandler.getScore(3)));
             scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getScoreBackground(3));
@@ -417,25 +504,18 @@ public class ScoreViewAdapter extends BaseAdapter {
 
         return scoreView;
     }
+
+    /***
+     * View for the header is all values on the current header
+     * check the header based on the name in the scoreListHandler
+     *
+     * @param scoreListHandler the scoreListHandler of the specific row
+     * @param scoreBoard the scoreBoard container
+     *                   for the views in a row
+     * */
     private void viewForHeader(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler){
         scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
 
-       /* if(scoreListHandler.getYatzyScore().equals("Sum")){
-            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
-        }
-        else if(scoreListHandler.getYatzyScore().equals("Bonus")){
-            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
-        }
-        else if(scoreListHandler.getYatzyScore().equals("Total")){
-            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
-        }
-        else if(scoreListHandler.getYatzyScore().equals("Total of All")){
-            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
-        }*/
         if(!scoreListHandler.getYatzyScore().equals("YATZY")){
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
             scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
@@ -472,6 +552,11 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getHeaderItem(3));
         }
     }
+
+    /**
+     * A class for holding the views in a
+     * specific row in the list view.
+     * */
     static class YatzyScoreBoard {
         TextView yatzyScores;
         TextView playerOneScore;

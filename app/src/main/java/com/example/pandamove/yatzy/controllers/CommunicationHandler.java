@@ -1,15 +1,12 @@
 package com.example.pandamove.yatzy.controllers;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.TextView;
-
-import com.example.pandamove.yatzy.activities.EndActivity;
 import com.example.pandamove.yatzy.activities.GameActivity;
 import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.dice.Dice;
