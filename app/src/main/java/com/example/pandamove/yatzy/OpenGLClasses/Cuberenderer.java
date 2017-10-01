@@ -18,6 +18,14 @@ import android.opengl.Matrix;
 import com.example.pandamove.yatzy.R;
 
 
+/**
+ * Class Cuberender is a class
+ * which render a new 3D-dice using openGL. Add
+ * preworker images that is visualized as a Dice score.
+ *
+ * @author Rasmus Dahlkvist
+ * */
+
 public class Cuberenderer implements GLSurfaceView.Renderer 
 {
 
@@ -75,8 +83,7 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	/** Size of the texture coordinate data in elements. */
 	private final int mTextureCoordinateDataSize = 2;
 	 
-	/** This is a handle to our texture data. */
-
+	/** This is a handle to texture data. */
 	private int mTextureDataHandle0;
 	private int mTextureDataHandle1;
 	private int mTextureDataHandle2;
@@ -310,14 +317,31 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	
 
 
+	/**
+	 * @return diceSelected as boolean, change view based on
+	 * 			selection of the dice
+	 * */
 	public boolean isDiceSelected() {
 		return diceSelected;
 	}
 
+	/**
+	 * Setter for diceSelected
+	 * @param diceSelected boolean for diceSelected
+	 * */
 	public void setDiceSelected(boolean diceSelected) {
 		this.diceSelected = diceSelected;
 	}
-	
+
+
+	/**
+	 * LoadTexture decode the loaded buffer and apply it to
+	 * the surface view.
+	 *
+	 * @param mActivityContext2 the surfaceview which the texture is going
+	 *                          to be apply upon
+	 * @param resourceId which resource that is obtained from the decoded bitmap buffer
+	 * */
 	public static int loadTexture(GLSurfaceView mActivityContext2, final int resourceId) {
 	    final int[] textureHandle = new int[1];
 	 
@@ -350,8 +374,17 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	 
 	    return textureHandle[0];
 	}
+
+	/**
+	 * When the surface is create openGL object are applied to
+	 * the texture, initialize shaders and the viewport (Camera position).
+	 *
+	 * @param gl10 not used since I use gl20 open gl 20 newer version
+	 *
+	 * @param config not used using gles20 instead
+	 * */
 	@Override
-	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
+	public void onSurfaceCreated(GL10 gl10, EGLConfig config) {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		float[] values = hextoRGB("#FFFFFF");
 		GLES20.glClearColor(values[0], values[1], values[2], 1.0f);
@@ -502,9 +535,19 @@ public class Cuberenderer implements GLSurfaceView.Renderer
         
 
 	}	
-	
+
+	/**
+	 * Calls everytime the surface change position
+	 * change viewport and give the drawer a new
+	 * camera position to be drawn upon
+	 *
+	 * @param gl10 using a newer verion gles20
+	 *
+	 * @param width the width of the veiwport
+	 * @param height of the viewport
+	 * */
 	@Override
-	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
+	public void onSurfaceChanged(GL10 gl10, int width, int height) {
 		// Set the OpenGL viewport to the same size as the surface.
 		GLES20.glViewport(0, 0, width, height);
 
@@ -519,13 +562,20 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		final float far = 10.0f;
 		
 		Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
-//please note i am making projection matrix as identity matrix intentionally here to avoid the
-//effects of projection matrix. if you want you can uncomment this line			
-		  Matrix.setIdentityM(mProjectionMatrix, 0);
+
+		Matrix.setIdentityM(mProjectionMatrix, 0);
 	}	
 
+
+	/**
+	 * Allocating buffer for the frame that is being
+	 * drawn. Since 3D module it contains 6 difference
+	 * faces.
+	 *
+	 * @param gl10 not in use
+	 * */
 	@Override
-	public void onDrawFrame(GL10 glUnused) {
+	public void onDrawFrame(GL10 gl10) {
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);			        
                 
 		 GLES20.glUseProgram(mProgramHandle);
@@ -537,16 +587,11 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	        mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");
 	        mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
 	        
-	        // Do a complete rotation every 10 seconds.
-//	        long time = SystemClock.uptimeMillis() % 10000L;
-//	        float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
-	        
+
 	        // Draw the triangle facing straight on.
 	        Matrix.setIdentityM(mModelMatrix, 0);
 	        Matrix.rotateM(mModelMatrix, 0, xAngle, 0.0f, 1.0f, 0.0f);
 			Matrix.rotateM(mModelMatrix, 0, -yAngle, 1.0f, 0.0f, 0.0f);
-//	        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 1.0f, 1.0f); 
-	        
 
 			// Set the active texture unit to texture unit 0.
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -616,6 +661,13 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 	}	
 	
 
+	/**
+	 * Thread which draw the context in the SurfaceView
+	 *
+	 * @param acubeBuffer a float buffer containing draw component for the object,
+	 *                    Per allocated as matrix.
+	 * @param i index / which face thats being drawn.
+	 * */
 	private void draw(final FloatBuffer acubeBuffer, final int i) {
 
 		// Pass in the position information. each vertex needs 3 values and each face of the
@@ -682,6 +734,13 @@ public class Cuberenderer implements GLSurfaceView.Renderer
 		return result;
 	}
 
+	/**
+	 * Makes a map to apply color on a openGL surface
+	 * using HEX string as input
+	 *
+	 * @param hex hexagoncode for the color
+	 * @return a new map for hex color to openGL surface
+	 * */
 	public float[] hextoRGB(String hex) {
 
 		float[] rgbcolor = new float[3];
