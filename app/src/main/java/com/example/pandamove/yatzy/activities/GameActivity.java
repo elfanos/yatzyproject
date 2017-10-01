@@ -88,13 +88,17 @@ public class GameActivity extends AppCompatActivity{
     private float acelVal; //Accelaration and gravity
     private float acelLast; //Lastt ac and graveitiy
     private float shake; // acce and differ gravity
+
+    /**
+     * @param savedInstanceState create new activity instance
+     *                           and initialize objects for
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
         Intent numbOfPlayers = getIntent();
         int numberOfPlayers = numbOfPlayers.getIntExtra("players",0);
-        System.out.println("other activityaaaaaaaaaaaa " + numberOfPlayers);
         animation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anim_alpha);
         this.initializePlayerIcon();
