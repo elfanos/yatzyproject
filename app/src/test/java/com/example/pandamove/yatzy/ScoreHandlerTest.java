@@ -84,7 +84,7 @@ public class ScoreHandlerTest {
         int six = scoreHandler.possibleScores().get("Six");
         int one = scoreHandler.possibleScores().get("One");
         Assert.assertEquals("All scores should be",
-                4, two
+                2, two
         );
         Assert.assertEquals("All scores should be",
                 12, six
