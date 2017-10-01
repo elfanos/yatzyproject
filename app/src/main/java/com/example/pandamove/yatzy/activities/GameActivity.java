@@ -143,7 +143,10 @@ public class GameActivity extends AppCompatActivity{
             CommunicationHandler.getInstance().goToInGameView();
         }else{
             if (exit) {
-                finish(); // finish activity
+                Intent newGame = new Intent(getApplication(), StartActivity.class);
+                newGame.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newGame);
+                finish();
             } else {
                 Toast.makeText(this, "Press Back again to Exit and Stop the Game.",
                         Toast.LENGTH_SHORT).show();
