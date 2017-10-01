@@ -37,26 +37,14 @@ import java.util.HashMap;
  * @author Rasmus Dahlkvist
  * */
 public class GameActivity extends AppCompatActivity{
-
     private ViewPager mPager;
-
     private PagerAdapter pagerAdapter;
-
     private HashMap<String,Integer> listOfPossibleScores = new HashMap<>();
-
     private ArrayList<Dice> dices = new ArrayList<>();
-
-
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<Integer> playersIcon = new ArrayList<>();
-
-    private int ralle = 0;
-    private static final ArrayList<Animation> animations = new ArrayList<>();
-
     private ArrayList<TextView> highScore = new ArrayList<>();
-
     private GameObjects gameObjects;
-
     private LeaderBoard leaderBoard = new LeaderBoard();
     Animation animation;
 

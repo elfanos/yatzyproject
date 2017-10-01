@@ -38,23 +38,16 @@ public class ScoreViewAdapter extends BaseAdapter {
     private static final int SCORE_ITEM = 1;
     private static final int HEADER_ITEM = 0;
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
-    private final int SUM_OF_FIRST_SECTION = 7;
-    private final int BONUS_OF_FIRST_SECTION = 7;
-    private final int SUM_OF_TOTAL_SCORE = 17;
     private HashMap<Integer,CellOnClickListener> observeListeners;
     private ArrayList<Dice> dices;
-
     private Animation setScoreAnimation;
-
     private int imageIndex = 0;
-
     private String[] headerRows = {
             "Sum",
             "Bonus",
             "Total",
             "Total of All"
     };
-
     private int [] imageId = {
             R.drawable.one,
             R.drawable.two,
@@ -212,11 +205,10 @@ public class ScoreViewAdapter extends BaseAdapter {
      * @param row the row in the list
      * */
     public void setScoreOnPlayer(int i, Player player, String row){
-        int score = player.getScoreKeeper().getScoresPossible(row);
         this.checkIfScoreExist(player);
-
         ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
-        ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(player.getColumnPosition(),1, player, row,0);
+        ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(
+                player.getColumnPosition(),1, player, row,0);
         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
         this.notifyDataSetChanged();
     }

@@ -550,6 +550,14 @@ public class ScoreListHandler {
         }
 
     }
+
+    /**
+     * Method which add scores to the
+     * header section in the list view
+     *
+     * @param scoreColumn which player cell the score gonna be updated on
+     * @param score tecturen score fo the palyer
+     * */
     private void setForHeadRightColumn( int score, int scoreColumn){
         switch (scoreColumn){
             case 0:
@@ -568,26 +576,20 @@ public class ScoreListHandler {
         }
 
     }
-    public boolean getVisible(int player){
-        switch (player){
-            case 0:
-                return this.getPlayers().get(player).isCurrentPlayer();
-            case 1:
-                return this.getPlayers().get(player).isCurrentPlayer();
-            case 2:
-                return this.getPlayers().get(player).isCurrentPlayer();
-            case 3:
-                return this.getPlayers().get(player).isCurrentPlayer();
-            default:
-                return false;
-        }
 
-    }
 
+    /**
+     * @return a list of players
+     * */
     public List<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Class for handling header item in list view
+     *
+     * @author Rasmus Dahlkvist
+     * */
     class HeaderItem {
         private int headerId;
         private int headerOneView;
@@ -601,6 +603,12 @@ public class ScoreListHandler {
         private int headerPlayerFour;
         private ArrayList<Integer> headerLayouts;
         private boolean textVisible;
+
+        /**
+         * Constructor for headerItem class
+         *
+         * @param id give a header item an id
+         * */
         public HeaderItem(int id){
             System.out.println("leid?" + id);
             this.headerId = id;
@@ -625,6 +633,12 @@ public class ScoreListHandler {
         public int getHeaderId() {
             return headerId;
         }
+
+        /**
+         * Get view based on which column.
+         *
+         * @param headerColumn column position on a row in the header
+         * */
         public int getHeaderBackground(int headerColumn){
             switch (headerColumn) {
                 case 0:
@@ -642,6 +656,13 @@ public class ScoreListHandler {
             }
 
         }
+
+        /**
+         * Set a new header value in the row
+         *
+         * @param row first name of column in the row
+         * @param player current player
+         * */
         public void setHeaderValue(String row, Player player){
             switch (player.getColumnPosition()){
                 case 0:
@@ -658,6 +679,14 @@ public class ScoreListHandler {
                     break;
             }
         }
+        /**
+         * Set new header value on the row
+         *
+         * @param player current playyer
+         * @param row first column in the row
+         * @param headerValue the new headerValue on the row
+         *
+         * */
         public void setHeaderValueOnRow(String row, Player player, int headerValue){
 
             switch (row){
@@ -673,46 +702,6 @@ public class ScoreListHandler {
                 case "Total of All":
                     headerValue = player.getScoreKeeper().getTotalOfAll();
                     break;
-            }
-        }
-        public String getHeaderScore(int player) {
-            switch (player){
-                case 0:
-                    if(headerPlayerOne != 0) {
-                        return Integer.toString(headerPlayerOne);
-                    }else{
-                        return "0";
-                    }
-                case 1:
-                    if(headerPlayerTwo != 0) {
-                        return Integer.toString(headerPlayerTwo);
-                    }else{
-                        return "0";
-                    }
-                case 2:
-                    if(headerPlayerThree != 0) {
-                        return Integer.toString(headerPlayerThree);
-                    }else{
-                        return "0";
-                    }
-                case 3:
-                    if(headerPlayerFour != 0) {
-                        return Integer.toString(headerPlayerFour);
-                    }else{
-                        return "0";
-                    }
-                default:
-                    return "0";
-            }
-        }
-        public void setHeaderId(int headerId) {
-            this.headerId = headerId;
-        }
-        public boolean getVisible(int headerColumn){
-            if(headerColumn != 0){
-                return true;
-            }else{
-                return false;
             }
         }
     }
