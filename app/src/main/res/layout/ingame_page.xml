@@ -27,8 +27,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true">
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true">
 
                     <TextView
                         android:id="@+id/currentPlayer"
@@ -46,14 +46,28 @@
                         android:id="@+id/currentplayerscore"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/thescoretext"
                         android:layout_below="@+id/currentPlayer"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="32dp"
                         android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:text="TextView"
                         android:textColor="@android:color/black"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/thescoretext"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/currentPlayer"
+                        android:layout_below="@+id/leaderBoard"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center"
+                        android:text="current score"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/leaderBoard"
@@ -104,6 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/playerThird"
                         android:layout_below="@+id/currentplayerscore"
+                        android:layout_marginTop="5dp"
                         android:textColor="@android:color/background_light" />
 
                     <TextView

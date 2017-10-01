@@ -17,6 +17,7 @@ public class ScoreHandler {
     private SparseArray<Dice> dices;
     private HashMap<String,Integer> allScores;
     private ArrayList<Integer> pairs;
+    private SparseArray<Dice> pairFourOfKind;
     private int threeOfKind = 0;
     private int [] allScoresOnDice = {
             1, 2, 3, 4, 5, 6
@@ -51,6 +52,7 @@ public class ScoreHandler {
      * */
     public ScoreHandler(SparseArray<Dice> dices) {
         this.dices = dices;
+        this.pairFourOfKind = dices;
         allScores = new HashMap<>();
         pairs = new ArrayList<>();
         this.checkScores();
@@ -148,29 +150,57 @@ public class ScoreHandler {
     /**
      * Check for pair inside the dices SparseArrayList
      *
-     * @param position which position is going to be checked in the list
      * @param pairCollector container for the pairs
      *
      * */
-    private void checkForPair(int position, List<Integer> pairCollector, boolean gotOnePair){
-        if(position < dices.size()) {
-            for (int i = position; i < dices.size(); i++) {
-                if ((i + 1) < dices.size()) {
-                    if (dices.get(position).getScore() == dices.get(i + 1).getScore()) {
-                        int value = (dices.get(position).getScore()) + (dices.get(i + 1).getScore());
-                        pairCollector.add(value);
-                        pairs.add(value);
-                        if (!gotOnePair) {
-                            this.checkForPair((i + 2), pairCollector, true);
-                            break;
-                        }else{
-                            break;
+    private void checkForPair(int position,List<Integer> pairCollector, SparseArray<Dice> pairFourOfKind,
+                              boolean gotOnePair){
+        System.out.println("le sizE??: " + pairFourOfKind.size());
+        if(pairFourOfKind.size() > 1) {
+            for (int i = 1; i < pairFourOfKind.size(); i++) {
+               System.out.println("le sizE??:");
+                if(pairFourOfKind.get(i) != null && pairFourOfKind.get(position) != null) {
+                    System.out.println("get osj score?: " + pairFourOfKind.get(position).getScore());
+                    System.out.println("get osj score? two: " + pairFourOfKind.get(i).getScore());
+                    if(position != i) {
+                        if (pairFourOfKind.get(position).getScore() == pairFourOfKind.get(i).getScore()) {
+                            System.out.println("in if?");
+                            int value = (pairFourOfKind.get(position).
+                                    getScore()) + (pairFourOfKind.get(i).getScore());
+                            System.out.println("in if ee");
+                            pairCollector.add(value);
+                            pairs.add(value);
+                            System.out.println("in if eeawd");
+                            if (!gotOnePair) {
+                                System.out.println("!Gotna pair??" + (pairFourOfKind.get(i).getScore()));
+                                this.setOnePair(position, i, pairFourOfKind, pairCollector);
+                                break;
+                            } else {
+                                System.out.println("le break=?");
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
     }
+    private void setOnePair(int position, int last,
+                            SparseArray<Dice> pairFourOfKind, List<Integer> pairCollector){
+        System.out.println("wat?" + position);
+        System.out.println("wat 3; " + last);
+        pairFourOfKind.removeAt(
+                position
+        );
+        pairFourOfKind.removeAt(
+           last
+        );
+        System.out.println("wat?2 " + pairFourOfKind.size());
+        this.checkForPair(1,pairCollector, pairFourOfKind, true);
+    }
+    /*private int checkNewPosition(int first, int last){
+        //for()
+    }*/
 
     /**
      * Method to check if there is more then on pair inside the list
@@ -180,8 +210,8 @@ public class ScoreHandler {
      * @param pairCollector container for the pairs
      * */
     private void checkForPairs(int position,List<Integer> pairCollector){
-        boolean gotOnePair = false;
-        this.checkForPair(position, pairCollector, gotOnePair);
+        SparseArray<Dice> temporaryList = dices.clone();
+        this.checkForPair(1,pairCollector,temporaryList, false);
         int highestPair = this.checkTheHighestPair(pairCollector);
         allScores.put(scores[7], highestPair);
         if(pairCollector.size() > 1) {

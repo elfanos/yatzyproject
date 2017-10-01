@@ -315,10 +315,13 @@ public class CommunicationHandler implements GameActivityInterface{
                 setBackgroundResource(
                         playersIcon.get(player.getColumnPosition())
                 );
+
         ((TextView)(v.findViewById(R.id.currentPlayer))).
                 setText(String.format("%s",player.getName()));
         ((TextView)(v.findViewById(R.id.currentplayerscore))).
                 setText(String.format("%s",player.getScoreKeeper().getTotalOfAll()));
+
+        (v.findViewById(R.id.currentplayerscore)).setVisibility(View.VISIBLE);
         ((TextView)v.findViewById(R.id.roundText)).
                 setText(String.format("%s", gameObjects.getRound()));
 

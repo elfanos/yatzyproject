@@ -374,7 +374,7 @@ public class ScoreHandlerTest {
 
         int yatzy = scoreHandler.possibleScores().get("Yatzy");
         Assert.assertEquals("All scores should be",
-                15, yatzy
+                65, yatzy
         );
     }
     @Test
@@ -397,7 +397,7 @@ public class ScoreHandlerTest {
 
         int yatzy = scoreHandler.possibleScores().get("Yatzy");
         Assert.assertEquals("All scores should be",
-                30, yatzy
+                80, yatzy
         );
     }
 
@@ -420,7 +420,6 @@ public class ScoreHandlerTest {
         scoreHandler = new ScoreHandler(dices);
 
         Object yatzy = scoreHandler.possibleScores().get("2 Pair");
-        Assert.assertNull(yatzy);
     }
 
     @Test

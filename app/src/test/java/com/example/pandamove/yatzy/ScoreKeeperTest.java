@@ -1,17 +1,10 @@
 package com.example.pandamove.yatzy;
 
-import android.util.SparseArray;
-
-import com.example.pandamove.yatzy.dice.Dice;
-import com.example.pandamove.yatzy.score.Score;
-import com.example.pandamove.yatzy.score.ScoreHandler;
 import com.example.pandamove.yatzy.score.ScoreKeeper;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ScoreKeeperTest {
