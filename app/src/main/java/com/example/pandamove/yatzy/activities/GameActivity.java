@@ -90,8 +90,11 @@ public class GameActivity extends AppCompatActivity{
     private float shake; // acce and differ gravity
 
     /**
-     * @param savedInstanceState create new activity instance
-     *                           and initialize objects for
+     * Create new activity instance
+     *  and initialize objects
+     * @param savedInstanceState restore saved instance from previous
+     *                           runs if there is any
+     *
      * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
