@@ -414,60 +414,7 @@ public class ScoreViewAdapter extends BaseAdapter {
         final ScoreListHandler scoreListHandler = playerList.get(position);
         if(!scoreListHandler.isHeaderItem()) {
             if (scoreBoard.yatzyScores == null) {
-                scoreBoard.diceImageOne.setImageResource(scoreListHandler.getImageScore());
-                if (scoreListHandler.getYatzyScore().contains("1 Pair")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.onepair);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-                } else if (scoreListHandler.getYatzyScore().contains("2 Pair")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.twopair);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("3 of a Kind")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.threeofkind);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("4 of a Kind")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.fourofkind);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("Full House")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.fullhouse);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("Small Straight")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.smallstraight);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("Long Straight")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.bigstraight);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("Chance")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.chance);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-
-                } else if (scoreListHandler.getYatzyScore().contains("Yatzy")) {
-                    scoreBoard.diceImageOne.setImageResource(R.drawable.chance);
-                    float logicalDensity = context.getResources().getDisplayMetrics().density;
-                    int px = (int) Math.ceil(100 * logicalDensity);
-                    scoreBoard.diceImageOne.getLayoutParams().width = px;
-                }
+                this.initializeImageForHeader(scoreBoard,scoreListHandler);
             } else {
                 scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
             }
@@ -495,6 +442,73 @@ public class ScoreViewAdapter extends BaseAdapter {
         }
 
         return scoreView;
+    }
+
+    /**
+     * Set the designed image to the yatzy score row instead
+     * of using text as indication for the yatzyscore
+     * Setting the size of each image before applying the
+     * new image background.
+     *
+     * @param scoreBoard the scoreboard store all view values
+     * @param scoreListHandler store a values set for a row
+     * */
+    private void initializeImageForHeader(YatzyScoreBoard scoreBoard,
+                                         ScoreListHandler scoreListHandler){
+        scoreBoard.diceImageOne.setImageResource(scoreListHandler.getImageScore());
+        if (scoreListHandler.getYatzyScore().contains("1 Pair")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.pairnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+        } else if (scoreListHandler.getYatzyScore().contains("2 Pair")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.twopairsnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("3 of a Kind")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.threeofkindnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("4 of a Kind")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.fourofkindnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("Full House")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.fullhousenew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("Small Straight")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.smallstraightnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("Long Straight")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.largestraightnew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("Chance")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.chancenew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+
+        } else if (scoreListHandler.getYatzyScore().contains("Yatzy")) {
+            scoreBoard.diceImageOne.setImageResource(R.drawable.yatzynew);
+            float logicalDensity = context.getResources().getDisplayMetrics().density;
+            int px = (int) Math.ceil(100 * logicalDensity);
+            scoreBoard.diceImageOne.getLayoutParams().width = px;
+        }
     }
 
     /***
