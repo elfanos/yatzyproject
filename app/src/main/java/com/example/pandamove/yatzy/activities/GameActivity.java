@@ -88,13 +88,20 @@ public class GameActivity extends AppCompatActivity{
     private float acelVal; //Accelaration and gravity
     private float acelLast; //Lastt ac and graveitiy
     private float shake; // acce and differ gravity
+
+    /**
+     * Create new activity instance
+     *  and initialize objects
+     * @param savedInstanceState restore saved instance from previous
+     *                           runs if there is any
+     *
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
         Intent numbOfPlayers = getIntent();
         int numberOfPlayers = numbOfPlayers.getIntExtra("players",0);
-        System.out.println("other activityaaaaaaaaaaaa " + numberOfPlayers);
         animation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anim_alpha);
         this.initializePlayerIcon();
@@ -143,7 +150,10 @@ public class GameActivity extends AppCompatActivity{
             CommunicationHandler.getInstance().goToInGameView();
         }else{
             if (exit) {
-                finish(); // finish activity
+                Intent newGame = new Intent(getApplication(), StartActivity.class);
+                newGame.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newGame);
+                finish();
             } else {
                 Toast.makeText(this, "Press Back again to Exit and Stop the Game.",
                         Toast.LENGTH_SHORT).show();

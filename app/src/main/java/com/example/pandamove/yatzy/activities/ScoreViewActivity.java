@@ -19,6 +19,14 @@ import java.util.ArrayList;
 public class ScoreViewActivity extends AppCompatActivity {
     ArrayList<Player> players;
     ArrayList<Integer> playersIcon;
+
+    /**
+     * Create new activity instance
+     *  and initialize objects
+     * @param onSavedInstance restore saved instance from previous
+     *                           runs if there is any
+     *
+     * */
     @Override
     protected void onCreate(Bundle onSavedInstance){
         super.onCreate(onSavedInstance);

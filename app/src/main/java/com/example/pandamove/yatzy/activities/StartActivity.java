@@ -21,6 +21,14 @@ import java.util.ArrayList;
 public class StartActivity extends AppCompatActivity{
     ArrayList<TextView> playerButtons = new ArrayList<>();
     private int howManyPlayers = 0;
+
+    /**
+     * Create new activity instance
+     *  and initialize objects
+     * @param savedInstanceState restore saved instance from previous
+     *                           runs if there is any
+     *
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
