@@ -158,31 +158,28 @@ public class ScoreHandler {
      * @param pairCollector container for the pairs
      * @param position starting position of iteration
      * @param pairFourOfKind arraylist of integers that is the scores
-     * @param gotOnePair boolean to check if one pair is already combined
      * */
-    private void checkForPair(int position, List<Integer> pairCollector, ArrayList<Integer> pairFourOfKind,
-                              boolean gotOnePair){
-        if(pairFourOfKind.size() > 1) {
-            for (int i = 0; i < pairFourOfKind.size(); i++) {
-                if(pairFourOfKind.get(i) != null && pairFourOfKind.get(position) != null) {
-                    if(position != i) {
-                        if (pairFourOfKind.get(position).equals(pairFourOfKind.get(i))) {
-                            int value = (pairFourOfKind.get(position)+ (pairFourOfKind.get(i)));
-                            pairCollector.add(value);
-                            pairs.add(value);
-                            if (!gotOnePair) {
-                                this.setOnePair(position,i, false, pairFourOfKind, pairCollector);
-                                break;
-                            } else {;
+    private void checkForPair(int position, List<Integer> pairCollector,
+                              ArrayList<Integer> pairFourOfKind){
+        if(position < pairFourOfKind.size()) {
+            if (pairFourOfKind.size() > 1) {
+                for (int i = 0; i < pairFourOfKind.size(); i++) {
+                    if (pairFourOfKind.get(i) != null && pairFourOfKind.get(position) != null) {
+                        if (position != i) {
+                            if (pairFourOfKind.get(position).equals(pairFourOfKind.get(i))) {
+                                this.setOnePair(pairFourOfKind.get(position),
+                                        pairFourOfKind.get(i),
+                                        pairFourOfKind, pairCollector,
+                                        (pairFourOfKind.get(position) + (pairFourOfKind.get(i))));
                                 break;
                             }
                         }
                     }
                 }
             }
-        }
-        if(pairFourOfKind.size() > 1) {
-            this.setOnePair(position,position, true, pairFourOfKind,pairCollector);
+            if (pairFourOfKind.size() > 1) {
+                this.checkForPair(position + 1, pairCollector, pairFourOfKind);
+            }
         }
     }
 
@@ -210,12 +207,14 @@ public class ScoreHandler {
      *                       the scores
      * @param pairCollector the collector of pairs
      * */
-    private void setOnePair(int first, int last, boolean noCombination,
-                            ArrayList<Integer> pairFourOfKind, List<Integer> pairCollector){
-        pairFourOfKind.remove(first);
-        if(!noCombination)
-            pairFourOfKind.remove(last);
-        this.checkForPair(0,pairCollector, pairFourOfKind, true);
+    private void setOnePair(int first, int last,
+                            ArrayList<Integer> pairFourOfKind,
+                            List<Integer> pairCollector, int value){
+        pairCollector.add(value);
+        pairs.add(value);
+        pairFourOfKind.remove(pairFourOfKind.indexOf(first));
+        pairFourOfKind.remove(pairFourOfKind.indexOf(last));
+        this.checkForPair(0,pairCollector, pairFourOfKind);
     }
 
     /**
@@ -229,7 +228,7 @@ public class ScoreHandler {
         //Sort the list before iteration through it
         //highest value first
         Collections.sort(scoreList, Collections.reverseOrder());
-        this.checkForPair(0,pairCollector,scoreList, false);
+        this.checkForPair(0,pairCollector,scoreList);
         int highestPair = this.checkTheHighestPair(pairCollector);
         allScores.put(scores[7], highestPair);
         if(pairCollector.size() > 1) {
@@ -280,21 +279,15 @@ public class ScoreHandler {
      * @param pairCollector
      * */
     private void checkForTwoPairOrFourOfKind(List<Integer> pairCollector){
-        System.out.println("ehma ja=?? ");
         int value = 0;
         int fourOfKind = 0;
-        System.out.println("pairColccetor? " + pairCollector.get(0));
-        System.out.println("pairColccetor? " + pairCollector.get(1));
         for(int i = 0; i < pairCollector.size(); i++){
             if(pairCollector.size() > 1) {
                 if((i+1) < pairCollector.size()) {
-                    System.out.println("ehma ja=?? ");
                     if (!pairCollector.get(i).equals(pairCollector.get(i + 1))) {
-                        System.out.println("ehma ja=?? 2pair????");
                         value += pairCollector.get(i);
                         value += pairCollector.get(i + 1);
                     } else {
-                        System.out.println("ehma ja=?? four a kinddded ");
                         fourOfKind = pairCollector.get(i) + pairCollector.get(i + 1);
                     }
                 }

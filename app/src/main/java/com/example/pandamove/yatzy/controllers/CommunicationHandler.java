@@ -205,7 +205,8 @@ public class CommunicationHandler implements GameActivityInterface{
             if (player != null) {
                 player.getScoreKeeper().setScores(listOfPossibleScores);
                 if (scoreFragment instanceof ScoreFragment) {
-                    ((ScoreFragment) scoreFragment).getScoreListAdapater().viewCombination(player, animation);
+                    ((ScoreFragment) scoreFragment).getScoreListAdapater().
+                            viewCombination(player, animation);
                 }
             }
     }

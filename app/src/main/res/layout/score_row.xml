@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutRow"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
-    android:paddingTop="10dp"
+    android:descendantFocusability="blocksDescendants"
     android:paddingBottom="10dp"
-    android:paddingRight="5dp"
     android:paddingLeft="5dp"
-    android:descendantFocusability="blocksDescendants">
+    android:paddingRight="5dp"
+    android:paddingTop="10dp">
 
     <ImageView
         android:id="@+id/imagescore"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-      />
+        android:layout_centerVertical="true" />
 
     <TextView
         android:id="@+id/playerone"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/playertwo"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
@@ -39,7 +39,7 @@
 
     <TextView
         android:id="@+id/playerthree"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
@@ -49,11 +49,22 @@
 
     <TextView
         android:id="@+id/playerfour"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/playerthree"
         android:gravity="center"
         android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/playertwo"
+        android:gravity="center" />
 </RelativeLayout>
+
+
+

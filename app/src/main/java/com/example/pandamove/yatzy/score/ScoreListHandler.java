@@ -161,7 +161,7 @@ public class ScoreListHandler {
 
 
     /**
-     * Set a new listenere for a
+     * Set a new listener for a
      * cell in the list view
      *
      * @param player current player

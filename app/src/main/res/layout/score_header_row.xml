@@ -28,7 +28,7 @@
 
     <TextView
         android:id="@+id/hplayerone"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/header1"
@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/hplayertwo"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/hplayerthree"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
@@ -57,7 +57,7 @@
 
     <TextView
         android:id="@+id/hplayerfour"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"

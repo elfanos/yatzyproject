@@ -450,4 +450,27 @@ public class ScoreHandlerTest {
         );
     }
 
+    @Test
+    public void pairTesting(){
+        dices = new SparseArray<Dice>();
+        //Should be dummy :D
+        Dice newDice = new Dice(true, 0, 0);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 2, 1);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 4, 2);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 4, 3);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 6, 4);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        newDice = new Dice(true, 6, 5);
+        dices.put(newDice.getSurfaceIndex(),newDice);
+        scoreHandler = new ScoreHandler(dices);
+        int fives2 = scoreHandler.possibleScores().get("2 Pair");
+        Assert.assertEquals("All scores should be",
+                20, fives2
+        );
+    }
+
 }
