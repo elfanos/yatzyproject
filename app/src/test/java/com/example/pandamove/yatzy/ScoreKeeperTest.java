@@ -142,4 +142,29 @@ public class ScoreKeeperTest {
         );
 
     }
+    @Test
+    public void checkBonus(){
+        HashMap<String,Integer> possibleScores = new HashMap<>();
+        ScoreKeeper scoreKeeper = new ScoreKeeper(scores);
+        possibleScores.put("One", 3);
+        possibleScores.put("Two", 6);
+        possibleScores.put("Three", 9);
+        possibleScores.put("Four", 12);
+        possibleScores.put("Five", 15);
+        possibleScores.put("Six", 18);
+        scoreKeeper.setScores(possibleScores);
+        scoreKeeper.setUsedScore("One");
+        scoreKeeper.setUsedScore("Two");
+        scoreKeeper.setUsedScore("Three");
+        scoreKeeper.setUsedScore("Four");
+        scoreKeeper.setUsedScore("Five");
+        scoreKeeper.setUsedScore("Six");
+        int size = scoreKeeper.sizeOfScores();
+        int bonus = scoreKeeper.checkBonus();
+        int sizeOfPossible = scoreKeeper.sizeOfPossibleScores();
+        Assert.assertEquals("Active should be false",
+                1, bonus
+        );
+
+    }
 }

@@ -22,7 +22,6 @@ public interface GameActivityInterface extends Serializable {
      * @param dices send all the dices generate on a roll
      * */
     void onThrowPostPossibleScores(SparseArray<Dice> dices);
-
     /**
      * Set the player view
      *
@@ -41,7 +40,7 @@ public interface GameActivityInterface extends Serializable {
      *
      * @param v view of the application
      * */
-    void setThrows(View v);
+    void getThrows(View v);
 
     /**
      * Set rounds end

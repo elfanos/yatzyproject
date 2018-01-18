@@ -2,9 +2,11 @@ package com.example.pandamove.yatzy.OpenGLClasses;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.fragments.InGameFragment;
 
 import java.util.Random;
@@ -22,8 +24,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 
 	float touchedX = 0;
 	float touchedY = 0;
-	float lastPositionX = 0;
-	float lastPositionY = 0;
 	private boolean surfaceIsActive;
 	private int currentDiceNumber;
 
@@ -59,13 +59,19 @@ public class DiceSurfaceView extends GLSurfaceView {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			touchedX = event.getX();
 			touchedY = event.getY();
-			System.out.println("yalla");
+			System.out.println("yalla" + this.getCurrentDiceNumber());
 			if(!renderer.isDiceSelected()) {
 				renderer.setDiceSelected(true);
 				this.setSurfaceIsActive(false);
+                CommunicationHandler.getInstance().getGameObjects().
+                        setGlActive(
+                                this.getCurrentDiceNumber(),false);
 			}else{
 				renderer.setDiceSelected(false);
 				this.setSurfaceIsActive(true);
+                CommunicationHandler.getInstance().getGameObjects().removeGlActive(
+                        this.getCurrentDiceNumber()
+                );
 			}
 		}
 		return true;
@@ -418,9 +424,12 @@ public class DiceSurfaceView extends GLSurfaceView {
 	 *
 	 * @param currentDiceNumber which dicesNumber
 	 * */
-	public void setCurrentDiceNumber(int currentDiceNumber) {
+	public synchronized void setCurrentDiceNumber(int currentDiceNumber) {
 		this.currentDiceNumber = currentDiceNumber;
 	}
+	public synchronized Integer getCurrentDiceNumber(){
+        return currentDiceNumber;
+    }
 
 	/**
 	 * Set messure for the dicesurfaceview instead of

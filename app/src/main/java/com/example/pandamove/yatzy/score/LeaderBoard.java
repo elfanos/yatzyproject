@@ -2,6 +2,7 @@ package com.example.pandamove.yatzy.score;
 
 import com.example.pandamove.yatzy.player.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,7 +14,7 @@ import java.util.Comparator;
  * @author Rasmus Dahlkvist
  */
 
-public class LeaderBoard {
+public class LeaderBoard implements Serializable {
 
 
     /**

@@ -56,7 +56,9 @@ public class Player implements Serializable{
      * Increment rounds of the current player, but it is rolls
      * */
     public void incrementRound(){
-        round++;
+        System.out.println("le rounds??");
+        round = 5;
+        //round++;
     }
     public int getRound() {
         return round;

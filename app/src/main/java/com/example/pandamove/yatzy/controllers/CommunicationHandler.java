@@ -1,6 +1,7 @@
 package com.example.pandamove.yatzy.controllers;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
@@ -34,12 +35,17 @@ public class CommunicationHandler implements GameActivityInterface{
         this.gameObjects = gameObjects;
     }
 
+    public GameObjects getGameObjects(){
+        return this.gameObjects;
+    }
     /**
      * @return players an list of players
      * */
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
+
 
     /**
      * Set a list of players
@@ -147,6 +153,10 @@ public class CommunicationHandler implements GameActivityInterface{
         this.initializeDices = initializeDices;
     }
 
+    public Animation getAnimation(){
+        return animation;
+    }
+
     private boolean initializeDices;
     private View inGameView;
     private GameActivity gameActivity;
@@ -192,6 +202,7 @@ public class CommunicationHandler implements GameActivityInterface{
      * */
     @Override
     public void onThrowPostPossibleScores(SparseArray<Dice> dices){
+            this.setGlScore(dices);
             testish++;
             resetHashMap();
             ScoreHandler scoreHandler = new ScoreHandler(dices);
@@ -201,7 +212,6 @@ public class CommunicationHandler implements GameActivityInterface{
             listOfPossibleScores = scoreHandler2.possibleScores();
             Fragment scoreFragment = fragments.get(1);
             Player player = checkCurrentPlayer();
-            System.out.println("Testish: " + testish);
             if (player != null) {
                 player.getScoreKeeper().setScores(listOfPossibleScores);
                 if (scoreFragment instanceof ScoreFragment) {
@@ -211,6 +221,18 @@ public class CommunicationHandler implements GameActivityInterface{
             }
     }
 
+    /**
+     * Set dice score in a glScore list which keep
+     * track on previous score on state change
+     *
+     * @param dices containing all values on dices
+     * */
+    public void setGlScore(SparseArray<Dice> dices){
+        this.getGameObjects().clearGlInfo();
+        for(int i = 0; i < dices.size(); i+=1){
+            this.getGameObjects().setGlScore(dices.get(i).getScore());
+        }
+    }
     /**
      * @return view of ingamefragment
      * */
@@ -251,7 +273,7 @@ public class CommunicationHandler implements GameActivityInterface{
         testish = 0;
         player.setCurrentPlayer(false);
         player.setScoreIsSet(true);
-        System.out.println("wats let round? " + gameObjects.getRound());
+        gameObjects.clearGlActive();
         //If more players
         if (gameObjects.checkIfLastPlayer()) {
             if(gameObjects.getRound() < 14) {
@@ -278,9 +300,8 @@ public class CommunicationHandler implements GameActivityInterface{
         }
 
     }
-
     /**
-     * Update the view bsed on current player
+     * Update the view based on current player
      *
      * @param v the view
      * */
@@ -288,6 +309,8 @@ public class CommunicationHandler implements GameActivityInterface{
     public void updateView(View v){
         //this.initializePlayerIcon();
         Player player = this.getCurrentPlayer();
+        System.out.println("wat is current player??   " +
+                this.getCurrentPlayer().getColumnPosition());
         if(player == null){
             player = players.get(0);
         }
@@ -418,11 +441,20 @@ public class CommunicationHandler implements GameActivityInterface{
      * @param v
      * */
     @Override
-    public void setThrows(View v){
+    public void getThrows(View v){
         Player player = this.getCurrentPlayer();
-        player.increseNumberOfThrows();
+        System.out.println("in get throws:   " + player.getNumberOfThrows());
         ((TextView)v.findViewById(R.id.thrownumber)).setText(String.format("%s",
                 player.getNumberOfThrows()));
+    }
+    public int getDemThrows(){
+        Player player = this.getCurrentPlayer();
+        System.out.println("in get getdemthrows:   " + player.getNumberOfThrows());
+        return player.getNumberOfThrows();
+    }
+    public void setThrows(){
+        Player player = this.getCurrentPlayer();
+        player.increseNumberOfThrows();
     }
     /**
      * refresh hashmap
@@ -457,5 +489,4 @@ public class CommunicationHandler implements GameActivityInterface{
     public void goToInGameView(){
         ((ViewPager) gameActivity.findViewById(R.id.viewpager)).setCurrentItem(0,true);
     }
-
 }

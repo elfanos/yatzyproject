@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.pandamove.yatzy.R;
+import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
@@ -48,9 +49,7 @@ public class ScoreFragment extends Fragment {
             "Total",
             "Total of All"
     };
-    private List<Player> players;
     private ScoreViewAdapter scoreViewAdapter;
-    private ArrayList<Dice> dices;
     private ListView scoreListView;
 
     /**
@@ -58,7 +57,6 @@ public class ScoreFragment extends Fragment {
      * two array list one for player and one list of scores
      * */
     public ScoreFragment(){
-        players = new ArrayList<>();
         listOfScores = new ArrayList<>();
     }
 
@@ -69,16 +67,11 @@ public class ScoreFragment extends Fragment {
      * information in bundles and send it to oncreate
      *
      * @param page fragment number
-     * @param dices alla dices in a arraylist
-     * @param players all the players in an arraylist
      * */
-    public static ScoreFragment newInstance(int page, ArrayList<Dice> dices,
-                                            ArrayList<Player> players){
+    public static ScoreFragment newInstance(int page){
         Bundle args = new Bundle();
         ScoreFragment object = new ScoreFragment();
         args.putInt(ARG_PAGE, page);
-        args.putParcelableArrayList("dices", dices);
-        args.putSerializable("players", players);
         object.setArguments(args);
 
         return object;
@@ -92,8 +85,24 @@ public class ScoreFragment extends Fragment {
     @Override
     public void onCreate(Bundle onSavedInstace){
         super.onCreate(onSavedInstace);
-        dices = getArguments().getParcelableArrayList("dices");
-        players = (ArrayList<Player>) getArguments().getSerializable("players");
+    }
+    /**
+     * Recreated previous stored values
+     *
+     * @param savedInstanceState contains stored values
+     * */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+    /**
+     * Store values inside a bundle
+     *
+     * @param outState keeps the value that is going to be stored
+     * */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -108,11 +117,31 @@ public class ScoreFragment extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.scoregame_page, container, false);
         scoreListView = (ListView) view.findViewById(R.id.list_view_score);
-
         if(scoreViewAdapter == null){
             this.updateAdapter();
         }
+        this.restartPreviousScores();
+        if(!CommunicationHandler.getInstance().getPlayers().get(0).getScoreKeeper().
+                containsInActive()){
+            ArrayList<Player> players = CommunicationHandler.getInstance().getPlayers();
+            for(int i = 0; i < players.size(); i+=1){
+                this.getScoreListAdapater().reinitializeUnActiveScores(players.get(i));
+            }
+        }
         return view;
+    }
+    /**
+     * Add values to the scoreViewAdapter when a activity is resumed
+     * */
+    public void restartPreviousScores(){
+        ArrayList<Player> players = CommunicationHandler.getInstance().getPlayers();
+        for(int i = 0; i < players.size(); i+=1) {
+            if (CommunicationHandler.getInstance().getPlayers().get(i).
+                    getScoreKeeper().sizeOfPossibleScores() != 0) {
+                this.getScoreListAdapater().viewCombination(players.get(i),
+                        CommunicationHandler.getInstance().getAnimation());
+            }
+        }
     }
 
     /**
@@ -122,24 +151,29 @@ public class ScoreFragment extends Fragment {
     public void updateAdapter(){
         int headerItem = 0;
         scoreViewAdapter = new ScoreViewAdapter(this.getActivity(),
-                listOfScores, dices);
+                listOfScores);
         for(int i = 0; i < scores.length; i++ ){
             if(i == 0){
-                scoreViewAdapter.addSectionHeader(scores[i],players, headerItem);
+                scoreViewAdapter.addSectionHeader(scores[i],
+                        CommunicationHandler.getInstance().getPlayers(), headerItem);
                 headerItem++;
             }
             if(i != 0 && i < 7){
-                scoreViewAdapter.addItem(scores[i],players);
+                scoreViewAdapter.addItem(scores[i],
+                        CommunicationHandler.getInstance().getPlayers());
             }
             if(i > 6 && i <9){
-                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                scoreViewAdapter.addSectionHeader(scores[i],
+                        CommunicationHandler.getInstance().getPlayers(), headerItem);
                 headerItem++;
             }
             if(i > 8 && i < 18 ){
-                scoreViewAdapter.addItem(scores[i], players);
+                scoreViewAdapter.addItem(scores[i],
+                        CommunicationHandler.getInstance().getPlayers());
             }
             if(i > 17){
-                scoreViewAdapter.addSectionHeader(scores[i], players, headerItem);
+                scoreViewAdapter.addSectionHeader(scores[i],
+                        CommunicationHandler.getInstance().getPlayers(), headerItem);
                 headerItem++;
             }
         }
@@ -156,6 +190,6 @@ public class ScoreFragment extends Fragment {
      * @return size of the players arraylist
      * */
     public int getPlayerListSize(){
-        return players.size();
+        return CommunicationHandler.getInstance().getPlayers().size();
     }
 }

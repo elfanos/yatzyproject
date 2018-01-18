@@ -8,6 +8,7 @@ import com.example.pandamove.yatzy.fragments.ScoreViewAdapter;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.ScoreListHandler;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +21,7 @@ import java.util.Map;
  * @author Rasmus Dahlkvist
  */
 
-public class CellOnClickListener implements View.OnClickListener {
+public class CellOnClickListener implements View.OnClickListener, Serializable {
     private ScoreViewAdapter scoreViewAdapter;
     private String yatzyScore;
     private int position;

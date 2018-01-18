@@ -16,14 +16,19 @@ public class GameObjects implements Serializable{
     private int halfScore;
     private static final int NUMBEROFROUNDS = 14;
     private ArrayList<Player> players;
+    private ArrayList<Integer> glScore;
+    private ArrayList<GlActive> glActive;
 
     /**
      * Constructor
      * @param players list of players
      * */
-    public GameObjects(ArrayList<Player> players){
+    public GameObjects(ArrayList<Player> players, ArrayList<Integer> glScore){
         this.players = players;
+        this.glScore = glScore;
+        glActive = new ArrayList<>();
         round = 1;
+
     }
 
     /**
@@ -115,6 +120,7 @@ public class GameObjects implements Serializable{
      * Increment rounds
      * */
     public void setRound() {
+        System.out.println("le rounds?? in game objective?");
        this.round++;
     }
 
@@ -138,5 +144,106 @@ public class GameObjects implements Serializable{
      * */
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
+    }
+
+
+    /**
+     * Empty the glScore array and
+     * and declare a new one
+     * */
+    public void clearGlInfo(){
+        glScore = null;
+        glScore = new ArrayList<>();
+    }
+
+    /**
+     * Empty the glActive array
+     * and declare a new one
+     * */
+    public void clearGlActive(){
+        glActive = null;
+        glActive = new ArrayList<>();
+    }
+
+    /**
+     * @return glScore as a list of integer
+     * */
+    public ArrayList<Integer> getGlScore(){
+        return glScore;
+    }
+
+    /**
+     * Add a new value to the glScore array
+     *
+     * @param score the value of the integer which is added to the array
+     * */
+    public void setGlScore(int score){
+        this.glScore.add(score);
+    }
+
+    /**
+     * Add a new GlActive object to the glActive array
+     *
+     * @param index as a integer
+     * @param bool the state given when called
+     * */
+    public synchronized void setGlActive(int index, boolean bool){
+        GlActive glActive = new GlActive(index,bool);
+        this.glActive.add(glActive);
+    }
+
+    /**
+     * Remove an object inside the glActive array
+     *
+     * @param index the index of the object which is being removed
+     * */
+    public synchronized void removeGlActive(int index){
+        for(int i = 0; i < glActive.size(); i+=1){
+            if(glActive.get(i).getIndex() == index){
+                this.glActive.remove(i);
+            }
+        }
+    }
+
+    /**
+     * @return glActive as an array of GlActive objects
+     * */
+    public ArrayList<GlActive> getGlActive(){
+        return glActive;
+    }
+
+    /**
+     * Class which keep selected surface index when user click
+     * on a open gl surface
+     * */
+    public class GlActive implements Serializable{
+        int index;
+        boolean active;
+
+        /**
+         * Constructor of the GlActive class
+         *
+         * @param index gives an index as integer
+         * @param active gives an state
+         * */
+        public GlActive(int index, boolean active){
+            this.index = index;
+            this.active = active;
+        }
+        /**
+         * @return the index of the object
+         * */
+        public int getIndex() {
+            return index;
+        }
+
+        /**
+         * @return the state of the object
+         * */
+        public boolean isActive() {
+            return active;
+        }
+
+
     }
 }

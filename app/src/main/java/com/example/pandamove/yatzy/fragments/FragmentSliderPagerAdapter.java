@@ -5,9 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
-import com.example.pandamove.yatzy.dice.Dice;
-import com.example.pandamove.yatzy.player.Player;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -19,8 +16,6 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
     private String tabTitles[] = new String[]{"Board", "Score"};
     private HashMap<String, Integer> listOfPossibleScores;
     private SparseArray<Fragment> fragments;
-    private ArrayList<Dice> dices;
-    private ArrayList<Player> players;
 
 
     /**
@@ -28,19 +23,14 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
      *
      * @param fm a fragmentmanager
      * @param fragments a sparse array of all the fragment initialized
-     * @param dices all the dices in the game in a arraylist
      * @param listOfPossibleScores list of all the possibles score for testing purpose
-     * @param players all the players in the game
      * */
     public FragmentSliderPagerAdapter(FragmentManager fm,
-                                      SparseArray<Fragment> fragments, ArrayList<Dice> dices,
-                                      HashMap<String, Integer> listOfPossibleScores,
-                                     ArrayList<Player> players){
+                                      SparseArray<Fragment> fragments,
+                                      HashMap<String, Integer> listOfPossibleScores){
         super(fm);
         this.fragments = fragments;
-        this.dices = dices;
         this.listOfPossibleScores = listOfPossibleScores;
-        this.players = players;
     }
 
     /**
@@ -65,14 +55,11 @@ public class FragmentSliderPagerAdapter extends FragmentStatePagerAdapter{
                 InGameFragment inGameFragment = new InGameFragment();
                 return inGameFragment.newInstance(
                         1,
-                       listOfPossibleScores,
-                        dices
+                       listOfPossibleScores
                 );
             case 2:
                 return ScoreFragment.newInstance(
-                        2,
-                        dices,
-                        players
+                        2
                 );
             default:
         }

@@ -11,11 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+
 import com.example.pandamove.yatzy.*;
 import com.example.pandamove.yatzy.OpenGLClasses.DiceSurfaceView;
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
+import com.example.pandamove.yatzy.controllers.GameObjects;
 import com.example.pandamove.yatzy.dice.Dice;
+import com.example.pandamove.yatzy.player.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -38,9 +41,7 @@ public class InGameFragment extends Fragment {
     private Handler throwHandler;
     private HashMap listOfPossibleScores;
     private ArrayList<DiceSurfaceView> diceList;
-    private ArrayList<Dice> dices;
     private SparseArray<Dice> hashDices;
-    private ArrayList<ImageButton> diceSelectedButtons;
     private Button buttonThrow;
     private ArrayList<ThrowThread> throwRunnables;
     private ThrowThread throwRunnable;
@@ -55,13 +56,10 @@ public class InGameFragment extends Fragment {
      *
      * */
     public static InGameFragment newInstance(int page,
-                                             HashMap<String,Integer> listOfPossibleScores,
-                                             ArrayList<Dice> dices){
-        System.out.println("inside fragment XD");
+                                             HashMap<String,Integer> listOfPossibleScores){
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         args.putSerializable("hashmap", listOfPossibleScores);
-        args.putParcelableArrayList("dices", dices);
         InGameFragment fragment = new InGameFragment();
         fragment.setArguments(args);
         return fragment;
@@ -78,11 +76,53 @@ public class InGameFragment extends Fragment {
         super.onCreate(savedInstanceState);
         listOfPossibleScores =
                 (HashMap) getArguments().getSerializable("hashmap");
-        dices = getArguments().getParcelableArrayList("dices");
-
         diceList = new ArrayList<>();
-        diceSelectedButtons = new ArrayList<>();
 
+    }
+
+    /**
+     * Recreated previous stored values
+     *
+     * @param savedInstanceState contains stored values
+     * */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            listOfPossibleScores = ((HashMap) savedInstanceState.getSerializable("scores"));
+        }
+    }
+    /**
+     * Store values inside a bundle
+     *
+     * @param outState keeps the value that is going to be stored
+     * */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("scores", listOfPossibleScores);
+    }
+
+    /**
+     * Pause all glSurfaceView when activity is inactive
+     * */
+    @Override
+    public void onPause() {
+        super.onPause();
+        for(int i = 0; i < diceList.size(); i+=1){
+            if(diceList.get(i) != null){diceList.get(i).onPause();}
+        }
+    }
+
+    /**
+     * Resume glSurface view when activity is active again
+     * */
+    @Override
+    public void onResume() {
+        super.onResume();
+        for(int i = 0; i < diceList.size(); i+=1){
+            if(diceList.get(i) != null){diceList.get(i).onResume();}
+        }
     }
 
 
@@ -115,39 +155,55 @@ public class InGameFragment extends Fragment {
         throwHandler = new Handler(throwCallback);
         this.initializeThrowThreads();
         CommunicationHandler.getInstance().setPlayerView(view);
-        CommunicationHandler.getInstance().setScoreView(view);
-        this.beginARollRound(view);
         buttonThrow.setOnClickListener(new ThrowListener(view));
+        CommunicationHandler.getInstance().getThrows(view);
         return view;
     }
-
     /**
      * Initialize the throwthres for the opengl animation
      * */
     public void initializeThrowThreads(){
-        for(int i = 0; i < diceList.size(); i++){
-            ThrowThread throwThread =  new ThrowThread(diceList.get(i), hashDices.get(i),
-                    hashDices, listOfPossibleScores, throwHandler);
-            int random = rand.nextInt((5)+1);
-            diceList.get(i).changePositionOfDice(random+1);
-            hashDices.get(i).setScore(random+1);
-            throwRunnables.add(throwThread);
+        if(CommunicationHandler.getInstance().getGameObjects().getGlScore().size() == 0) {
+            for (int i = 0; i < diceList.size(); i++) {
+                ThrowThread throwThread = new ThrowThread(diceList.get(i), hashDices.get(i),
+                        hashDices, listOfPossibleScores, throwHandler);
+                int random = rand.nextInt((5) + 1);
+                diceList.get(i).changePositionOfDice(random + 1);
+                hashDices.get(i).setScore(random + 1);
+                throwRunnables.add(throwThread);
+            }
+        }else{
+            this.setPreviousValues();
         }
         throwRunnable = new ThrowThread(diceList.get(0),hashDices.get(1),
                 hashDices,listOfPossibleScores,throwHandler);
     }
 
     /**
+     * Get the previous values from the dices which is stored
+     * inside the savedInstanceState in the activity
+     * */
+    public void setPreviousValues(){
+        ArrayList<Integer> dicesCurrentScores =
+                CommunicationHandler.getInstance().getGameObjects().getGlScore();
+        for (int i = 0; i < diceList.size(); i+=1) {
+            ThrowThread throwThread = new ThrowThread(diceList.get(i), hashDices.get(i),
+                    hashDices, listOfPossibleScores, throwHandler);
+            diceList.get(i).changePositionOfDice(dicesCurrentScores.get(i));
+            hashDices.get(i).setScore(dicesCurrentScores.get(i));
+            throwRunnables.add(throwThread);
+        }
+    }
+
+    /**
      * Initialize all the dices in the game
      * */
     public void initializeDices(){
-        for(int i = 0; i < diceList.size(); i++){
-            Dice dice = new Dice(true,0,i);
-            dices.add(dice);
-        }
-        for(int i = 0; i< diceList.size(); i++){
-            Dice dice = new Dice(true,1,i);
-            hashDices.put(dice.getSurfaceIndex(),dice);
+        if(hashDices.size() == 0) {
+            for (int i = 0; i < diceList.size(); i++) {
+                Dice dice = new Dice(true, 1, i);;
+                hashDices.put(dice.getSurfaceIndex(), dice);
+            }
         }
     }
 
@@ -179,9 +235,8 @@ public class InGameFragment extends Fragment {
     public void beginARollRound(View view){
         if(CommunicationHandler.getInstance().getCurrentPlayer().getNumberOfThrows() < 3) {
             if (!throwIsExcuting()) {
-                CommunicationHandler.getInstance().setThrows(
-                        view
-                );
+                CommunicationHandler.getInstance().setThrows();
+                CommunicationHandler.getInstance().getThrows(view);
                 dice_sound.play(sound_id, 0f, 1.0f, 0, 0, 1.0f);
                 for (int i = 0; i < throwRunnables.size(); i++) {
                     if (i + 1 < throwRunnables.size()) {
@@ -251,15 +306,15 @@ public class InGameFragment extends Fragment {
         @Override
         public boolean handleMessage(Message message) {
             SparseArray<Dice> sparseArray = message.getData().getSparseParcelableArray("scoreArray");
+            for(int j = 1; j < sparseArray.size(); j+=1){
+                System.out.println("score?" + sparseArray.get(j).getScore());
+
+            }
             if(sparseArray != null) {
                 for(int i = 0; i < sparseArray.size(); i++){
                     int key = sparseArray.keyAt(i);
                 }
                 CommunicationHandler.getInstance().onThrowPostPossibleScores(sparseArray);
-                /*if(CommunicationHandler.getInstance().
-                        getCurrentPlayer().getNumberOfThrows() == 3) {
-                    CommunicationHandler.getInstance().goToScoreView();
-                }*/
                 return true;
             }else{
                 return false;
@@ -315,8 +370,36 @@ public class InGameFragment extends Fragment {
             );
             xAngle = currentAngle[0];
             yAngle = currentAngle[1];
+            this.addDiceNumber(surface);
+            this.checkSelected();
         }
 
+        /**
+         * Add a dice number to the glSurfaceContext to keep
+         * track on which dice that is interacting with user
+         * */
+        public synchronized void addDiceNumber(DiceSurfaceView diceSurfaceView){
+            diceSurfaceView.setCurrentDiceNumber(dice.getSurfaceIndex());
+        }
+
+        /**
+         * Check any dice is checked if so it tells the glSurfaceView which
+         * once that is checked
+         * */
+        public synchronized void checkSelected(){
+            ArrayList<GameObjects.GlActive> gameObjects =
+                    CommunicationHandler.getInstance().getGameObjects().getGlActive();
+            if(gameObjects.size() != 0){
+                for(int i = 0; i < gameObjects.size(); i+=1){
+                    if(gameObjects.get(i).getIndex() == dice.getSurfaceIndex()){
+                        if(!gameObjects.get(i).isActive()) {
+                            surface.getRenderer().setDiceSelected(true);
+                            surface.setSurfaceIsActive(false);
+                        }
+                    }
+                }
+            }
+        }
         /**
          * Call rotation animation on the x-axis and
          * the y-axis. The throw animation is executed on
@@ -355,10 +438,17 @@ public class InGameFragment extends Fragment {
             }
         }
 
+        /**
+         * Update the dicelist by setting a new
+         * value inside the dice sparesArray
+         * */
         public synchronized void updateDiceInList(){
             dices.setValueAt(dice.getSurfaceIndex(),dice);
         }
 
+        /**
+         * Set a new score for the dice object
+         * */
         public synchronized void setGetScore(int diceNumber){
             int myVal = diceNumber+1;
             dice.setScore(myVal);
@@ -381,7 +471,10 @@ public class InGameFragment extends Fragment {
             newAngleIsSetted = false;
         }
 
-
+        /**
+         * Check if all thread is done if so the angle for
+         * each dice score is setted
+         * */
         public synchronized void checkIfAllThreadsIsDone(){
             int counter = 0;
             for(int i = 0; i < throwRunnables.size(); i++){
@@ -398,6 +491,11 @@ public class InGameFragment extends Fragment {
                 this.setAllAngleToScore();
             }
         }
+
+        /**
+         * Tells to set angle after the animation is done for
+         * each thread
+         * */
         private void setAllAngleToScore(){
             for(int i = 0; i < throwRunnables.size(); i++){
                     this.setAngleAfterAnimation(
@@ -405,10 +503,19 @@ public class InGameFragment extends Fragment {
                     );
             }
         }
+        /**
+         * Set a new angle for the object based on the score
+         * of the object
+         * */
         private void setAngleAfterAnimation(ThrowThread object){
             int newAngle = object.getScoreDice().getScore();
             object.getSurface().changePositionOfDice(newAngle);
         }
+
+        /**
+         * Send the generated scores after the openGL animation is done
+         * to the mainThread by using a bundle and callback function
+         * */
         private synchronized void sendMessageToMainThread(){
             Message m = new Message();
             Bundle bundle = new Bundle();

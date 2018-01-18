@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +24,12 @@ import com.example.pandamove.yatzy.R;
 import com.example.pandamove.yatzy.controllers.CommunicationHandler;
 import com.example.pandamove.yatzy.dice.Dice;
 import com.example.pandamove.yatzy.fragments.FragmentSliderPagerAdapter;
+import com.example.pandamove.yatzy.fragments.InGameFragment;
 import com.example.pandamove.yatzy.fragments.ScoreFragment;
 import com.example.pandamove.yatzy.controllers.GameObjects;
 import com.example.pandamove.yatzy.player.Player;
 import com.example.pandamove.yatzy.score.LeaderBoard;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,13 +43,13 @@ public class GameActivity extends AppCompatActivity{
     private ViewPager mPager;
     private PagerAdapter pagerAdapter;
     private HashMap<String,Integer> listOfPossibleScores = new HashMap<>();
-    private ArrayList<Dice> dices = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<Integer> playersIcon = new ArrayList<>();
     private ArrayList<TextView> highScore = new ArrayList<>();
     private GameObjects gameObjects;
     private LeaderBoard leaderBoard = new LeaderBoard();
     Animation animation;
+    private ArrayList<Integer> glScore = new ArrayList<>();
 
     private String[] scores = {
             "Header",
@@ -106,17 +109,14 @@ public class GameActivity extends AppCompatActivity{
                 R.anim.anim_alpha);
         this.initializePlayerIcon();
         this.initializePlayers(numberOfPlayers);
-        gameObjects = new GameObjects(players);
+        gameObjects = new GameObjects(players, glScore);
         gameObjects.setRoundTest(0);
-
         fragments = new SparseArray<>();
         mPager = (ViewPager) findViewById(R.id.viewpager);
         pagerAdapter = new FragmentSliderPagerAdapter(
                 getSupportFragmentManager(),
                 fragments,
-                dices,
-                listOfPossibleScores,
-                players
+                listOfPossibleScores
         );
         mPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -130,6 +130,35 @@ public class GameActivity extends AppCompatActivity{
         acelLast = SensorManager.GRAVITY_EARTH;
         shake = 0.00f;
 
+    }
+
+    /**
+     * Gather stored values inside bundle savedInstanceState
+     *
+     * @param savedInstanceState contains stored values
+     * */
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        gameObjects = (GameObjects) savedInstanceState.getSerializable("gameobject");
+        CommunicationHandler.getInstance().setGameObjects(gameObjects);
+        CommunicationHandler.getInstance().setPlayers(gameObjects.getPlayers());
+    }
+
+    /**
+     * Save values for next initialization of the activity
+     *
+     * @param outState keeps values stored
+     * */
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState,"inGameFragment",
+               (CommunicationHandler.getInstance()).getFragments().get(0));
+        getSupportFragmentManager().putFragment(outState,"scoreFragment",
+               (CommunicationHandler.getInstance()).getFragments().get(1));
+        outState.putInt("numberofrounds", gameObjects.getRound());
+        outState.putSerializable("gameobject", gameObjects);
+        outState.putSerializable("themplayers",players);
     }
     @Override
     public void onStop(){
@@ -216,6 +245,7 @@ public class GameActivity extends AppCompatActivity{
         CommunicationHandler.getInstance().setGameObjects(gameObjects);
         CommunicationHandler.getInstance().setGameActivity(this);
         CommunicationHandler.getInstance().setInitializeDices(false);
+        CommunicationHandler.getInstance().setThrows();
     }
 
     /**

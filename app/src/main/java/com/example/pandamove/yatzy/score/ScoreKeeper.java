@@ -139,6 +139,22 @@ public class ScoreKeeper implements Serializable{
     }
 
     /**
+     * Check if the scoreTables contains inactive
+     * columns scores
+     *
+     * @return false if it does otherwise true
+     * */
+    public boolean containsInActive(){
+        for(int i = 0; i < scoreTables.size(); i +=1){
+            if(!scoreTables.get(i).active){
+                return false;
+            }else{
+                return true;
+            }
+        }
+        return true;
+    }
+    /**
      * Get possible score by choosing the specific
      * row where the score should appear.
      *
@@ -192,7 +208,7 @@ public class ScoreKeeper implements Serializable{
     }
 
     /**
-     * Get the usm of numbers score in the game,
+     * Get the sum of numbers score in the game,
      * Sum all the rows which is a number score and return
      * the number score sum.
      *
@@ -231,11 +247,7 @@ public class ScoreKeeper implements Serializable{
                 }
              }
         }
-        if(counter >= 6){
-            return true;
-        }else{
-            return false;
-        }
+        return (counter >= 6);
     }
 
     /**

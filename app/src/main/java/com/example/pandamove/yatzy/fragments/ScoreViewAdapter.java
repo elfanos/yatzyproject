@@ -39,7 +39,6 @@ public class ScoreViewAdapter extends BaseAdapter {
     private static final int HEADER_ITEM = 0;
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
     private HashMap<Integer,CellOnClickListener> observeListeners;
-    private ArrayList<Dice> dices;
     private Animation setScoreAnimation;
     private int imageIndex = 0;
     private String[] headerRows = {
@@ -75,17 +74,16 @@ public class ScoreViewAdapter extends BaseAdapter {
      * @param context the main activity which
      *                the list view is present on
      * @param playerList a list containing ScoreListHandler
-     * @param dices list which contains Dice
      * */
     public ScoreViewAdapter(Activity context,
-                            List<ScoreListHandler> playerList,
-                            ArrayList<Dice> dices){
+                            List<ScoreListHandler> playerList){
         this.playerList = playerList;
         this.context = context;
         observeListeners = new HashMap<>();
-        this.dices = dices;
     }
-
+    public void updateList(){
+        this.notifyDataSetChanged();
+    }
     /**
      * Set the score animation
      *
@@ -195,6 +193,22 @@ public class ScoreViewAdapter extends BaseAdapter {
         return 2;
     }
 
+
+    public void reinitializeUnActiveScores(Player player){
+        for(int i = 0; i < this.getCount(); i+=1){
+            if(this.getItem(i) instanceof  ScoreListHandler){
+                String row = ((ScoreListHandler) this.getItem(i)).getYatzyScore();
+                int value = player.getScoreKeeper().getScoreOnRow(row);
+                if(value != 0 && !this.checkIfSumOrBonus(row)){
+                    ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(
+                            player.getColumnPosition(),1,player,row,0
+                    );
+                    this.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
     /**
      * Set score on player based on row and the current player
      * position in the row which the score is about to be
@@ -206,7 +220,6 @@ public class ScoreViewAdapter extends BaseAdapter {
      * */
     public void setScoreOnPlayer(int i, Player player, String row){
         this.checkIfScoreExist(player);
-        ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
         ((ScoreListHandler) this.getItem(i)).setScoreBackgroundInActive(
                 player.getColumnPosition(),1, player, row,0);
         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
@@ -228,7 +241,6 @@ public class ScoreViewAdapter extends BaseAdapter {
                             getScoresPossible(((ScoreListHandler) this.getItem(i)).
                                     getYatzyScore());
                     if(value == 0 && !this.checkIfSumOrBonus(row)){
-                        ((ScoreListHandler) this.getItem(i)).setScore(player, row, 0);
                         ((ScoreListHandler) this.getItem(i)).
                                 setScoreBackgroundInActive(player.getColumnPosition(),3, player, row,2);
                         ((ScoreListHandler) this.getItem(i)).setListener(player, this , row, i);
@@ -237,17 +249,13 @@ public class ScoreViewAdapter extends BaseAdapter {
                     if(checkIfSumOrBonus(row)){
                         ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
 
-                        ((ScoreListHandler) this.getItem(i)).setScore(player, row, 2);
-
                     }
             }
         }
     }
     private boolean checkIfSumOrBonus(String row){
-        if(row.equals("Bonus") || row.equals("Sum") || row.equals("Total") || row.equals("Total of All")){
-            return true;
-        }
-        return false;
+        return row.equals("Bonus") || row.equals("Sum") ||
+                row.equals("Total") || row.equals("Total of All");
     }
 
 
@@ -311,7 +319,6 @@ public class ScoreViewAdapter extends BaseAdapter {
 
                                 player.getScoreKeeper().setUsedScore(yatzyScore);
                                for(int j = 0; j < player.getScoreKeeper().sizeOfScores(); j++){
-                                   ((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                                    this.notifyDataSetChanged();
                                }
                                this.updateHeaderItems(player);
@@ -320,11 +327,9 @@ public class ScoreViewAdapter extends BaseAdapter {
                             }
                             break;
                         case 1:
-                            ((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                             this.notifyDataSetChanged();
                             break;
                         case 2:
-                            ((ScoreListHandler) this.getItem(i)).setScore(player, yatzyScore, 1);
                             this.notifyDataSetChanged();
                             break;
                     }
@@ -346,9 +351,7 @@ public class ScoreViewAdapter extends BaseAdapter {
 
                 String row = ((ScoreListHandler) this.getItem(i)).getYatzyScore();
                 if(checkIfSumOrBonus(row)){
-
-                    ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
-                    ((ScoreListHandler) this.getItem(i)).setScore(player, row, 2);
+                   // ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
                 }
             }
         }
@@ -412,28 +415,33 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard = (YatzyScoreBoard) scoreView.getTag();
         }
         final ScoreListHandler scoreListHandler = playerList.get(position);
+        this.setHeaderValues(scoreBoard,scoreListHandler);
         if(!scoreListHandler.isHeaderItem()) {
             if (scoreBoard.yatzyScores == null) {
                 this.initializeImageForHeader(scoreBoard,scoreListHandler);
             } else {
                 scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
             }
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
+            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0,
+                    scoreListHandler.getYatzyScore())));
             scoreBoard.playerOneScore.setBackgroundResource(scoreListHandler.getScoreBackground(0));
             scoreBoard.playerOneScore.setOnClickListener(scoreListHandler.getListener(0, scoreBoard.playerOneScore));
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
 
-            scoreBoard.playerTwoScore.setText(String.format("%s", scoreListHandler.getScore(1)));
+            scoreBoard.playerTwoScore.setText(String.format("%s", scoreListHandler.getScore(1,
+                    scoreListHandler.getYatzyScore())));
             scoreBoard.playerTwoScore.setBackgroundResource(scoreListHandler.getScoreBackground(1));
             scoreBoard.playerTwoScore.setOnClickListener(scoreListHandler.getListener(1, scoreBoard.playerTwoScore));
             scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
 
-            scoreBoard.playerThreeScore.setText(String.format("%s", scoreListHandler.getScore(2)));
+            scoreBoard.playerThreeScore.setText(String.format("%s", scoreListHandler.getScore(2,
+                    scoreListHandler.getYatzyScore())));
             scoreBoard.playerThreeScore.setBackgroundResource(scoreListHandler.getScoreBackground(2));
             scoreBoard.playerThreeScore.setOnClickListener(scoreListHandler.getListener(2, scoreBoard.playerThreeScore));
             scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
 
-            scoreBoard.playerFourScore.setText(String.format("%s", scoreListHandler.getScore(3)));
+            scoreBoard.playerFourScore.setText(String.format("%s", scoreListHandler.getScore(3,
+                    scoreListHandler.getYatzyScore())));
             scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getScoreBackground(3));
             scoreBoard.playerFourScore.setOnClickListener(scoreListHandler.getListener(3, scoreBoard.playerFourScore));
             scoreBoard.playerFourScore.setVisibility(View.VISIBLE);
@@ -515,10 +523,11 @@ public class ScoreViewAdapter extends BaseAdapter {
      * */
     private void viewForHeader(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler){
         scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
-
         if(!scoreListHandler.getYatzyScore().equals("YATZY")){
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerOneScore.setText(String.format("%s", scoreListHandler.getScore(0)));
+            scoreBoard.playerOneScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(0,
+                            scoreListHandler.getYatzyScore())));
             scoreBoard.playerOneScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
         }else{
             scoreBoard.playerOneScore.setText(String.format("%s", ""));
@@ -527,7 +536,9 @@ public class ScoreViewAdapter extends BaseAdapter {
 
         if (!scoreListHandler.getYatzyScore().equals("YATZY")) {
             scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerTwoScore.setText(String.format("%s", scoreListHandler.getScore(1)));
+            scoreBoard.playerTwoScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(1,
+                            scoreListHandler.getYatzyScore())));
             scoreBoard.playerTwoScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
         } else {
             scoreBoard.playerTwoScore.setText(String.format("%s", ""));
@@ -536,7 +547,9 @@ public class ScoreViewAdapter extends BaseAdapter {
 
         if (!scoreListHandler.getYatzyScore().equals("YATZY")) {
             scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
-            scoreBoard.playerThreeScore.setText(String.format("%s", scoreListHandler.getScore(2)));
+            scoreBoard.playerThreeScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(2,
+                            scoreListHandler.getYatzyScore())));
             scoreBoard.playerThreeScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
         } else {
             scoreBoard.playerThreeScore.setText(String.format("%s", ""));
@@ -544,7 +557,9 @@ public class ScoreViewAdapter extends BaseAdapter {
         }
 
         if (!scoreListHandler.getYatzyScore().equals("YATZY")) {
-            scoreBoard.playerFourScore.setText(String.format("%s", scoreListHandler.getScore(3)));
+            scoreBoard.playerFourScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(3,
+                            scoreListHandler.getYatzyScore())));
             scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
             scoreBoard.playerFourScore.setVisibility(View.VISIBLE);
         } else {
@@ -553,6 +568,68 @@ public class ScoreViewAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * Set the header values for total and Total of all
+     * @param scoreListHandler the scoreListHandler of the specific row
+     * @param scoreBoard the scoreBoard container
+     *                   for the views in a row
+     *
+     * */
+    public void setHeaderValues(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler){
+        System.out.println("hola vista?");
+        if (scoreListHandler.getYatzyScore().equals("Total")){
+            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerOneScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(0,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerOneScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerTwoScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(1,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerTwoScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerThreeScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(2,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerThreeScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerFourScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerFourScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(3,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+        }else if(scoreListHandler.getYatzyScore().equals("Total of All")){
+            scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerOneScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(0,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerOneScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerTwoScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerTwoScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(1,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerTwoScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerThreeScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerThreeScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(2,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerThreeScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+            scoreBoard.playerFourScore.setVisibility(View.VISIBLE);
+            scoreBoard.playerFourScore.setText(String.format("%s",
+                    scoreListHandler.getHeaderScore(3,
+                            scoreListHandler.getYatzyScore())));
+            scoreBoard.playerFourScore.setBackgroundResource(scoreListHandler.getHeaderItem(4));
+
+        }
+
+    }
     /**
      * A class for holding the views in a
      * specific row in the list view.
