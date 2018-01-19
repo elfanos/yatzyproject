@@ -120,7 +120,6 @@ public class GameObjects implements Serializable{
      * Increment rounds
      * */
     public void setRound() {
-        System.out.println("le rounds?? in game objective?");
        this.round++;
     }
 

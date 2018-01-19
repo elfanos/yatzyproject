@@ -101,6 +101,11 @@ public class GameActivity extends AppCompatActivity{
      * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            CommunicationHandler.getInstance().setFirstRound(false);
+        }else{
+            CommunicationHandler.getInstance().setFirstRound(true);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_tab);
         Intent numbOfPlayers = getIntent();

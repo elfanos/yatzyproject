@@ -56,6 +56,37 @@ public class StartActivity extends AppCompatActivity{
             }
         });
     }
+    /**
+     * Restore the instance and set the higlighted
+     * button to the number of players that was setted
+     * before
+     * */
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        TextView selectedButton = playerButtons
+                .get(savedInstanceState.getInt("numbofplayers")-1);
+        selectedButton.setAlpha(1);
+        for(int i = 0; i < playerButtons.size(); i++){
+            if(!playerButtons.get(i).equals(selectedButton)){
+
+                playerButtons.get(i).setAlpha(0.3f);
+            }else{
+                this.setHowManyPlayers((i+1));
+            }
+        }
+
+    }
+
+    /**
+     * Save values for next initialization of the activity
+     *
+     * @param outState keeps values stored
+     * */
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putInt("numbofplayers", this.howManyPlayers);
+    }
 
     /**
      * Initialize all the buttons in the start menu for selecting players

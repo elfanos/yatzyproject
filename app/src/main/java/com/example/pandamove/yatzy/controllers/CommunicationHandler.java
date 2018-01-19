@@ -157,6 +157,15 @@ public class CommunicationHandler implements GameActivityInterface{
         return animation;
     }
 
+    public boolean isFirstRound() {
+        return firstRound;
+    }
+
+    public void setFirstRound(boolean firstRound) {
+        this.firstRound = firstRound;
+    }
+
+    private boolean firstRound;
     private boolean initializeDices;
     private View inGameView;
     private GameActivity gameActivity;
@@ -307,10 +316,7 @@ public class CommunicationHandler implements GameActivityInterface{
      * */
     @Override
     public void updateView(View v){
-        //this.initializePlayerIcon();
         Player player = this.getCurrentPlayer();
-        System.out.println("wat is current player??   " +
-                this.getCurrentPlayer().getColumnPosition());
         if(player == null){
             player = players.get(0);
         }
@@ -443,14 +449,8 @@ public class CommunicationHandler implements GameActivityInterface{
     @Override
     public void getThrows(View v){
         Player player = this.getCurrentPlayer();
-        System.out.println("in get throws:   " + player.getNumberOfThrows());
         ((TextView)v.findViewById(R.id.thrownumber)).setText(String.format("%s",
                 player.getNumberOfThrows()));
-    }
-    public int getDemThrows(){
-        Player player = this.getCurrentPlayer();
-        System.out.println("in get getdemthrows:   " + player.getNumberOfThrows());
-        return player.getNumberOfThrows();
     }
     public void setThrows(){
         Player player = this.getCurrentPlayer();

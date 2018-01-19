@@ -1,4 +1,5 @@
 package com.example.pandamove.yatzy.fragments;
+import android.app.Activity;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -79,7 +80,6 @@ public class InGameFragment extends Fragment {
         diceList = new ArrayList<>();
 
     }
-
     /**
      * Recreated previous stored values
      *
@@ -172,11 +172,21 @@ public class InGameFragment extends Fragment {
                 hashDices.get(i).setScore(random + 1);
                 throwRunnables.add(throwThread);
             }
+            if(CommunicationHandler.getInstance().isFirstRound()) {
+                this.sendMessageToHandler(hashDices);
+            }
         }else{
             this.setPreviousValues();
         }
         throwRunnable = new ThrowThread(diceList.get(0),hashDices.get(1),
                 hashDices,listOfPossibleScores,throwHandler);
+    }
+    public void sendMessageToHandler(SparseArray<Dice> dices){
+        Message m = new Message();
+        Bundle bundle = new Bundle();
+        bundle.putSparseParcelableArray("scoreArray", dices); // for example
+        m.setData(bundle);
+        throwHandler.sendMessage(m);
     }
 
     /**
@@ -201,7 +211,7 @@ public class InGameFragment extends Fragment {
     public void initializeDices(){
         if(hashDices.size() == 0) {
             for (int i = 0; i < diceList.size(); i++) {
-                Dice dice = new Dice(true, 1, i);;
+                Dice dice = new Dice(true, 1, i);
                 hashDices.put(dice.getSurfaceIndex(), dice);
             }
         }
@@ -306,10 +316,6 @@ public class InGameFragment extends Fragment {
         @Override
         public boolean handleMessage(Message message) {
             SparseArray<Dice> sparseArray = message.getData().getSparseParcelableArray("scoreArray");
-            for(int j = 1; j < sparseArray.size(); j+=1){
-                System.out.println("score?" + sparseArray.get(j).getScore());
-
-            }
             if(sparseArray != null) {
                 for(int i = 0; i < sparseArray.size(); i++){
                     int key = sparseArray.keyAt(i);

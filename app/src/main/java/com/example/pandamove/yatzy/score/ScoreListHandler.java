@@ -44,7 +44,8 @@ public class ScoreListHandler {
      * @param scoreSetted if the score is setted or not
      * @param imageId for the handler to help return right view
      * */
-    public ScoreListHandler (List<Player> players, String yatzyScore, boolean scoreSetted, int imageId){
+    public ScoreListHandler (List<Player> players, String yatzyScore,
+                             boolean scoreSetted, int imageId){
         this.players = players;
         this.yatzyScore = yatzyScore;
         this.scoreSetted = scoreSetted;
@@ -444,14 +445,14 @@ public class ScoreListHandler {
     public String getHeaderScore(int player, String row){
         switch (player){
             case 0:
-                if(players.get(player).getScoreKeeper().getSumOfNumbers() != 0) {
+                if(players.get(player).getScoreKeeper().getTotalOfAll() != 0) {
                    return getListHeader(player,row);
                 }else{
                     return "0";
                 }
             case 1:
                 if (players.size()  > player) {
-                    if(players.get(player).getScoreKeeper().getSumOfNumbers() != 0) {
+                    if(players.get(player).getScoreKeeper().getTotalOfAll() != 0) {
                         return getListHeader(player,row);
                     }else{
                         return "0";
@@ -460,8 +461,8 @@ public class ScoreListHandler {
                     return "0";
                 }
             case 2:
-                if (players.size() > player) {
-                    if(players.get(player).getScoreKeeper().getSumOfNumbers() != 0) {
+                if (players.size()  > player) {
+                    if(players.get(player).getScoreKeeper().getTotalOfAll() != 0) {
                         return getListHeader(player,row);
                     }else{
                         return "0";
@@ -470,13 +471,13 @@ public class ScoreListHandler {
                     return "0";
                 }
             case 3:
-                if (players.size() > player) {
-                    if(players.get(player).getScoreKeeper().getSumOfNumbers() != 0) {
+                if (players.size()  > player) {
+                    if(players.get(player).getScoreKeeper().getTotalOfAll() != 0) {
                         return getListHeader(player,row);
                     }else{
                         return "0";
                     }
-                }else {
+                }else{
                     return "0";
                 }
             default:
@@ -516,7 +517,6 @@ public class ScoreListHandler {
          * @param id give a header item an id
          * */
         public HeaderItem(int id){
-            System.out.println("leid?" + id);
             this.headerId = id;
             headerLayouts = new ArrayList<>();
             headerLayouts.add(R.drawable.header_one_first);

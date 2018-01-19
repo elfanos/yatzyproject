@@ -20,6 +20,7 @@ import com.example.pandamove.yatzy.score.ScoreListHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -102,10 +103,11 @@ public class ScoreViewAdapter extends BaseAdapter {
      * @param players list of all players
      **/
     public void addItem(String yatzyScore, List<Player> players){
-        ScoreListHandler scoreHandler = new ScoreListHandler(players, yatzyScore, false, imageId[imageIndex]);
+        ScoreListHandler scoreHandler = new ScoreListHandler(players,
+                yatzyScore, false, imageId[imageIndex]);
         playerList.add(scoreHandler);
-        this.notifyDataSetChanged();
         imageIndex++;
+        this.notifyDataSetChanged();
     }
 
     /**
@@ -247,8 +249,7 @@ public class ScoreViewAdapter extends BaseAdapter {
                         this.notifyDataSetChanged();
                     }
                     if(checkIfSumOrBonus(row)){
-                        ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
-
+                       ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
                     }
             }
         }
@@ -312,46 +313,19 @@ public class ScoreViewAdapter extends BaseAdapter {
                             player.getColumnPosition(),2, player, yatzyScore, 1
                     );
                     switch (this.checkIfTotalOrSum(
-                            ((ScoreListHandler) this.getItem(i)), player.getColumnPosition())
+                                ((ScoreListHandler) this.getItem(i)), player.getColumnPosition())
                             ){
                         case 0:
                             if(player.getScoreKeeper().getActive(yatzyScore)){
 
                                 player.getScoreKeeper().setUsedScore(yatzyScore);
                                for(int j = 0; j < player.getScoreKeeper().sizeOfScores(); j++){
-                                   this.notifyDataSetChanged();
+                                 //  this.notifyDataSetChanged();
                                }
-                               this.updateHeaderItems(player);
-                                this.notifyDataSetChanged();
                                 CommunicationHandler.getInstance().roundsEnd(player, context);
                             }
                             break;
-                        case 1:
-                            this.notifyDataSetChanged();
-                            break;
-                        case 2:
-                            this.notifyDataSetChanged();
-                            break;
                     }
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates the headeritem with value in the
-     * list view
-     *
-     * @param player the current player which the column
-     *               in the header should be update on.
-     * */
-    public void updateHeaderItems(Player player){
-        for(int i = 0; i < this.getCount(); i++){
-            if(this.getItem(i) instanceof ScoreListHandler){
-
-                String row = ((ScoreListHandler) this.getItem(i)).getYatzyScore();
-                if(checkIfSumOrBonus(row)){
-                   // ((ScoreListHandler) this.getItem(i)).setHeaderValueScore(row,player);
                 }
             }
         }
@@ -415,7 +389,6 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard = (YatzyScoreBoard) scoreView.getTag();
         }
         final ScoreListHandler scoreListHandler = playerList.get(position);
-        this.setHeaderValues(scoreBoard,scoreListHandler);
         if(!scoreListHandler.isHeaderItem()) {
             if (scoreBoard.yatzyScores == null) {
                 this.initializeImageForHeader(scoreBoard,scoreListHandler);
@@ -446,7 +419,8 @@ public class ScoreViewAdapter extends BaseAdapter {
             scoreBoard.playerFourScore.setOnClickListener(scoreListHandler.getListener(3, scoreBoard.playerFourScore));
             scoreBoard.playerFourScore.setVisibility(View.VISIBLE);
         }else{
-            this.viewForHeader(scoreBoard,scoreListHandler);
+            this.viewForHeader(scoreBoard,scoreListHandler , position);
+         //   this.getTotalAndTotalOfAll(scoreBoard);
         }
 
         return scoreView;
@@ -521,7 +495,7 @@ public class ScoreViewAdapter extends BaseAdapter {
      * @param scoreBoard the scoreBoard container
      *                   for the views in a row
      * */
-    private void viewForHeader(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler){
+    private void viewForHeader(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler, int position){
         scoreBoard.yatzyScores.setText(String.format("%s", scoreListHandler.getYatzyScore()));
         if(!scoreListHandler.getYatzyScore().equals("YATZY")){
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
@@ -576,7 +550,6 @@ public class ScoreViewAdapter extends BaseAdapter {
      *
      * */
     public void setHeaderValues(YatzyScoreBoard scoreBoard, ScoreListHandler scoreListHandler){
-        System.out.println("hola vista?");
         if (scoreListHandler.getYatzyScore().equals("Total")){
             scoreBoard.playerOneScore.setVisibility(View.VISIBLE);
             scoreBoard.playerOneScore.setText(String.format("%s",

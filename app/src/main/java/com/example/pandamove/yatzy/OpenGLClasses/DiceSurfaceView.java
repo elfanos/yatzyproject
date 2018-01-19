@@ -59,7 +59,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			touchedX = event.getX();
 			touchedY = event.getY();
-			System.out.println("yalla" + this.getCurrentDiceNumber());
 			if(!renderer.isDiceSelected()) {
 				renderer.setDiceSelected(true);
 				this.setSurfaceIsActive(false);
@@ -104,8 +103,6 @@ public class DiceSurfaceView extends GLSurfaceView {
 		}
 		else if(angleValue > 0 && !reversed){
 			if(angleValue < 360) {
-			//	System.out.println("inla loop positive " + angleValue);
-				//angleValue++;
 				angleValue = angleValue + 10;
 				this.setRenderAngle(axis, angleValue);
 				this.setAngleValue(axis,angleValue,throwThread);
